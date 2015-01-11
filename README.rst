@@ -17,5 +17,5 @@ Currently, this package implements the following:
 * Non-negative least squares (nnls) fitting
 
 
-.. _online user guide: http://rnelsonchem.github.io/gcmstools/
+.. _online user guide: http://gcmstools.rcnelson.com/
 .. _available as a pdf: https://github.com/rnelsonchem/gcmstools/blob/master/gcmstools.pdf?raw=true)

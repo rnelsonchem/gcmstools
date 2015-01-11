@@ -1,0 +1,8 @@
+*swp
+TODO*
+*pyc
+
+# setuptools build directories
+build
+dist
+gcmstools.egg-info

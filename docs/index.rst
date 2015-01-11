@@ -6,10 +6,16 @@
 gcmstools Documentation
 =======================
 
+*gcmstools* is a Python package that reads some GCMS file formats and does
+some simple types of fitting. The source code for this project can be found on
+`GitHub`_. If you are reading this in PDF format, there is `online
+documentation`_ as well.
+
 .. toctree::
     :maxdepth: 2
 
-    intro
+    start
+    install
     basics
     fitting
     calibration
@@ -23,3 +29,5 @@ gcmstools Documentation
     * :ref:`modindex`
     * :ref:`search`
 
+.. _GitHub: https://github.com/rnelsonchem/gcmstools
+.. _online documentation: http://gcmstools.rcnelson.com/

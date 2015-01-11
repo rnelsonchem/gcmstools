@@ -105,7 +105,7 @@ First, install the `version-control software Git`_. Now, download and install
 
 .. code::
 
-    home>$ pip install git+https://github.com/rnelsonchem/gcms_nnls.git
+    home>$ pip install git+https://github.com/rnelsonchem/gcmstools.git
 
 The advantage here is that the same command will update your *gcmstools*
 installation with any any changes that have been made to the main repository. 
@@ -119,7 +119,7 @@ method used above.
 
     home>$ pip uninstall gcmstools
 
-.. _the main repository: https://github.com/rnelsonchem/gcms_nnls
+.. _the main repository: https://github.com/rnelsonchem/gcmstools
 .. _version-control software Git: http://git-scm.com/
 
 

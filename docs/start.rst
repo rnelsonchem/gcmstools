@@ -2,19 +2,33 @@ Getting started
 ###############
 
 *gcmstools* is a Python package that reads some GCMS file formats and does
-some simple types of fitting. The source code for this project can be found on
-`GitHub`_. If you are reading this in PDF format, there is `online
-documentation`_ as well.
+simple fitting. The source code for this project can be found on `GitHub`_. If
+you are reading this in PDF format, there is `online documentation`_ as well.
 
-This user guide is broken into a few sections. First of all, there is
-information about getting a Python installation up and running. This is
-followed by a section on the basic usage of *gcmstools* to manipulate and plot
-GCMS data. There is also a section about fitting the GCMS datasets. The final
-section covers generating calibration curves and automating data extraction
-with this calibration information. You can skip to that section if all you
-want to do is automate some data extractions. (It is not necessary to
-understand the data manipulation/plotting as that is automated in the final
-section.)
+This user guide is broken into a few sections. 
+
+#. :ref:`Installation <install>`: Information about getting a Python
+   installation up and running and installing *gcmstools*.
+
+#. :ref:`Basic Usage <basics>`: This section covers the usage of
+   *gcmstools* to manipulate and plot GCMS data. 
+
+#. :ref:`Fitting <fit>`: The information in this section covers manual fitting of a
+   GCMS data set. 
+   
+#. :ref:`Calibration <cal>` and :ref:`Batch Processing <batch>`: These final
+   sections cover calibration curves and automated data extraction.
+
+You can skip to the final sections if all you want to do is automate some data
+extractions. It is not necessary to understand the basics of data
+manipulation/plotting as those tasks are automated in the calibration and
+batch processing steps.
+
+.. note::
+    
+    The examples presented in this document require a basic working knowledge
+    of a command-line terminal interface. An :ref:`appendix <cli>` is included
+    that covers the basics that you will need to run these examples.
 
 .. _GitHub: https://github.com/rnelsonchem/gcmstools
 .. _online documentation: http://gcmstools.rcnelson.com/

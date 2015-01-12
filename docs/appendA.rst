@@ -1,3 +1,5 @@
+.. _cli:
+
 Appendix A: Running Code Samples
 ################################
 

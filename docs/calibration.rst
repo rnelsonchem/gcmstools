@@ -1,3 +1,5 @@
+.. _cal: 
+
 Automated Calibration and Integration
 #####################################
 

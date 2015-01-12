@@ -1,3 +1,5 @@
+.. _fit:
+
 Non-negative Least Squares Fitting
 ----------------------------------
 

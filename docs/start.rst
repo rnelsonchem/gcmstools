@@ -10,8 +10,8 @@ This user guide is broken into a few sections.
 #. :ref:`Installation <install>`: Information about getting a Python
    installation up and running and installing *gcmstools*.
 
-#. :ref:`Basic Usage <basics>`: This section covers the usage of
-   *gcmstools* to manipulate and plot GCMS data. 
+#. :ref:`Basic Usage <basics>`: This section covers the usage of *gcmstools*
+   to manipulate and plot GCMS data. 
 
 #. :ref:`Fitting <fit>`: The information in this section covers manual fitting of a
    GCMS data set. 
@@ -27,8 +27,9 @@ batch processing steps.
 .. note::
     
     The examples presented in this document require a basic working knowledge
-    of a command-line terminal interface. An :ref:`appendix <cli>` is included
-    that covers the basics that you will need to run these examples.
+    of a command-line terminal interface and running Python commands from an
+    interpreter. :ref:`Appendix A <cli>` covers the basics that you will need
+    to run these examples.
 
 .. _GitHub: https://github.com/rnelsonchem/gcmstools
 .. _online documentation: http://gcmstools.rcnelson.com/

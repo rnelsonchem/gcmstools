@@ -1,3 +1,5 @@
+.. _basics:
+
 Basics of working with GCMS data files
 ######################################
 

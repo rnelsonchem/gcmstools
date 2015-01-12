@@ -6,14 +6,18 @@
 gcmstools Documentation
 =======================
 
+Welcome to the *gcmstools* documentation.
+
 .. toctree::
     :maxdepth: 2
 
-    intro
+    start
+    install
     basics
     fitting
     calibration
     autoint
+    appendA
 
 .. Remove the indices and tables section
     Indices and tables

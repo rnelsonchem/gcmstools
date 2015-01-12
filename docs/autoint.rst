@@ -1,3 +1,5 @@
+.. _batch: 
+
 Process Sample Data
 ###################
 

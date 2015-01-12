@@ -1,21 +1,7 @@
-Getting started and installation
-################################
-
-This document is broken into a few secions. First of all, there is information
-about getting a Python installation up and running. This is followed by a
-section on the basic usage of these programs to manipulate, plot, and execute
-simple non-negative least squares fits on GCMS datasets. The final section
-covers generating calibration curves and automating data extraction with this
-calibration information. You can skip to that section if all you want to do is
-automate some data extractions. (It is not necessary to understand the data
-manipulation/plotting as that is automated in the final section.)
-
+.. _install:
 
 Installation
-------------
-
-Python
-++++++
+############
 
 *Gcmstools* requires Python and a number of third-party packages. Below is a
 complete list of packages and minium versions:
@@ -34,9 +20,12 @@ Although not required, IPython (v 2.3.1 tested) provides a very useful
 advanced interactive Python interpreter, and examples in this documentation
 assume that you are using this environment.
 
-All of these packages can easily be installed using the all-in-one `Anaconda
-Python distribution`_. It combines a large number of Python packages for
-scientific data analysis and a program (``conda``) for managing package
+Python
+------
+
+Python and the necessary packages can easily be installed using the all-in-one
+`Anaconda Python distribution`_. It combines a large number of Python packages
+for scientific data analysis and a program (``conda``) for managing package
 updates (in addition to many other advanced features). The Anaconda developers
 (Continuum Analytics) have a lot of useful documentation for `installing
 Anaconda`_ and `using conda`_. There are other ways to install Python and it's
@@ -71,7 +60,7 @@ well as full tutorials are `easily discovered`_.
 .. _easily discovered: https://google.com
 
 gcmstools
-+++++++++
+---------
 
 To install *gcmstools* from `the main repository`_, there are two options: 1)
 download the source file and install the package or 2) install using ``git``

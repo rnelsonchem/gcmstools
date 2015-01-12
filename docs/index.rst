@@ -17,6 +17,7 @@ Welcome to the *gcmstools* documentation.
     fitting
     calibration
     autoint
+    appendA
 
 .. Remove the indices and tables section
     Indices and tables

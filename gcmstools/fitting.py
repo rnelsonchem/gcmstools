@@ -6,13 +6,11 @@ import filetypes as gcf
 class Fit(object):
     def __call__(self, datafiles):
         if isinstance(datafiles, gcf.GcmsFile):
-            self.data = datafiles
-            self.fit()
+            self.fit(datafiles)
 
         elif isinstance(datafiles, (tuple, list)):
             for data in datafiles:
-                self.data = data
-                self.fit()
+                self.fit(data)
 
 class Nnls(Fit):
     '''A non-negative least squares fitting object.'''
@@ -42,17 +40,17 @@ class Nnls(Fit):
         int_cum = np.cumsum(sim, axis=0)
         data.int_cum = int_cum
 
-    def fit(self, ):
-        if not hasattr(self.data, 'ref_array'):
+    def fit(self, data):
+        if not hasattr(data, 'ref_array'):
             error = "The datafile {} does not have reference data."
-            raise ValueError(error.format(self.data.filename))
+            raise ValueError(error.format(data.filename))
 
         fits = []
-        ref_cpds = self.data.ref_cpds
-        times = self.data.times
-        inten = self.data.intensity
-        ref_meta = self.data.ref_meta 
-        ref_array = self.data.ref_array
+        ref_cpds = data.ref_cpds
+        times = data.times
+        inten = data.intensity
+        ref_meta = data.ref_meta 
+        ref_array = data.ref_array
         
         # If a retention time filter is requested, then build up an array of
         # retention times from the meta data
@@ -70,8 +68,8 @@ class Nnls(Fit):
 
             fits.append( fit )
 
-        self.data.fits = np.array( fits )
-        self._integrate(self.data)
+        data.fits = np.array( fits )
+        self._integrate(data)
 
     def _rt_filter_times(self, ref_cpds, ref_meta):
         rts = []

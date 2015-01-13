@@ -21,21 +21,17 @@ class ReferenceFileGeneric(object):
 
     def __call__(self, datafiles):
         if isinstance(datafiles, gcf.GcmsFile):
-            self.data = datafiles
-            self._append_ref_array()
+            self._append_ref_array(datafiles)
 
         elif isinstance(datafiles, (tuple, list)):
             for data in datafiles:
-                self.data = data
-                self._append_ref_array()
+                self._append_ref_array(data)
 
-        del(self.data)
-
-    def _append_ref_array(self, ):
+    def _append_ref_array(self, data):
         ref_array = []
-        data_min = self.data.masses.min()
-        data_max = self.data.masses.max()
-        spec = np.empty(self.data.masses.size, dtype=float)
+        data_min = data.masses.min()
+        data_max = data.masses.max()
+        spec = np.empty(data.masses.size, dtype=float)
         
         for mass, inten in self.ref_mass_inten:
             spec[:] = 0.
@@ -47,9 +43,9 @@ class ReferenceFileGeneric(object):
             ref_array.append( spec/spec.max() )
 
         if self.bkg == True:
-            times = self.data.times
-            inten = self.data.intensity
-            bkg_idx = self.data.index(times, self.bkg_time)
+            times = data.times
+            inten = data.intensity
+            bkg_idx = data.index(times, self.bkg_time)
             bkg = inten[bkg_idx]/inten[bkg_idx].max()
             ref_array.append( bkg )
 
@@ -61,9 +57,9 @@ class ReferenceFileGeneric(object):
         if (self.bkg == False) and ('Background' in self.ref_meta):
             self.ref_meta.pop('Background')
         
-        self.data.ref_array = np.array(ref_array)
-        self.data.ref_meta = self.ref_meta
-        self.data.ref_cpds = self.ref_cpds
+        data.ref_array = np.array(ref_array)
+        data.ref_meta = self.ref_meta
+        data.ref_cpds = self.ref_cpds
         
     def ref_build(self, ):
         self.ref_mass_inten = []

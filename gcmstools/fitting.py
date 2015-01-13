@@ -14,14 +14,6 @@ class Fit(object):
                 self.data = data
                 self.fit()
 
-    def integrate(self, datafiles, start, stop):
-        if isinstance(datafiles, gcf.GcmsFile):
-            self._integrate(datafiles, start, stop)
-
-        elif isinstance(datafiles, (tuple, list)):
-            for data in datafiles:
-                self._integrate(data, start, stop)
-
 class Nnls(Fit):
     '''A non-negative least squares fitting object.'''
     def __init__(self, rt_filter=False, rt_win=0.2, rt_adj=0.):
@@ -30,23 +22,25 @@ class Nnls(Fit):
             self.rt_win = rt_win
             self.rt_adj = rt_adj
 
-    def _integrate(self, data, start, stop):
-        mask = (data.times > start) & (data.times < stop)
-        data.int_start = start
-        data.int_stop = stop
-        data.int_mask = mask
+    def _integrate(self, data):
+        # Make the fits array 3D -> [len(times), len(cpds), 1]
+        # multiply by the ref_array -> [len(cpds), len(masses)]
+        # fit_ms = [len(times), len(cpds), len(masses)]
+        fit_ms = data.fits[:,:,np.newaxis]*data.ref_array
+        #data.int_ms = fit_ms
 
-        chunk = data.fits[mask]
-        data.int_fits = chunk
-
-        fit_ms = chunk[:,:,np.newaxis]*data.ref_array
-        data.int_ms = fit_ms
-
+        # Generate simulated MS for each component
+        # Sum along the 3d dimmension (masses)
+        # sim = [len(times), len(cpds)]
         sim = fit_ms.sum(axis=2)
         data.int_sim = sim
         
-        integral = fit_ms.sum( axis = (0,2) )
-        data.integral = integral
+        # Run a cummulative sum along the time axis of the simulation to get a
+        # total integral, the difference between any two points is relative
+        # integrals
+        # int_cum -> [len(times, len(cpds)]
+        int_cum = np.cumsum(sim, axis=0)
+        data.int_cum = int_cum
 
     def fit(self, ):
         if not hasattr(self.data, 'ref_array'):
@@ -77,6 +71,7 @@ class Nnls(Fit):
             fits.append( fit )
 
         self.data.fits = np.array( fits )
+        self._integrate(self.data)
 
     def _rt_filter_times(self, ref_cpds, ref_meta):
         rts = []

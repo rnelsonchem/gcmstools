@@ -3,12 +3,68 @@ from codecs import open
 
 import numpy as np
 
+import filetypes as gcf
+
 class ReferenceFileGeneric(object):
     '''Generic object that defines refernce file methods.
     
     Requires subclass objects that have a _ref_file_proc method that processes
-    a file called _ref_file.
+    a file called ref_file.
     '''
+    def __init__(self, ref_file, bkg=True, bkg_time=0., encoding='ascii'):
+        self.ref_file = ref_file
+        self.bkg = bkg
+        self.bkg_time = bkg_time
+        self.encoding = encoding
+
+        self.ref_build()
+
+    def __call__(self, datafiles):
+        if isinstance(datafiles, gcf.GcmsFile):
+            self.data = datafiles
+            self._append_ref_array()
+
+        elif isinstance(datafiles, (tuple, list)):
+            for data in datafiles:
+                self.data = data
+                self._append_ref_array()
+
+        del(self.data)
+
+    def _append_ref_array(self, ):
+        ref_array = []
+        data_min = self.data.masses.min()
+        data_max = self.data.masses.max()
+        spec = np.empty(self.data.masses.size, dtype=float)
+        
+        for mass, inten in self.ref_mass_inten:
+            spec[:] = 0.
+            mask = (mass > data_min) & (mass < data_max)
+            mass_mask = mass[mask] - data_min
+            inten_mask = inten[mask]
+
+            spec[mass_mask] = inten
+            ref_array.append( spec/spec.max() )
+
+        if self.bkg == True:
+            times = self.data.times
+            inten = self.data.intensity
+            bkg_idx = np.abs(times - self.bkg_time).argmin()
+            bkg = inten[bkg_idx]/inten[bkg_idx].max()
+            ref_array.append( bkg )
+
+            bkg_dict = {'bkg_time': self.bkg_time,
+                    'bkg_idx': bkg_idx, 
+                    }
+            self.ref_meta['Background'] = bkg_dict
+
+        if (self.bkg == False) and ('Background' in self.ref_meta):
+            self.ref_meta.pop('Background')
+        
+        self.data.ref_array = np.array(ref_array)
+        self.data.ref_meta = self.ref_meta
+        self.data.ref_cpds = self.ref_cpds
+        
     def _ref_extend(self, masses, intensities):
         masses = np.array(masses, dtype=int)
         intensities = np.array(intensities, dtype=float)
@@ -19,23 +75,16 @@ class ReferenceFileGeneric(object):
         spec = np.zeros(self.masses.size, dtype=float)
         spec[masses] = intensities
         return spec/spec.max()
-    
 
     def ref_build(self, bkg=True, bkg_time=0., encoding='ascii'):
-        self.ref_array = []
-        self.ref_files = []
+        self.ref_mass_inten = []
+        self.ref_cpds = []
         self.ref_meta = {}
 
-        self._ref_file_proc(encoding)
+        self._ref_file_proc()
         
-        if bkg == True:
-            bkg_idx = np.abs(self.times - bkg_time).argmin()
-            bkg = self.intensity[bkg_idx]/self.intensity[bkg_idx].max()
-            self.ref_array.append( bkg )
-            self.ref_files.append( 'Background' )
-            self._bkg_idx = bkg_idx
-        
-        self.ref_array = np.array(self.ref_array)
+        if self.bkg == True:
+            self.ref_cpds.append( 'Background' )
 
 
 class TxtReference(ReferenceFileGeneric):
@@ -43,8 +92,8 @@ class TxtReference(ReferenceFileGeneric):
 
     These functions process a ".txt" reference MS file.
     '''
-    def _ref_file_proc(self, encoding):
-        fname = self._ref_file
+    def _ref_file_proc(self, ):
+        fname = self.ref_file
         f = open(fname)
 
         for line in f:
@@ -56,7 +105,7 @@ class TxtReference(ReferenceFileGeneric):
             
             if sp[0] == "NAME":
                 name = sp[1]
-                self.ref_files.append(name)
+                self.ref_cpds.append(name)
                 self.ref_meta[name] = {}
             elif sp[0] == "NUM PEAKS":
                 line = self._ref_entry_proc(f, name=name)
@@ -81,8 +130,11 @@ class TxtReference(ReferenceFileGeneric):
             mass.append(vals[0])
             inten.append(vals[1])
 
-        ref = self._ref_extend(mass, inten)
-        self.ref_array.append(ref)
+#        ref = self._ref_extend(mass, inten)
+#        self.ref_array.append(ref)
+        mass = np.array(mass, dtype=int)
+        inten = np.array(inten, dtype=float)
+        self.ref_mass_inten.append((mass, inten))
 
         return None
 
@@ -91,8 +143,8 @@ class MslReference(ReferenceFileGeneric):
 
     These functions process a ".MSL" (mass spectral libray) reference MS file.
     '''
-    def _ref_file_proc(self, encoding):
-        fname = self._ref_file
+    def _ref_file_proc(self, ):
+        fname = self.ref_file
         regex = r'\(\s*(\d*)\s*(\d*)\)'
         recomp = re.compile(regex)
         
@@ -103,7 +155,7 @@ class MslReference(ReferenceFileGeneric):
             elif 'NAME' in line:
                 sp = line.split(':')
                 name = sp[1].strip()
-                self.ref_files.append(name)
+                self.ref_cpds.append(name)
                 self.ref_meta[name] = {}
                 self._msl_ref(f, name=name, recomp=recomp)
 

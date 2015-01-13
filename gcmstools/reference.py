@@ -49,7 +49,7 @@ class ReferenceFileGeneric(object):
         if self.bkg == True:
             times = self.data.times
             inten = self.data.intensity
-            bkg_idx = np.abs(times - self.bkg_time).argmin()
+            bkg_idx = self.data.index(times, self.bkg_time)
             bkg = inten[bkg_idx]/inten[bkg_idx].max()
             ref_array.append( bkg )
 

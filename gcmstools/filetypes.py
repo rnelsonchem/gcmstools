@@ -21,6 +21,22 @@ class GcmsFile(object):
         self.filename = fname
         self._file_proc()
 
+    def index(self, array, *vals, **kwargs):
+        if 'axis' in kwargs:
+            axis = kwargs['axis']
+        else: 
+            axis = None
+
+        indices = []
+        for val in vals:
+            idx = np.abs(val - array).argmin(axis=axis)
+            indices.append(idx)
+
+        if len(indices) == 1:
+            return indices[0]
+        else:
+            return np.array(indices, dtype=int)
+
 
 class AIAFile(GcmsFile):
     '''AIA GCMS File type.

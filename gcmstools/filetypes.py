@@ -38,7 +38,7 @@ class GcmsFile(object):
             return np.array(indices, dtype=int)
 
 
-class AIAFile(GcmsFile):
+class AiaFile(GcmsFile):
     '''AIA GCMS File type.
 
     This subclass reads GCMS data from an AIA (CDF) file type.

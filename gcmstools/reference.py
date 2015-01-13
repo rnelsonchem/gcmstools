@@ -8,8 +8,8 @@ import filetypes as gcf
 class ReferenceFileGeneric(object):
     '''Generic object that defines refernce file methods.
     
-    Requires subclass objects that have a _ref_file_proc method that processes
-    a file called ref_file.
+    Requires subclass objects that have a _ref_entry_proc method that processes
+    the reference mass/intensity information.
     '''
     def __init__(self, ref_file, bkg=True, bkg_time=0., encoding='ascii'):
         self.ref_file = ref_file
@@ -65,18 +65,7 @@ class ReferenceFileGeneric(object):
         self.data.ref_meta = self.ref_meta
         self.data.ref_cpds = self.ref_cpds
         
-    def _ref_extend(self, masses, intensities):
-        masses = np.array(masses, dtype=int)
-        intensities = np.array(intensities, dtype=float)
-        mask = (masses > self.masses.min()) & (masses < self.masses.max())
-        masses = masses[mask] - self.masses.min()
-        intensities = intensities[mask]
-
-        spec = np.zeros(self.masses.size, dtype=float)
-        spec[masses] = intensities
-        return spec/spec.max()
-
-    def ref_build(self, bkg=True, bkg_time=0., encoding='ascii'):
+    def ref_build(self, ):
         self.ref_mass_inten = []
         self.ref_cpds = []
         self.ref_meta = {}
@@ -86,12 +75,6 @@ class ReferenceFileGeneric(object):
         if self.bkg == True:
             self.ref_cpds.append( 'Background' )
 
-
-class TxtReference(ReferenceFileGeneric):
-    '''txt Reference File class.
-
-    These functions process a ".txt" reference MS file.
-    '''
     def _ref_file_proc(self, ):
         fname = self.ref_file
         f = open(fname)
@@ -102,6 +85,8 @@ class TxtReference(ReferenceFileGeneric):
 
             sp = line.split(':')
             sp = [i.strip() for i in sp]
+            if len(sp) > 2:
+                sp[1] = ':'.join(sp[1:])
             
             if sp[0] == "NAME":
                 name = sp[1]
@@ -116,6 +101,11 @@ class TxtReference(ReferenceFileGeneric):
             else:
                 self.ref_meta[name][sp[0]] = sp[1]
 
+class TxtReference(ReferenceFileGeneric):
+    '''txt Reference File class.
+
+    These functions process a ".txt" reference MS file.
+    '''
     def _ref_entry_proc(self, fobj, name):
         inten = []
         mass = []
@@ -130,8 +120,6 @@ class TxtReference(ReferenceFileGeneric):
             mass.append(vals[0])
             inten.append(vals[1])
 
-#        ref = self._ref_extend(mass, inten)
-#        self.ref_array.append(ref)
         mass = np.array(mass, dtype=int)
         inten = np.array(inten, dtype=float)
         self.ref_mass_inten.append((mass, inten))
@@ -143,48 +131,29 @@ class MslReference(ReferenceFileGeneric):
 
     These functions process a ".MSL" (mass spectral libray) reference MS file.
     '''
-    def _ref_file_proc(self, ):
-        fname = self.ref_file
-        regex = r'\(\s*(\d*)\s*(\d*)\)'
-        recomp = re.compile(regex)
-        
-        f = open(fname, encoding=encoding)
+    def __init__(self, ref_file, bkg=True, bkg_time=0., encoding='ascii'):
+        self.regex = r'\(\s*(\d*)\s*(\d*)\)'
+        self.recomp = re.compile(self.regex)
+        super(MslReference, self).__init__(ref_file, bkg, bkg_time, encoding)
 
-        for line in f:
-            if line[0] == '#': continue
-            elif 'NAME' in line:
-                sp = line.split(':')
-                name = sp[1].strip()
-                self.ref_cpds.append(name)
-                self.ref_meta[name] = {}
-                self._msl_ref(f, name=name, recomp=recomp)
+    def _ref_entry_proc(self, fobj, name):
+        inten = []
+        mass = []
 
-
-    def _ref_entry_proc(self, fobj, name, recomp):
         for line in fobj:
             if line[0] == '#': continue
-            space = line.isspace()
+            elif line.isspace(): break
+            elif ":" in line:
+                return line
 
-            if 'NUM PEAK' in line:
-                inten = []
-                mass = []
-                for line in fobj:
-                    if line.isspace():
-                        space = True
-                        break
-                    vals = recomp.findall(line)
-                    for val in vals:
-                        mass.append(val[0])
-                        inten.append(val[1])
-                ref = self._ref_extend(mass, inten)
-                self.ref_array.append(ref)
-                if space:
-                    return None
-
-            elif not space:
-                meta = line.split(':')
-                self.ref_meta[name][meta[0]] = meta[1].strip()
-
-            if space:
-                return None
+            vals = self.recomp.findall(line)
+            for val in vals:
+                mass.append(val[0])
+                inten.append(val[1])
             
+        mass = np.array(mass, dtype=int)
+        inten = np.array(inten, dtype=float)
+        self.ref_mass_inten.append((mass, inten))
+
+        return None
+

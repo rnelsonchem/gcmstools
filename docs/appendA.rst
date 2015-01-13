@@ -156,6 +156,8 @@ order that commands are processed. For this documentation, though, the numbers
 will be striped for clarity: e.g. ``In :`` and ``Out:`` will denote commands
 run and output, respectively, in an IPython interpreter. 
 
+.. _ipytab:
+
 Autocompletion and Introscpection
 +++++++++++++++++++++++++++++++++
 
@@ -305,6 +307,10 @@ it can be very intimidating for beginners. Don't worry! The far left panel is
 the text editor, and you can use that without knowing what any of the other
 panels are doing. Some internet searches will reveal other text editors if
 you'd prefer something smaller. (Do *not* use MS Notepad.)
+
+The ".py" suffix for Python programs is usually not important. However, on
+Windows at least, this file extension will make it possible to double-click to
+run the program, which is a feature that some people prefer. 
 
 .. _Spyder: https://code.google.com/p/spyderlib/
 .. _information on running Spyder: http://

@@ -15,27 +15,30 @@ complete list of packages and minium versions:
 * PyTables >=3.1.1
 * Scipy >=0.14.0
 * Sphinx >=1.2.2 (Optional for documentation.)
+  - numfig is a Sphinx extenstion that is needed to autonumber figures
+    references in the docuementation.
 
 Although not required, IPython (v 2.3.1 tested) provides a very useful
 advanced interactive Python interpreter, and examples in this documentation
-assume that you are using this environment.
+assume that you are using this environment. See the :ref:`ipython` section of
+:doc:`Appendix A <appendA>` for more details.
 
 Python
 ------
 
-Python and the necessary packages can easily be installed using the all-in-one
-`Anaconda Python distribution`_. It combines a large number of Python packages
-for scientific data analysis and a program (``conda``) for managing package
-updates (in addition to many other advanced features). The Anaconda developers
-(Continuum Analytics) have a lot of useful documentation for `installing
-Anaconda`_ and `using conda`_. There are other ways to install Python and it's
-packages, but for this documentation, it will be assumed that Anaconda is
-being used.
+Python and the necessary third-party packages can easily be installed using
+the all-in-one `Anaconda Python distribution`_. It combines a large number of
+Python packages for scientific data analysis and a program (``conda``) for
+managing package updates (in addition to many other advanced features). The
+Anaconda developers (Continuum Analytics) provide a lot of useful documentation
+for `installing Anaconda`_ and `using conda`_. There are other ways to install
+Python and it's packages, but for this documentation, it will be assumed that
+your are using Anaconda.
 
 .. note::
 
-    On Mac/Linux systems, Python is already part of the operating systems.  Do
-    not try to install these packages into the builtin Python distribution
+    On Mac/Linux, Python is already part of the operating system.  Do not try
+    to install these third-party packages into the builtin Python distribution
     unless you really know what you are doing. You might overwrite and
     important file, which can cause problems for your system.  Confusion
     between the system and Anaconda Python installation is a common source of
@@ -79,8 +82,9 @@ this package wherever you'd like.
     The zipfile download button.
 
 From the command line, navigate the newly extracted folder and use ``pip`` to
-install the package. (In this case, *path-to-gcmstools-folder* is the location
-of the newly unzipped *gcmstools* folder.)
+install the package.  In this case, *path-to-gcmstools-folder* is the location
+of the newly unzipped *gcmstools* folder. Be sure to put a ``.`` at the end of
+that pip command.
 
 .. code::
 
@@ -89,8 +93,8 @@ of the newly unzipped *gcmstools* folder.)
 
 *Option 2 (recommended)*
 
-First, install the `version-control software Git`_. Now, download and install
-*gcmstools* with one command.
+First, install the `version-control software Git`_. *gcmstools* can now be
+downloaded and installed with one command.
 
 .. code::
 
@@ -101,8 +105,7 @@ installation with any any changes that have been made to the main repository.
 
 *Uninstall*
 
-Uninstallation of *gcmstools* is identical regardless of the installation
-method used above.
+Uninstallation of *gcmstools* is trivial.
 
 .. code::
 

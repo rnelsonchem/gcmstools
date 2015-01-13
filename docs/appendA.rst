@@ -92,6 +92,8 @@ lists the contents of the current directory.
 
 .. _The Command Line Crash Course: http://cli.learncodethehardway.org/book/
 
+.. _ipython:
+
 IPython
 -------
 

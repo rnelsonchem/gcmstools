@@ -3,44 +3,42 @@ import itertools as it
 import numpy as np
 import netCDF4 as cdf
 
-import general 
-
-class GcmsMeta(type):
-    '''Generic Metaclass for GCMS data files.'''
-    def __new__(meta, name, parents, dct):
-        return super(GcmsMeta, meta).__new__(meta, name, parents, dct)
-
 
 class GcmsFile(object):
     '''Base class for all GCMS files.
     
     This object is meant to be subclassed and can't be instantiated directly.
+    Subclasses must define a _ref_file method that extracts the information
+    from the reference file.
     '''
-    def __init__(self, fname, refs=None):
+    def __init__(self, fname):
         '''
         Arguments
         ---------
         * fname: string - The name of the GCMS data file.
-        * refs: None (default) or string: If string is given, this will be
-        processed as a reference file for fitting.
         '''
 
         self.filename = fname
         self._file_proc()
-        if refs:
-            self._ref_file = refs
-            self.ref_build()
 
-    def __reduce__(self,):
-        save_dict = self.__dict__.copy()
-        
-        rem = ['filename', 'intensity', 'masses', 'tic', 'times']
-        [save_dict.pop(r) for r in rem]
+    def index(self, array, *vals, **kwargs):
+        if 'axis' in kwargs:
+            axis = kwargs['axis']
+        else: 
+            axis = None
 
-        return (general.open_file, tuple(self._reconstruct), save_dict)
+        indices = []
+        for val in vals:
+            idx = np.abs(val - array).argmin(axis=axis)
+            indices.append(idx)
+
+        if len(indices) == 1:
+            return indices[0]
+        else:
+            return np.array(indices, dtype=int)
 
 
-class AIAFile(GcmsFile):
+class AiaFile(GcmsFile):
     '''AIA GCMS File type.
 
     This subclass reads GCMS data from an AIA (CDF) file type.

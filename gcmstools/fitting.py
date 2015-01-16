@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.optimize as spo
 
-import filetypes as gcf
+import .filetypes as gcf
 
 class Fit(object):
     def __call__(self, datafiles):

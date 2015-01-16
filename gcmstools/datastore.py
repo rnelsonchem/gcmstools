@@ -57,6 +57,8 @@ class HDFStore(object):
         group = self.h5.create_group('/data', name)
 
         # Run through the items in the GCMS file
+        # Create an info dict for recreating object
+        gcmsinfo = {}
         for key, val in gcmsobj.__dict__.items():
             # If they are Numpy arrays, add CArray
             if isinstance(val, np.ndarray):
@@ -64,18 +66,18 @@ class HDFStore(object):
             # Or else, set a group attribute with the value
             # This is used to check if any changes have been made
             else:
-                setattr(group._v_attrs, key, val)
+                gcmsinfo[key] = val
+        group._v_attrs['gcmsinfo'] = gcmsinfo
 
     def _check_data(self, name, obj):
         '''Check for equivalence between GCMS file and stored data.'''
         group = getattr(self.h5.root.data, name)
-        groupd = group._v_attrs
+        groupd = group._v_attrs.gcmsinfo
         d = obj.__dict__
         for key, val in d.items():
             # Ignore the arrays for now
             if isinstance(val, np.ndarray):
                 continue
-            
             # Check the other values agains the group attributes
             # If there is a mismatch, return True
             if (not key in groupd) or val != groupd[key]:

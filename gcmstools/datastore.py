@@ -30,6 +30,8 @@ class HDFStore(object):
             self.h5.create_group('/', 'data', filters=self._filters)
 
     def append_files(self, datafiles):
+        '''Append a series of GCMS files into the HDF container.'''
+        # Make sure datafiles is iterable
         if not isinstance(datafiles, (tuple, list)):
             datafiles = [datafiles,]
         
@@ -45,33 +47,51 @@ class HDFStore(object):
                 how='outer')
 
     def _append(self, name, gcmsobj):
+        '''Append a single GCMS file into the HDF container.'''
+        # If this exists already, check for equivalence
         if hasattr(self.h5.root.data, name):
             different = self._check_data(name, gcmsobj)
             if not different: return
-        
+       
+        # If not equivalent add the data set to the file
         group = self.h5.create_group('/data', name)
 
+        # Run through the items in the GCMS file
         for key, val in gcmsobj.__dict__.items():
+            # If they are Numpy arrays, add CArray
             if isinstance(val, np.ndarray):
                 self.h5.create_carray(group, key, obj=val,)
+            # Or else, set a group attribute with the value
+            # This is used to check if any changes have been made
             else:
                 setattr(group._v_attrs, key, val)
 
     def _check_data(self, name, obj):
+        '''Check for equivalence between GCMS file and stored data.'''
         group = getattr(self.h5.root.data, name)
         groupd = group._v_attrs
         d = obj.__dict__
         for key, val in d.items():
+            # Ignore the arrays for now
             if isinstance(val, np.ndarray):
                 continue
             
+            # Check the other values agains the group attributes
+            # If there is a mismatch, return True
             if (not key in groupd) or val != groupd[key]:
+                # Remove old data
                 group._f_remove(recursive=True)
                 return True
-
+        # No mismatch
         return False
 
     def _name_fix(self, badname):
+        '''Remove special characters from filename.
+
+        This is necessary for PyTables natural naming, which is very
+        convenient. 
+        '''
+        # TODO: remove the path information!!
         sp = badname.split('.')
         nosuffix = '_'.join(sp[:-1])
         nospace = nosuffix.replace(' ', '_')

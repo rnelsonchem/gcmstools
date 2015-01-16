@@ -3,7 +3,7 @@ from codecs import open
 
 import numpy as np
 
-import gmcstools.filetypes as gcf
+import gcmstools.filetypes as gcf
 
 class ReferenceFileGeneric(object):
     '''Generic object that defines refernce file methods.

@@ -18,7 +18,7 @@ class HDFStore(object):
         self._files_df_columns = ('name', 'filename')
         
         # Check to see if the 'files' DataFrame is already saved
-        if not hasattr(self.h5.root, 'files'):
+        if not hasattr(self.pdh5, 'files'):
             # Create a blank DF
             df = pd.DataFrame(columns=self._files_df_columns)
             self.pdh5['files'] = df
@@ -45,6 +45,9 @@ class HDFStore(object):
 
         self.pdh5['files'] = pd.merge(temp_df, self.pdh5['files'],
                 how='outer')
+        self.files = self.pdh5.files
+
+        self.pdh5.flush()
 
     def _append(self, name, gcmsobj):
         '''Append a single GCMS file into the HDF container.'''

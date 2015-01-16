@@ -44,6 +44,10 @@ class AiaFile(GcmsFile):
 
     This subclass reads GCMS data from an AIA (CDF) file type.
     '''
+    def __init__(self, *args, **kwargs):
+        self.file_type = 'AiaFile'
+        super(AiaFile, self).__init__(*args, **kwargs)
+
     def _groupkey(self, x):
         return x[0]
 

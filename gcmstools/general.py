@@ -3,9 +3,9 @@ import shutil
 
 import netCDF4 as cdf
 
-import gcmstools.filetypes
+import gcmstools.filetypes as gcf
 import gcmstools.reference
-import gcmstoos.fitting
+import gcmstools.fitting
 
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -38,42 +38,33 @@ def get_sample_data(fname=None):
             name in fnames]
     
 
-#def open_file(fname, refs=None, fit=None):
-#    '''Function to construct GCMS file object.
-#
-#    Arguments
-#    ---------
-#    * fname: string - The name of the GCMS data file.
-#    * refs: string - The name of a reference file for fitting.
-#    * fit: string - The type of fitting to use on the data.
-#        - 'nnls': non-negative least squares
-#    '''
-#    objects = []
-#    names = []
-#    reconstruct = [fname,]
-#
-#    filetype = fname[-3:].lower()
-#    if filetype == 'cdf':
-#        objects.append(filetypes.AIAFile)
-#   
-#    if refs:
-#        reconstruct.append( refs )
-#        reffiletype = refs[-3:].lower()
-#        if reffiletype == 'txt':
-#            objects.append(reference.TxtReference)
-#        if reffiletype == 'msl':
-#            objects.append(reference.MslReference)
-#
-#    if fit:
-#        fit = fit.lower()
-#        reconstruct.append( fit )
-#        if fit == 'nnls':
-#            objects.append(fitting.Nnls)
-#
-#    # This is a constructor for the dynamic GCMS class
-#    newobj = filetypes.GcmsMeta('Gcms', tuple(objects), {})
-#    instance = newobj(fname, refs)
-#    instance._reconstruct = reconstruct
-#    if refs:
-#        instance._ref_file = refs
-#    return instance
+def extract_gcms_data(hdfstore, filename):
+    '''Extract a data set from the HDF storage file.'''
+    # Find the file info that corresponds to the filename
+    mask = hdfstore.files['filename'].str.contains(filename)
+    info = hdfstore.files[mask]
+    # Check to make sure there aren't too many files selected.
+    # This would be very bad
+    if len(info) > 1:
+        print("Too many files with that name!")
+        return None
+    info = info.ix[0]
+
+    # Find the group and info that corresponds to this file
+    group = getattr(hdfstore.h5.root.data, info['name'])
+    gdict = group._v_attrs.gcmsinfo
+
+    # Create a new file object
+    # Do not let it process the data
+    GcmsObj = getattr(gcf, gdict['file_type'])
+    gcms = GcmsObj(filename, file_build=False)
+
+    # Add all of the Python data back
+    for key, val in gdict.items():
+        setattr(gcms, key, val)
+    # Add all the Numpy arrays back
+    for child in group:
+        setattr(gcms, child.name, child[:])
+
+    return gcms
+    

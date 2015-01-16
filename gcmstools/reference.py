@@ -1,5 +1,4 @@
 import re
-from codecs import open
 
 import numpy as np
 
@@ -11,11 +10,10 @@ class ReferenceFileGeneric(object):
     Requires subclass objects that have a _ref_entry_proc method that processes
     the reference mass/intensity information.
     '''
-    def __init__(self, ref_file, bkg=True, bkg_time=0., encoding='ascii'):
+    def __init__(self, ref_file, bkg=True, bkg_time=0.,):
         self.ref_file = ref_file
         self.bkg = bkg
         self.bkg_time = bkg_time
-        self.encoding = encoding
 
         self.ref_build()
 
@@ -127,10 +125,10 @@ class MslReference(ReferenceFileGeneric):
 
     These functions process a ".MSL" (mass spectral libray) reference MS file.
     '''
-    def __init__(self, ref_file, bkg=True, bkg_time=0., encoding='ascii'):
+    def __init__(self, ref_file, bkg=True, bkg_time=0.,):
         self.regex = r'\(\s*(\d*)\s*(\d*)\)'
         self.recomp = re.compile(self.regex)
-        super(MslReference, self).__init__(ref_file, bkg, bkg_time, encoding)
+        super(MslReference, self).__init__(ref_file, bkg, bkg_time)
 
     def _ref_entry_proc(self, fobj, name):
         inten = []

@@ -55,9 +55,10 @@ class ReferenceFileGeneric(object):
         if (self.bkg == False) and ('Background' in self.ref_meta):
             self.ref_meta.pop('Background')
         
+        data.ref_type = self.ref_type
         data.ref_array = np.array(ref_array)
-        data.ref_meta = self.ref_meta
-        data.ref_cpds = self.ref_cpds
+        data.ref_meta = self.ref_meta.copy()
+        data.ref_cpds = self.ref_cpds.copy()
         
     def ref_build(self, ):
         self.ref_mass_inten = []
@@ -100,6 +101,10 @@ class TxtReference(ReferenceFileGeneric):
 
     These functions process a ".txt" reference MS file.
     '''
+    def __init__(self, *args, **kwargs):
+        self.ref_type = 'TxtReference'
+        super(TxtReference, self).__init__(*args, **kwargs)
+
     def _ref_entry_proc(self, fobj, name):
         inten = []
         mass = []
@@ -125,10 +130,11 @@ class MslReference(ReferenceFileGeneric):
 
     These functions process a ".MSL" (mass spectral libray) reference MS file.
     '''
-    def __init__(self, ref_file, bkg=True, bkg_time=0.,):
+    def __init__(self, *args, **kwargs):
         self.regex = r'\(\s*(\d*)\s*(\d*)\)'
         self.recomp = re.compile(self.regex)
-        super(MslReference, self).__init__(ref_file, bkg, bkg_time)
+        self.ref_type = 'MslReference'
+        super(MslReference, self).__init__(*args, **kwargs)
 
     def _ref_entry_proc(self, fobj, name):
         inten = []

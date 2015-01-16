@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import tables as tb
 
+import gcmstools.filetypes as gcf
+
 class HDFStore(object):
     def __init__(self, hdfname):
         self.hdfname = hdfname
@@ -18,7 +20,7 @@ class HDFStore(object):
         self._files_df_columns = ('name', 'filename')
         
         # Check to see if the 'files' DataFrame is already saved
-        if not hasattr(self.h5.root, 'files'):
+        if not hasattr(self.pdh5, 'files'):
             # Create a blank DF
             df = pd.DataFrame(columns=self._files_df_columns)
             self.pdh5['files'] = df
@@ -28,6 +30,7 @@ class HDFStore(object):
         # Check if there is a data group, otherwise create it
         if not hasattr(self.h5.root, 'data'):
             self.h5.create_group('/', 'data', filters=self._filters)
+        self.data = self.h5.root.data
 
     def append_files(self, datafiles):
         '''Append a series of GCMS files into the HDF container.'''
@@ -45,11 +48,53 @@ class HDFStore(object):
 
         self.pdh5['files'] = pd.merge(temp_df, self.pdh5['files'],
                 how='outer')
+        self.files = self.pdh5.files
+
+        self.pdh5.flush()
+
+    def extract_gcms_data(self, filename):
+        '''Extract a data set from the HDF storage file.'''
+        # Find the file info that corresponds to the filename
+        mask = self.files['filename'].str.contains(filename)
+        info = self.files[mask]
+        # Check to make sure there aren't too many files selected.
+        # This would be very bad
+        if len(info) > 1:
+            print("Too many files with that name!")
+            return None
+        info = info.ix[0]
+    
+        # Find the group and info that corresponds to this file
+        group = getattr(self.data, info['name'])
+        gdict = group._v_attrs.gcmsinfo
+    
+        # Create a new file object
+        # Do not let it process the data
+        GcmsObj = getattr(gcf, gdict['file_type'])
+        gcms = GcmsObj(filename, file_build=False)
+    
+        # Add all of the Python data back
+        for key, val in gdict.items():
+            setattr(gcms, key, val)
+        # Add all the Numpy arrays back
+        for child in group:
+            setattr(gcms, child.name, child[:])
+    
+        return gcms
+    
+    def close(self, ):
+        # Close the hdf file
+        self.pdh5.close()
+        # Make a copy of the file.
+        # This compresses the file if a lot of changes have been made
+        tb.copyFile(self.hdfname, self.hdfname+'temp', overwrite=True)
+        os.remove(self.hdfname)
+        os.rename(self.hdfname+'temp', self.hdfname)
 
     def _append(self, name, gcmsobj):
         '''Append a single GCMS file into the HDF container.'''
         # If this exists already, check for equivalence
-        if hasattr(self.h5.root.data, name):
+        if hasattr(self.data, name):
             different = self._check_data(name, gcmsobj)
             if not different: return
        
@@ -57,6 +102,8 @@ class HDFStore(object):
         group = self.h5.create_group('/data', name)
 
         # Run through the items in the GCMS file
+        # Create an info dict for recreating object
+        gcmsinfo = {}
         for key, val in gcmsobj.__dict__.items():
             # If they are Numpy arrays, add CArray
             if isinstance(val, np.ndarray):
@@ -64,18 +111,18 @@ class HDFStore(object):
             # Or else, set a group attribute with the value
             # This is used to check if any changes have been made
             else:
-                setattr(group._v_attrs, key, val)
+                gcmsinfo[key] = val
+        group._v_attrs['gcmsinfo'] = gcmsinfo
 
     def _check_data(self, name, obj):
         '''Check for equivalence between GCMS file and stored data.'''
-        group = getattr(self.h5.root.data, name)
-        groupd = group._v_attrs
+        group = getattr(self.data, name)
+        groupd = group._v_attrs.gcmsinfo
         d = obj.__dict__
         for key, val in d.items():
             # Ignore the arrays for now
             if isinstance(val, np.ndarray):
                 continue
-            
             # Check the other values agains the group attributes
             # If there is a mismatch, return True
             if (not key in groupd) or val != groupd[key]:
@@ -100,18 +147,5 @@ class HDFStore(object):
             return nonum
         else:
             return nospace
-
-    def close(self, ):
-        # Close the hdf file
-        self.pdh5.close()
-        # Make a copy of the file.
-        # This compresses the file if a lot of changes have been made
-        tb.copyFile(self.hdfname, self.hdfname+'temp', overwrite=True)
-        os.remove(self.hdfname)
-        os.rename(self.hdfname+'temp', self.hdfname)
-
-    def recompress(self,):
-        # Copy file to recompress
-        pass
 
 

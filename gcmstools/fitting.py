@@ -15,6 +15,7 @@ class Fit(object):
 class Nnls(Fit):
     '''A non-negative least squares fitting object.'''
     def __init__(self, rt_filter=False, rt_win=0.2, rt_adj=0.):
+        self.fittype = 'Nnls'
         self.rt_filter = rt_filter
         if rt_filter:
             self.rt_win = rt_win
@@ -31,14 +32,14 @@ class Nnls(Fit):
         # Sum along the 3d dimmension (masses)
         # sim = [len(times), len(cpds)]
         sim = fit_ms.sum(axis=2)
-        data.int_sim = sim
+        data.int_sim = sim.copy()
         
         # Run a cummulative sum along the time axis of the simulation to get a
         # total integral, the difference between any two points is relative
         # integrals
         # int_cum -> [len(times, len(cpds)]
         int_cum = np.cumsum(sim, axis=0)
-        data.int_cum = int_cum
+        data.int_cum = int_cum.copy()
 
     def fit(self, data):
         if not hasattr(data, 'ref_array'):
@@ -67,7 +68,8 @@ class Nnls(Fit):
                         ref_cpds)
 
             fits.append( fit )
-
+        
+        data.fittype = self.fittype
         data.fits = np.array( fits )
         self._integrate(data)
 

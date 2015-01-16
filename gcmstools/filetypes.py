@@ -11,7 +11,7 @@ class GcmsFile(object):
     Subclasses must define a _ref_file method that extracts the information
     from the reference file.
     '''
-    def __init__(self, fname):
+    def __init__(self, fname, file_build=True):
         '''
         Arguments
         ---------
@@ -19,7 +19,8 @@ class GcmsFile(object):
         '''
 
         self.filename = fname
-        self._file_proc()
+        if file_build == True:
+            self._file_proc()
 
     def index(self, array, *vals, **kwargs):
         if 'axis' in kwargs:

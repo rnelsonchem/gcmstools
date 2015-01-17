@@ -26,17 +26,41 @@ class Calibrate(object):
         elif not os.path.isdir(calfolder):
             os.mkdir(calfolder)
 
-        self.caldf = pd.read_csv(calfile)
-        gb = self.caldf.groupby('Compound')
+        self.calinput = pd.read_csv(calfile)
+        gb = self.calinput.groupby('Compound')
         all_calibration_data = []
         for group in gb:
             cal = self._proc_group(group)
             all_calibration_data.append(cal)
-        self.h5.pdh5['calibration'] = pd.DataFrame(all_calibration_data,
-                columns=Calibrate.tblcols)
-        self.h5.pdh5['calinput'] = self.caldf
 
+        self.h5.pdh5['calibration'] = pd.DataFrame(all_calibration_data)\
+                .set_index('Compound')
+        self.calibration = self.h5.pdh5['calibration']
+        self.h5.pdh5['calinput'] = self.calinput
         self.h5.pdh5.flush()
+        
+        mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File']) 
+        others_df = self.h5.pdh5.files[~mask]
+        dicts = {}
+        for idx, line in others_df.iterrows():
+            datadict = self._data_proc(line)
+            dicts[line['filename']] = datadict
+        df = pd.DataFrame(dicts).T
+        df.index.name = 'name'
+        self.h5.pdh5['datacal'] = df
+        self.h5.pdh5.flush()
+            
+    def _data_proc(self, line):
+        if not self._quiet:
+            print("Processing: {}".format(line['filename']))
+
+        gcms = self.h5.extract_gcms_data(line['filename']) 
+        data = {}
+        for name, series in self.calibration.iterrows():
+            integral = gcms.int_extract(name, series)
+            data[name] = (integral - series['intercept'])/series['slope']
+
+        return data
 
     def _proc_group(self, group):
         name, df = group
@@ -69,10 +93,15 @@ class Calibrate(object):
         slope, intercept, r, p, stderr = sps.linregress(conc, integrals)
         self._cal_plot(name, integrals, conc, slope, intercept, r)
 
-        caldata = [name, series['Start'], series['Stop'], slope, intercept, r,
-                p, stderr]
-
-        return caldata
+        series.pop('File')
+        series.pop('Concentration')
+        series.pop('Standard Conc')
+        series['slope'] = slope
+        series['intercept'] = intercept
+        series['r'] = r
+        series['p'] = p
+        series['stderr'] = stderr
+        return series
 
     def _cal_plot(self, name, integrals, conc, slope, intercept, r):
         fig = plt.figure()

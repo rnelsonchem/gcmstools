@@ -30,7 +30,7 @@ class ReferenceFileGeneric(object):
         data_min = data.masses.min()
         data_max = data.masses.max()
         spec = np.empty(data.masses.size, dtype=float)
-        
+
         for mass, inten in self.ref_mass_inten:
             spec[:] = 0.
             mask = (mass > data_min) & (mass < data_max)
@@ -108,12 +108,14 @@ class TxtReference(ReferenceFileGeneric):
     def _ref_entry_proc(self, fobj, name):
         inten = []
         mass = []
+        return_line = None
 
         for line in fobj:
             if line[0] == '#': continue
             elif line.isspace(): break
             elif ":" in line: 
-                return line
+                return_line = line
+                break
 
             vals = line.split()
             mass.append(vals[0])
@@ -123,7 +125,7 @@ class TxtReference(ReferenceFileGeneric):
         inten = np.array(inten, dtype=float)
         self.ref_mass_inten.append((mass, inten))
 
-        return None
+        return return_line
 
 class MslReference(ReferenceFileGeneric):
     '''msl Reference File class.

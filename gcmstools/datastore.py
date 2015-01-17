@@ -13,7 +13,7 @@ class HDFStore(object):
         self.pdh5 = pd.HDFStore(hdfname, mode='a', complevel=9,
                 complib='blosc')
         # Make a link to the original file as well
-        self.h5 = self.pdh5._handle
+        self.tbh5 = self.pdh5._handle
         # Se up some compression filters
         self._filters = tb.Filters(complevel=9, complib='blosc')
         # These are the columns of my stored DataFrame
@@ -28,9 +28,9 @@ class HDFStore(object):
         self.files = self.pdh5['files']
 
         # Check if there is a data group, otherwise create it
-        if not hasattr(self.h5.root, 'data'):
-            self.h5.create_group('/', 'data', filters=self._filters)
-        self.data = self.h5.root.data
+        if not hasattr(self.tbh5.root, 'data'):
+            self.tbh5.create_group('/', 'data', filters=self._filters)
+        self.data = self.tbh5.root.data
 
     def append_files(self, datafiles):
         '''Append a series of GCMS files into the HDF container.'''
@@ -62,7 +62,9 @@ class HDFStore(object):
         if len(info) > 1:
             print("Too many files with that name!")
             return None
-        info = info.ix[0]
+        elif len(info) == 0:
+            print("No files with name {}".format(filename))
+        info = info.iloc[0]
     
         # Find the group and info that corresponds to this file
         group = getattr(self.data, info['name'])
@@ -99,7 +101,7 @@ class HDFStore(object):
             if not different: return
        
         # If not equivalent add the data set to the file
-        group = self.h5.create_group('/data', name)
+        group = self.tbh5.create_group('/data', name)
 
         # Run through the items in the GCMS file
         # Create an info dict for recreating object
@@ -107,7 +109,7 @@ class HDFStore(object):
         for key, val in gcmsobj.__dict__.items():
             # If they are Numpy arrays, add CArray
             if isinstance(val, np.ndarray):
-                self.h5.create_carray(group, key, obj=val,)
+                self.tbh5.create_carray(group, key, obj=val,)
             # Or else, set a group attribute with the value
             # This is used to check if any changes have been made
             else:
@@ -132,13 +134,13 @@ class HDFStore(object):
         # No mismatch
         return False
 
-    def _name_fix(self, badname):
+    def _name_fix(self, badname_path):
         '''Remove special characters from filename.
 
         This is necessary for PyTables natural naming, which is very
         convenient. 
         '''
-        # TODO: remove the path information!!
+        pth, badname = os.path.split(badname_path)
         sp = badname.split('.')
         nosuffix = '_'.join(sp[:-1])
         nospace = nosuffix.replace(' ', '_')

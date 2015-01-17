@@ -1,5 +1,8 @@
 import os
 import shutil
+import sys
+
+from IPython.parallel import Client, interactive
 
 import gcmstools.filetypes as gcf
 import gcmstools.reference as gcr
@@ -38,8 +41,9 @@ def get_sample_data(fname=None):
             name in fnames]
     
 
-def proc_data(data_folder, h5name, nproc=1, filetype='aia', reffile=None,
-        fittype=None, **kwargs):
+def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
+        filetype='aia', reffile=None, fittype=None, **kwargs):
+
     if filetype == 'aia':
         GcmsObj = gcf.AiaFile
         ends = ('CDF', 'AIA', 'cdf', 'aia') 
@@ -58,17 +62,56 @@ def proc_data(data_folder, h5name, nproc=1, filetype='aia', reffile=None,
         if fittype.lower() == 'nnls':
             fit = gcfit.Nnls(**kwargs)
 
-    if nproc == 1:
-        datafiles = [GcmsObj(f, **kwargs) for f in files]
-        if ref:
-            ref(datafiles)
-        if fit:
-            fit(datafiles)
-
     h5 = gcd.HDFStore(h5name, **kwargs)
-    h5.append_files(datafiles)
+
+    if multiproc:
+        try:
+            client = Client()
+        except:
+            error = "ERROR! You do not have an IPython Cluster running.\n\n"
+            error += "Start cluster with: ipcluster start -n # &\n"
+            error += "Where # == the number of processors.\n\n"
+            error += "Stop cluster with: ipcluster stop"
+            print(error)
+            h5.close()
+            sys.exit(1)
+        dview = client[:]
+        dview.block = True
+        dview['ref'] = ref
+        dview['fit'] = fit
+        dview['GcmsObj'] = GcmsObj
+        chunk_size == len(dview)
+
+    # Chunk the data so lots of data files aren't opened in memory.
+    for chunk in _chunker(files, chunk_size):
+        if multiproc:
+            datafiles = dview.map_sync(_proc_file, 
+                    [(i, kwargs) for i in chunk])
+        else:
+            datafiles = [GcmsObj(f, **kwargs) for f in chunk]
+            if ref:
+                ref(datafiles)
+            if fit:
+                fit(datafiles)
+
+        h5.append_files(datafiles)
+
     h5.close()
 
+# This function is from: http://stackoverflow.com/questions/434287
+def _chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+# This function is for the multiproc version.
+# Must use the interactive decorator to update the node namespace
+@interactive
+def _proc_file(file_kwargs):
+    filename, kwargs = file_kwargs
+    datafile = GcmsObj(filename, **kwargs)
+    if ref:
+        ref(datafile)
+    if fit:
+        fit(datafile)
+    return datafile
 
 
-    

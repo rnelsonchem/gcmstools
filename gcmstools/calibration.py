@@ -12,11 +12,13 @@ from gcmstools.datastore import HDFStore
 
 class Calibrate(object):
     def __init__(self, h5name, calfile=None, calfolder='cal',
-            datafolder='proc', clear_folder=True, quiet=False, **kwargs):
+            datafolder='proc', clear_folder=True, quiet=False, dpi=100, 
+            **kwargs):
         self._quiet = quiet
         self.calfolder = calfolder
         self.datafolder = datafolder
         self._clear_folder = clear_folder
+        self._dpi = dpi
 
         if isinstance(h5name, str):
             self.h5 = HDFStore(h5name)
@@ -68,7 +70,8 @@ class Calibrate(object):
             ax.plot(gcms.times, gcms.int_sim[:,nameidx])
         
         ax.set_xlim(series['Start'], series['Stop'])
-        fig.savefig(os.path.join(self.calfolder, name + '_fits'), dpi=200)
+        fig.savefig(os.path.join(self.calfolder, name + '_fits'),
+                dpi=self._dpi)
         plt.close(fig)
 
         conc = df['Concentration']
@@ -99,8 +102,10 @@ class Calibrate(object):
         ax.plot(conc, slope*conc + intercept, 'k-')
         ax.plot(conc, integrals, 'o', ms=8)
         text_string = 'Slope: {:.2f}\nIntercept: {:.2f}\nR^2: {:.5f}'
-        ax.text(0.5, integrals.max()*0.8, text_string.format(slope, intercept, r**2))
-        fig.savefig(os.path.join(self.calfolder, name+'_cal_curve'), dpi=200)
+        ax.text(0.5, integrals.max()*0.8, text_string.format(slope, 
+            intercept, r**2))
+        fig.savefig(os.path.join(self.calfolder, name+'_cal_curve'), 
+                dpi=self._dpi)
         plt.close(fig)
             
     def _data_proc(self,):
@@ -109,8 +114,8 @@ class Calibrate(object):
             os.mkdir(self.datafolder)
         elif not os.path.isdir(self.datafolder):
             os.mkdir(self.datafolder)
-
-        mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File']) 
+        
+        mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File'])
         others_df = self.h5.pdh5.files[~mask]
         dicts = {}
         for idx, line in others_df.iterrows():
@@ -147,7 +152,7 @@ class Calibrate(object):
         ax.plot(gcms.times[mask], gcms.tic[mask], 'k', lw=1.5)
         ax.set_title('Concentration = {:.2f}'.format(conc))
         fig.savefig(os.path.join(self.datafolder, 
-                line['name'] + '_' + name + '.png'), dpi=200)
+                line['name'] + '_' + name + '.png'), dpi=self._dpi)
         plt.close(fig)
 
     def close(self,):

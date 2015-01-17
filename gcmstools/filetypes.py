@@ -21,7 +21,7 @@ class GcmsFile(object):
         self.filename = fname
         if file_build == True:
             if not quiet:
-                print("Building {}".format(fname))
+                print("Building: {}".format(fname))
             self._file_proc()
 
     def index(self, array, *vals, **kwargs):

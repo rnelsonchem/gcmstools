@@ -2,6 +2,7 @@ import itertools as it
 
 import numpy as np
 import netCDF4 as cdf
+import pandas as pd
 
 
 class GcmsFile(object):
@@ -107,3 +108,24 @@ class AiaFile(GcmsFile):
         self.masses = masses
 
         self.tic = self.intensity.sum(axis=1)
+
+    def int_extract(self, name, series):
+        cpdidx = self.ref_cpds.index(name)
+        std = series['Standard']
+        has_std = isinstance(std, str) and not std.isspace()
+        if has_std:
+            stdidx = self.ref_cpds.index(std)
+
+        start = series['Start']
+        stop = series['Stop']
+        startidx, stopidx = self.index(self.times, start, stop)
+        cpdint = self.int_cum[stopidx, cpdidx] - self.int_cum[startidx, cpdidx]
+        if has_std:
+            stdint = self.int_cum[stopidx, stdidx] - \
+                    self.int_cum[startidx, stdidx]
+            cpdint = cpdint/stdint
+
+        return cpdint
+
+
+

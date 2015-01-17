@@ -37,7 +37,7 @@ class ReferenceFileGeneric(object):
             mass_mask = mass[mask] - data_min
             inten_mask = inten[mask]
 
-            spec[mass_mask] = inten
+            spec[mass_mask] = inten_mask
             ref_array.append( spec/spec.max() )
 
         if self.bkg == True:

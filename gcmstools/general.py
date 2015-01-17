@@ -59,13 +59,13 @@ def proc_data(data_folder, h5name, nproc=1, filetype='aia', reffile=None,
             fit = gcfit.Nnls(**kwargs)
 
     if nproc == 1:
-        datafiles = [GcmsObj(f) for f in files]
+        datafiles = [GcmsObj(f, **kwargs) for f in files]
         if ref:
             ref(datafiles)
         if fit:
             fit(datafiles)
 
-    h5 = gcd.HDFStore(h5name)
+    h5 = gcd.HDFStore(h5name, **kwargs)
     h5.append_files(datafiles)
     h5.close()
 

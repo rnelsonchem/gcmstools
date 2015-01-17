@@ -14,8 +14,10 @@ class Fit(object):
 
 class Nnls(Fit):
     '''A non-negative least squares fitting object.'''
-    def __init__(self, rt_filter=False, rt_win=0.2, rt_adj=0.):
+    def __init__(self, rt_filter=False, rt_win=0.2, rt_adj=0., quiet=False,
+            **kwargs):
         self.fittype = 'Nnls'
+        self._quiet = quiet
         self.rt_filter = rt_filter
         if rt_filter:
             self.rt_win = rt_win
@@ -45,6 +47,9 @@ class Nnls(Fit):
         if not hasattr(data, 'ref_array'):
             error = "The datafile {} does not have reference data."
             raise ValueError(error.format(data.filename))
+
+        if not self._quiet:
+            print("Fitting: {}".format(data.filename))
 
         fits = []
         ref_cpds = data.ref_cpds

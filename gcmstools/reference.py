@@ -10,10 +10,11 @@ class ReferenceFileGeneric(object):
     Requires subclass objects that have a _ref_entry_proc method that processes
     the reference mass/intensity information.
     '''
-    def __init__(self, ref_file, bkg=True, bkg_time=0.,):
+    def __init__(self, ref_file, bkg=True, bkg_time=0., quiet=False, **kwargs):
         self.ref_file = ref_file
         self.bkg = bkg
         self.bkg_time = bkg_time
+        self._quiet = quiet
 
         self.ref_build()
 
@@ -26,6 +27,9 @@ class ReferenceFileGeneric(object):
                 self._append_ref_array(data)
 
     def _append_ref_array(self, data):
+        if not self._quiet:
+            print("Referencing: {}".format(data.filename))
+
         ref_array = []
         data_min = data.masses.min()
         data_max = data.masses.max()

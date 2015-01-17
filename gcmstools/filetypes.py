@@ -12,15 +12,16 @@ class GcmsFile(object):
     Subclasses must define a _ref_file method that extracts the information
     from the reference file.
     '''
-    def __init__(self, fname, file_build=True):
+    def __init__(self, fname, file_build=True, quiet=False, **kwargs):
         '''
         Arguments
         ---------
         * fname: string - The name of the GCMS data file.
         '''
-
         self.filename = fname
         if file_build == True:
+            if not quiet:
+                print("Building {}".format(fname))
             self._file_proc()
 
     def index(self, array, *vals, **kwargs):

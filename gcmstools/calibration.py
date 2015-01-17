@@ -14,7 +14,9 @@ class Calibrate(object):
     tblcols = ['Name', 'Start', 'Stop', 'Slope', 'Intercept', 'r', 'p',
             'stderr']
 
-    def __init__(self, h5name, calfile, calfolder='cal', clear_folder=True):
+    def __init__(self, h5name, calfile, calfolder='cal', clear_folder=True,
+            quiet=False, **kwargs):
+        self._quiet = quiet
         self.h5 = HDFStore(h5name)
 
         self.calfolder = calfolder
@@ -38,6 +40,8 @@ class Calibrate(object):
 
     def _proc_group(self, group):
         name, df = group
+        if not self._quiet:
+            print("Calibrating: {}".format(name))
 
         fig = plt.figure()
         ax = fig.add_subplot(111)

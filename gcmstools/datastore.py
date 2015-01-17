@@ -7,7 +7,8 @@ import tables as tb
 import gcmstools.filetypes as gcf
 
 class HDFStore(object):
-    def __init__(self, hdfname):
+    def __init__(self, hdfname, quiet=False, **kwargs):
+        self._quiet = quiet
         self.hdfname = hdfname
         # Open the HDF file with pandas
         self.pdh5 = pd.HDFStore(hdfname, mode='a', complevel=9,
@@ -98,8 +99,13 @@ class HDFStore(object):
         # If this exists already, check for equivalence
         if hasattr(self.data, name):
             different = self._check_data(name, gcmsobj)
-            if not different: return
+            if not different: 
+                if not self._quiet:
+                    print("HDF Skipping: {}".format(name))
+                return
        
+        if not self._quiet:
+            print("HDF Appending: {}".format(name))
         # If not equivalent add the data set to the file
         group = self.tbh5.create_group('/data', name)
 
@@ -128,6 +134,8 @@ class HDFStore(object):
             # Check the other values agains the group attributes
             # If there is a mismatch, return True
             if (not key in groupd) or val != groupd[key]:
+                if not self._quiet:
+                    print("HDF Removing: {}".format(name))
                 # Remove old data
                 group._f_remove(recursive=True)
                 return True

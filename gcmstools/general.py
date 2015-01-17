@@ -39,7 +39,7 @@ def get_sample_data(fname=None):
     
 
 def proc_data(data_folder, h5name, nproc=1, filetype='aia', reffile=None,
-        fittype=None, calfile=None, **kwargs):
+        fittype=None, **kwargs):
     if filetype == 'aia':
         GcmsObj = gcf.AiaFile
         ends = ('CDF', 'AIA', 'cdf', 'aia') 
@@ -69,9 +69,6 @@ def proc_data(data_folder, h5name, nproc=1, filetype='aia', reffile=None,
     h5.append_files(datafiles)
     h5.close()
 
-    if calfile:
-        cal = gcc.Calibrate(h5name, calfile, **kwargs)
-        cal.close()
 
 
     

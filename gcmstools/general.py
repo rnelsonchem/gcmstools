@@ -1,11 +1,11 @@
 import os
 import shutil
 
-import netCDF4 as cdf
-
 import gcmstools.filetypes as gcf
-import gcmstools.reference
-import gcmstools.fitting
+import gcmstools.reference as gcr
+import gcmstools.fitting as gcfit
+import gcmstools.datastore as gcd
+import gcmstools.calibration as gcc
 
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -38,3 +38,40 @@ def get_sample_data(fname=None):
             name in fnames]
     
 
+def proc_data(data_folder, h5name, nproc=1, filetype='aia', reffile=None,
+        fittype=None, calfile=None, **kwargs):
+    if filetype == 'aia':
+        GcmsObj = gcf.AiaFile
+        ends = ('CDF', 'AIA', 'cdf', 'aia') 
+
+    files = os.listdir(data_folder)
+    files = [f for f in files if f.endswith(ends)]
+    files = [os.path.join(data_folder, f) for f in files]
+
+    ref = None
+    if reffile:
+        if reffile.endswith(('txt', 'TXT')):
+            ref = gcr.TxtReference(reffile, **kwargs)
+    
+    fit = None
+    if fittype:
+        if fittype.lower() == 'nnls':
+            fit = gcfit.Nnls(**kwargs)
+
+    if nproc == 1:
+        datafiles = [GcmsObj(f) for f in files]
+        if ref:
+            ref(datafiles)
+        if fit:
+            fit(datafiles)
+
+    h5 = gcd.HDFStore(h5name)
+    h5.append_files(datafiles)
+    h5.close()
+
+    if calfile:
+        cal = gcc.Calibrate(h5name, calfile, **kwargs)
+        cal.close()
+
+
+    

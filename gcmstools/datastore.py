@@ -143,9 +143,10 @@ class HDFStore(object):
         pth, badname = os.path.split(badname_path)
         sp = badname.split('.')
         nosuffix = '_'.join(sp[:-1])
-        nospace = nosuffix.replace(' ', '_')
+        nohyp = nosuffix.replace('-', '_')
+        nospace = nohyp.replace(' ', '_')
         if nospace[0].isdigit():
-            nonum = 'num' + nospcace
+            nonum = 'num' + nospace
             return nonum
         else:
             return nospace

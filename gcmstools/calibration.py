@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -13,8 +14,15 @@ class Calibrate(object):
     tblcols = ['Name', 'Start', 'Stop', 'Slope', 'Intercept', 'r', 'p',
             'stderr']
 
-    def __init__(self, h5name, calfile):
+    def __init__(self, h5name, calfile, calfolder='cal', clear_folder=True):
         self.h5 = HDFStore(h5name)
+
+        self.calfolder = calfolder
+        if os.path.isdir(calfolder) and clear_folder:
+            shutil.rmtree(calfolder)
+            os.mkdir(calfolder)
+        elif not os.path.isdir(calfolder):
+            os.mkdir(calfolder)
 
         self.caldf = pd.read_csv(calfile)
         gb = self.caldf.groupby('Compound')
@@ -24,6 +32,7 @@ class Calibrate(object):
             all_calibration_data.append(cal)
         self.h5.pdh5['calibration'] = pd.DataFrame(all_calibration_data,
                 columns=Calibrate.tblcols)
+        self.h5.pdh5['calinput'] = self.caldf
 
         self.h5.pdh5.flush()
 
@@ -41,7 +50,7 @@ class Calibrate(object):
             ax.plot(gcms.times, gcms.int_sim[:,nameidx])
         
         ax.set_xlim(series['Start'], series['Stop'])
-        fig.savefig(os.path.join('cal', name + '_fits'), dpi=200)
+        fig.savefig(os.path.join(self.calfolder, name + '_fits'), dpi=200)
         fig.clear()
 
         conc = df['Concentration']
@@ -68,9 +77,9 @@ class Calibrate(object):
         ax.plot(conc, integrals, 'o', ms=8)
         text_string = 'Slope: {:.2f}\nIntercept: {:.2f}\nR^2: {:.5f}'
         ax.text(0.5, integrals.max()*0.8, text_string.format(slope, intercept, r**2))
-        fig.savefig(os.path.join('cal', name+'_cal_curve'), dpi=200)
+        fig.savefig(os.path.join(self.calfolder, name+'_cal_curve'), dpi=200)
         fig.clear()
 
-    def close():
+    def close(self,):
         self.h5.close()
 

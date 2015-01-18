@@ -60,8 +60,8 @@ class Calibrate(object):
             filename = series['File']
             gcms = self.h5.extract_gcms_data(filename)
             integrals.append(gcms.int_extract(name, series))
-            nameidx = gcms.ref_cpds.index(name)
             if self._calpicts:
+                nameidx = gcms.ref_cpds.index(name)
                 ax.plot(gcms.times, gcms.int_sim[:,nameidx])
         
         if self._calpicts:
@@ -78,6 +78,10 @@ class Calibrate(object):
         if has_std:
             stdconc = df['Standard Conc']
             conc = conc/stdconc
+        
+        mask = self.calinput['Compound'] == name
+        self.calinput.loc[mask, 'conc'] = conc
+        self.calinput.loc[mask, 'integral'] = integrals
 
         slope, intercept, r, p, stderr = sps.linregress(conc, integrals)
         if self._calpicts:

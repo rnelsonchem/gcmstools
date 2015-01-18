@@ -6,7 +6,9 @@
 gcmstools Documentation
 =======================
 
-Welcome to the *gcmstools* documentation.
+.. only:: html
+
+    Welcome to the *gcmstools* documentation.
 
 .. toctree::
     :maxdepth: 2

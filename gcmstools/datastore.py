@@ -63,7 +63,7 @@ class HDFStore(object):
     
         # Create a new file object
         # Do not let it process the data
-        GcmsObj = getattr(gcf, gdict['file_type'])
+        GcmsObj = getattr(gcf, gdict['filetype'])
         gcms = GcmsObj(filename, file_build=False)
     
         # Add all of the Python data back

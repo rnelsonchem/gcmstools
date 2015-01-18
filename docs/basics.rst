@@ -3,90 +3,120 @@
 Basics of working with GCMS data files
 ######################################
 
-Export the data
----------------
-
-First of all, be sure to export your GCMS data in a common data format, such
-as `AIA, ANDI, or CDF.`_ It turns out that all of these formats `are related`_
-in that they are all based off of Network Common Data Format (`netCDF`_), so
-they may have the file extension "AIA" or "CDF". This file type may not be the
-default for your instrument, so consult the documentation for your GCMS
-software to determine how to export your data in these formats. 
-
-.. _AIA, ANDI, or CDF.: http://en.wikipedia.org/wiki/Mass_spectrometry_data_format#ANDI-MS_or_netCDF
-.. _are related: https://www.unidata.ucar.edu/support/help/MailArchives/netcdf/msg05748.html
-.. _netCDF: http://en.wikipedia.org/wiki/NetCDF
-  
-
 Set up the processing environment
 ---------------------------------
 
-In order to process these files, run IPython from a terminal (command prompt
-in Windows) in the folder containing the "gcms.py" file (which is the base
-folder for this repository).  There are (at least) two ways to do this that
-involve the command ``cd`` (change directory) run from either the terminal or
-an IPython session. For example (``home>$`` is the command prompt located in
-the folder "home", ``In:`` is the IPython prompt):
+In these examples, we will run *gcmstools* form a :ref:`terminal IPython
+<ipython>` session in a folder "gcms", which is located in your home
+directory.
 
 .. code::
 
-    home>$ ipython
-    In: %cd "path-to-gcms-folder"
-    Out: path-to-gcms-folder
-    In:
+    home>$ cd gcms
 
-or:
-
-.. code::
-
-    home>$ cd path-to-gcms-folder
     gcms>$ ipython
-    In:
+    Python 3.4.1 (default, Oct 10 2014, 15:29:52)
+    Type "copyright", "credits" or "license" for more information.
+    
+    IPython 2.3.1 -- An enhanced Interactive Python.
+    ?         -> Introduction and overview of IPython's features.
+    %quickref -> Quick reference.
+    help      -> Python's own help system.
+    object?   -> Details about 'object', use 'object??' for extra details.
+    
+    In : 
 
-The "*path-to-gcms-folder*" is a valid path to the folder with "gcms.py". It
-can take a little practice, but this gets easier very quickly. I'll assume you
-use the second form of this as it makes using the `IPython notebook`_ much
-easier later.
+Some example files are provided with the *gcmstools* installation. These files
+can be moved into the current directory using the ``get_sample_data``
+function.
 
-.. _IPython notebook: http://ipython.org/notebook.html
+.. code::
 
-Read AIA data files
+    In : from gcmstools.general import get_sample_data
+
+    In : get_sample_data()
+
+This invocation copies all of the example files to the current directory.
+Individual file names can be passed to this function, if you only want a few
+data files.
+
+.. code::
+
+    In : get_sample_data('datasample1.CDF')
+
+Note on Conventions
 -------------------
 
-First of all, you will need to ``import`` the "gcms.py" file to make the code
-accessible to the IPython environment. This file contains a class called
-``AIAFile`` that reads and processes the GCMS files. AIAFile takes one
-argument, which is a string with the file name. This string must have the path
-(i.e.  folder) information if the file is not in the same directory as
-"gcms.py".  Sample data files are contained in a folder called "data". 
+There are potentially many types of GCMS files; however, all file importing
+objects discussed in this section should have identical properties. This is
+important for later sections of the documentation, because fitting routines,
+etc., usually do not require a specific file type importer. All of the import
+objects are constructed with a single string input, which is the name of the
+file to process. This file name string can also contain path information if
+the file is not located in the current directory. 
+
+AIA Files
+---------
+
+`AIA, ANDI, or CDF`_ are all related types of standard GCMS files that are all
+`derived from`_ the Network Common Data Format (`netCDF`_). They may have
+the file extension "AIA" or "CDF". This file type may not be the default for
+your instrument, so consult the documentation for your GCMS software to
+determine how to export your data in these formats. 
+
+.. _AIA, ANDI, or CDF: http://en.wikipedia.org/wiki/
+    Mass_spectrometry_data_format#ANDI-MS_or_netCDF
+.. _derived from: https://www.unidata.ucar.edu/support/
+    help/MailArchives/netcdf/msg05748.html
+.. _netCDF: http://en.wikipedia.org/wiki/NetCDF
+  
+To import this type of data, use the ``AiaFile`` object, which is located in
+the ``gcmstools.filetypes`` module.
 
 .. code::
 
-    In: import gcms
-    In: data = gcms.AIAFile('data/datasample1.CDF')
+    In : from gcmstools.filetype import AiaFile 
+
+Read a Data File
+----------------
+
+First of all, you will need to import a file reader from
+``gcmstools.filetypes`` module. In this example, we'll use the AIA file
+reader, ``AiaFile``; however, the results should be identical with other
+readers. To read a file, you can create a new instance of this object with a
+filename given as a string. 
+
+.. code::
+
+    In : from gcmstools.filetype import AiaFile
+
+    In : data = AiaFile('datasample1.CDF')
+    Building: datasample1.CDF
 
 The variable ``data`` now contains our processed GCMS data set. You can see
-its contents using tab completion in IPython (``<tab>`` refers to the tab
-key).
+its contents using :ref:`tab completion <ipytab>` in IPython.
 
 .. code::
 
     In: data.<tab>
-    data.filename data.intensity data.nnls data.ref_build data.times
-    data.integrate data.masses data.tic
+    data.filename   data.intensity    data.tic    data.index  data.masses 
+    data.filetype  data.int_extract  data.index  data.times
 
-All of these attributes are either data that describe or functions that modify
-(methods) our dataset. You can inspect these attributes very easily in
-IPython by just typing the name at the prompt.
+Most of these attributes are data that describe our dataset. You can inspect
+these attributes very easily in IPython by just typing the name at the prompt.
 
 .. code::
 
-    In: data.times
+    In : data.times
     Out: 
     array([0.08786667, ..., 49.8351])
-    In: data.tic
+
+    In : data.tic
     Out:
     array([158521., ..., 0.])
+
+    In : data.filetype
+    Out: 'AiaFile'
 
 This is a short description of these initial attributes:
 
@@ -102,30 +132,35 @@ This is a short description of these initial attributes:
   columns correspond to the masses in the ``masses`` array and the rows
   correspond to the times in the ``times`` array. 
 
-The remaining attributes *ref_build*, *nnls*, and *integrate* are functions
-that deal with the non-negative fitting routine and are covered in later
-sections. 
+* *filetype*: This is the type of file importer that was used.
+
+The *index* and *int_extract* methods are used for finding the indices from an
+array and extracting integrals, respectively. Their usage is described later.
 
 Simple plotting
 ---------------
 
-We can easily plot these data using the plotting package Matplotlib. As an
-example, let's try plotting the total ion chromatogram. In this case,
-``data.times`` will be our "x-axis" data, and ``data.tic`` will be our "y-axis"
-data.
+Now that we've opened a GCMS data set. We can easily visualize these data
+using the plotting package Matplotlib. As an example, let's try plotting the
+total ion chromatogram. In this case, ``data.times`` will be our "x-axis"
+data, and ``data.tic`` will be our "y-axis" data.
 
 .. code:: 
 
-    In: import matplotlib.pyplot as plt
-    In: plt.plot(data.times, data.tic)
-    Out:
+    In : import matplotlib.pyplot as plt
+
+    In : plt.plot(data.times, data.tic)
+    Out :
     [<matplotlib.lines.Line2D at 0x7f34>]
+
     In: plt.show()
 
-This should produce a pop-up window with an interactive plot, :num:`Figure
-#ticplot`.  (This should process should be fairly quick. However, sometimes
-the plot initially appears behind the other windows, which makes it seem like
-things are stuck. Be sure to scroll through your windows to find it.)
+This produces a pop-up window with an interactive plot, :num:`Figure
+#ticplot`.  (This should happen fairly quickly. However, sometimes the plot
+window appears behind the other windows, which makes it seem like things are
+stuck. Be sure to scroll through your windows to find it.) The buttons at the
+top of the window give you some interactive control of the plot. See the
+`Matplotlib documentation`_ for more information.
 
 .. _ticplot:
 
@@ -137,81 +172,70 @@ things are stuck. Be sure to scroll through your windows to find it.)
 One drawback here is that you have to type these commands every time you want
 to see this plot. There is another alternative, though. You can also put all
 of these commands into a text file and run it with Python directly. Copy the
-following code into a plain text file called "tic\_plot.py". 
-
-**NOTE**: it is very important that you are using a plain text file and not a
-word processing (MS Word) document. On Mac/Linux, the ".py" suffix is not
-required; however, in Windows, this suffix can be important. Unfortunately,
-Windows hides file extentions by default, so you may have to search the web to
-determine how to enable display of file extensions. Otherwise, you might end
-up with a file called "tic\_plot.py.txt", which can work, but will most likely
-cause confusion and annoyance. Anaconda ships with Spyder, a Python
-development editor, which will take care of all of this for you, so you might
-want to familiarize yourself with that program.
+following code into a plain text file called "tic\_plot.py". (See
+:ref:`textfiles` for more information on making Python program files.) 
 
 .. code::
 
     import matplotlib.pyplot as plt
-    import gcms
+    from gcmstools.filetypes import AiaFile
 
-    data = gcms.AIAFile('data/datasample1.CDF')
+    data = AiaFile('datasample1.CDF')
     plt.plot(data.times, data.tic)
     plt.show()
 
 It is common practice to do all imports at the top of a Python program. That
 way it is clear exactly what code is being brought into play. Run this new
-file using the ``python`` command from the terminal.
+file using the ``python`` command from the terminal. Again, the plot window
+will appear, but you will not be able to work in the terminal until you close
+this window. 
 
 .. code:: 
 
     gcms>$ python tic_plot.py
 
-The window with your plot will now appear. (You will not be able to work in the
-terminal until you close this window.) Alternatively, you can run this program
-directly from IPython.
+Alternatively, you can run this program directly from IPython.  This has the
+advantage that once the window is closed, you are dropped back into an IPython
+session that "remembers" all of the variables and imports that you created in
+your program file. See :doc:`Appendix A <appendA>` for more information here.
 
 .. code::
 
-    gcms>$ ipython
-    In: %run tic_plot.py
+    In : %run tic_plot.py
 
-This also pops open a new window containing the interactive plot. It has the
-advantage, however, that once the window is closed, you are dropped back into
-an IPython session that "remembers" all of the variables and imports that you
-created in your program file. In our example above, once the plot window is
-closed, your IPython session will have ``gcms``, ``plt``, and ``data`` (our
-GCMS AIA file) available.  This is very useful if you want to continue to work
-interactively with your data, and it is a great way to remove a bunch of
-repetitive typing.
+
+.. _Matplotlib documentation: http://matplotlib.org/contents.html 
 
 Working with multiple data sets
 -------------------------------
 
-In the example above, we opened our dataset into a variable called ``data`` in
-order to be able to plot the TIC. If you want to manipulate more than one data
-set, the procedure is exactly the same, except that you will need to use
-different variable names for your other data sets. 
+In the example above, we opened one dataset into a variable called ``data``.
+If you want to manipulate more than one data set, the procedure is the same,
+except that you will need to use different variable names for your other data
+sets. (Again, using AiaFile importer as an example, but this is not required.)
 
 .. code::
 
-    In: data2 = gcms.AIAFile('data/datasample2.CDF')
+    In : data2 = AiaFile('datasample2.CDF')
 
 These two data sets can be plot together on the same figure by doing the
 following:
 
 .. code::
 
-    In: plt.plot(data.times, data.tic)
+    In : plt.plot(data.times, data.tic)
     Out:
     [<matplotlib.lines.Line2D at 0x7f34>]
+
     In: plt.plot(data2.times, data2.tic)
     Out:
     [<matplotlib.lines.Line2D at 0x02e3>]
+
     In: plt.show()
 
-The window shown in :num:`Figure #twotic` should appear on the screen. (There
-is a blue and green line here that are a little hard to see in this picture.
-Zoom in on the plot to see the differences.)
+The window shown in :num:`Figure #twotic` should now appear. (There is a blue
+and green line here that are a little hard to see in this picture.  Zoom in on
+the plot to see the differences.)
 
 .. _twotic:
 
@@ -219,4 +243,5 @@ Zoom in on the plot to see the differences.)
     :width: 3.5in
     
     Two tic plotted together
+
 

@@ -15,7 +15,7 @@ directory.
     home>$ cd gcms
 
     gcms>$ ipython
-    Python 2.7.9 (default, Oct 10 2014, 15:29:52)
+    Python 3.4.1 (default, Oct 10 2014, 15:29:52)
     Type "copyright", "credits" or "license" for more information.
     
     IPython 2.3.1 -- An enhanced Interactive Python.
@@ -36,7 +36,7 @@ function.
 
     In : get_sample_data()
 
-The invocation above copies all of the example files to the current directory.
+This invocation copies all of the example files to the current directory.
 Individual file names can be passed to this function, if you only want a few
 data files.
 
@@ -47,19 +47,16 @@ data files.
 Note on Conventions
 -------------------
 
-There are potentially many types of GCMS files. However, all importing objects
-discussed in this section should have identical properties. This is important
-for later sections of the documentation, because fitting routines, etc.
-usually do not require a specific file type importer. All of the import
+There are potentially many types of GCMS files; however, all file importing
+objects discussed in this section should have identical properties. This is
+important for later sections of the documentation, because fitting routines,
+etc., usually do not require a specific file type importer. All of the import
 objects are constructed with a single string input, which is the name of the
-file to process. This file name string can also contain path information, if
-the file is not located in the current directory.
+file to process. This file name string can also contain path information if
+the file is not located in the current directory. 
 
 AIA Files
 ---------
-
-Export the data
-+++++++++++++++
 
 `AIA, ANDI, or CDF`_ are all related types of standard GCMS files that are all
 `derived from`_ the Network Common Data Format (`netCDF`_). They may have
@@ -73,19 +70,28 @@ determine how to export your data in these formats.
     help/MailArchives/netcdf/msg05748.html
 .. _netCDF: http://en.wikipedia.org/wiki/NetCDF
   
+To import this type of data, use the ``AiaFile`` object, which is located in
+the ``gcmstools.filetypes`` module.
 
-Read AIA data files
-+++++++++++++++++++
+.. code::
 
-First of all, you will need to import the AIA file reader ``AiaFile`` from
-``gcmstools.filetypes`` module. To read a file, you can create a new instance
-of this object with a filename given as a string. 
+    In : from gcmstools.filetype import AiaFile 
+
+Read a Data File
+----------------
+
+First of all, you will need to import a file reader from
+``gcmstools.filetypes`` module. In this example, we'll use the AIA file
+reader, ``AiaFile``; however, the results should be identical with other
+readers. To read a file, you can create a new instance of this object with a
+filename given as a string. 
 
 .. code::
 
     In : from gcmstools.filetype import AiaFile
 
     In : data = AiaFile('datasample1.CDF')
+    Building: datasample1.CDF
 
 The variable ``data`` now contains our processed GCMS data set. You can see
 its contents using :ref:`tab completion <ipytab>` in IPython.
@@ -93,8 +99,8 @@ its contents using :ref:`tab completion <ipytab>` in IPython.
 .. code::
 
     In: data.<tab>
-    data.filename data.intensity data.tic
-    data.index data.masses data.times
+    data.filename   data.intensity    data.tic    data.index  data.masses 
+    data.filetype  data.int_extract  data.index  data.times
 
 Most of these attributes are data that describe our dataset. You can inspect
 these attributes very easily in IPython by just typing the name at the prompt.
@@ -108,6 +114,9 @@ these attributes very easily in IPython by just typing the name at the prompt.
     In : data.tic
     Out:
     array([158521., ..., 0.])
+
+    In : data.filetype
+    Out: 'AiaFile'
 
 This is a short description of these initial attributes:
 
@@ -123,8 +132,10 @@ This is a short description of these initial attributes:
   columns correspond to the masses in the ``masses`` array and the rows
   correspond to the times in the ``times`` array. 
 
-The *index* method is used for finding the indices from an array. Its usage is
-described later.
+* *filetype*: This is the type of file importer that was used.
+
+The *index* and *int_extract* methods are used for finding the indices from an
+array and extracting integrals, respectively. Their usage is described later.
 
 Simple plotting
 ---------------
@@ -144,7 +155,7 @@ data, and ``data.tic`` will be our "y-axis" data.
 
     In: plt.show()
 
-This should produce a pop-up window with an interactive plot, :num:`Figure
+This produces a pop-up window with an interactive plot, :num:`Figure
 #ticplot`.  (This should happen fairly quickly. However, sometimes the plot
 window appears behind the other windows, which makes it seem like things are
 stuck. Be sure to scroll through your windows to find it.) The buttons at the
@@ -162,9 +173,7 @@ One drawback here is that you have to type these commands every time you want
 to see this plot. There is another alternative, though. You can also put all
 of these commands into a text file and run it with Python directly. Copy the
 following code into a plain text file called "tic\_plot.py". (See
-:ref:`textfiles` for more information on making Python program files.) In this
-case, we're using an AIA file type import, but you can change this for others
-as you see fit.
+:ref:`textfiles` for more information on making Python program files.) 
 
 .. code::
 
@@ -177,24 +186,23 @@ as you see fit.
 
 It is common practice to do all imports at the top of a Python program. That
 way it is clear exactly what code is being brought into play. Run this new
-file using the ``python`` command from the terminal.
+file using the ``python`` command from the terminal. Again, the plot window
+will appear, but you will not be able to work in the terminal until you close
+this window. 
 
 .. code:: 
 
     gcms>$ python tic_plot.py
 
-The plot window will now appear, and you will not be able to work in the
-terminal until you close this window. Alternatively, you can run this program
-directly from IPython.
+Alternatively, you can run this program directly from IPython.  This has the
+advantage that once the window is closed, you are dropped back into an IPython
+session that "remembers" all of the variables and imports that you created in
+your program file. See :doc:`Appendix A <appendA>` for more information here.
 
 .. code::
 
     In : %run tic_plot.py
 
-This has the advantage that once the window is closed, you are dropped back
-into an IPython session that "remembers" all of the variables and imports that
-you created in your program file. See :doc:`Appendix A <appendA>` for more
-information here.
 
 .. _Matplotlib documentation: http://matplotlib.org/contents.html 
 

@@ -7,32 +7,32 @@ you are reading this in PDF format, there is `online documentation`_ as well.
 
 This user guide is broken into a few sections. 
 
-#. :ref:`Installation <install>`: Information about getting a Python
+#. :doc:`Installation <install>`: Information about getting a Python
    installation up and running and installing *gcmstools*.
 
-#. :ref:`Basic Usage <basics>`: This section covers the usage of *gcmstools*
+#. :doc:`Basic Usage <basics>`: This section covers the usage of *gcmstools*
    to manipulate and plot GCMS data. 
 
-#. Referencing: Incorporate reference data along with the GCMS data set.
+#. :doc:`Referenceing and Fitting <fitting>`: Incorportate refernce data into your
+   GCMS data set, and use this to manually fit the GCMS data set.   
 
-#. :ref:`Fitting <fit>`: Manually fit the GCMS data set using the reference
-   information.
-   
-#. :ref:`Calibration <cal>`: Make a calibration file and use this to extract
+#. :doc:`Calibration <calibration>`: Make a calibration file and use this to extract
    generate concentration information from your data. 
 
-#. :ref:`Batch Processing <batch>`: Covers a simple function for automating
+#. :doc:`Batch Processing <autoint>`: Covers a simple function for automating
    this entire process. You can skip to this final sections if all you want to
    do is automate some data extractions. It is not necessary to understand the
    basics of data manipulation/plotting.
 
-.. note::
-    
-    The examples presented in this document require a basic working knowledge
-    of a command-line terminal interface and running Python commands from an
-    interpreter. :ref:`Appendix A <cli>` covers the basics that you will need
-    to run these examples.
+#. :doc:`Appendix A <appendA>`: Command line basics.The examples presented in
+   this document require a basic working knowledge of a command-line terminal
+   interface and running Python commands from an IPython interpreter. This
+   section covers some of the basics.
 
+#. Appendix B: Examples. Basic data extraction and plotting examples are
+   presented.
+
+    
 .. _GitHub: https://github.com/rnelsonchem/gcmstools
 .. _online documentation: http://gcmstools.rcnelson.com/
 

@@ -22,15 +22,17 @@ class Calibrate(object):
         else:
             self.h5 = h5name
         
-    def curvegen(self, calfile, calfolder='cal'):
+    def curvegen(self, calfile, calfolder='cal', picts=True):
         self.calfolder = calfolder
         self.calfile = calfile
+        self._calpicts = picts
 
-        if os.path.isdir(self.calfolder) and self._clear_folder:
-            shutil.rmtree(self.calfolder)
-            os.mkdir(self.calfolder)
-        elif not os.path.isdir(self.calfolder):
-            os.mkdir(self.calfolder)
+        if picts:
+            if os.path.isdir(self.calfolder) and self._clear_folder:
+                shutil.rmtree(self.calfolder)
+                os.mkdir(self.calfolder)
+            elif not os.path.isdir(self.calfolder):
+                os.mkdir(self.calfolder)
 
         self.calinput = pd.read_csv(self.calfile)
         gb = self.calinput.groupby('Compound')
@@ -50,20 +52,23 @@ class Calibrate(object):
         if not self._quiet:
             print("Calibrating: {}".format(name))
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        if self._calpicts:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
         integrals = []
         for idx, series in df.iterrows():
             filename = series['File']
             gcms = self.h5.extract_gcms_data(filename)
             integrals.append(gcms.int_extract(name, series))
             nameidx = gcms.ref_cpds.index(name)
-            ax.plot(gcms.times, gcms.int_sim[:,nameidx])
+            if self._calpicts:
+                ax.plot(gcms.times, gcms.int_sim[:,nameidx])
         
-        ax.set_xlim(series['Start'], series['Stop'])
-        fig.savefig(os.path.join(self.calfolder, name + '_fits'),
-                dpi=self._dpi)
-        plt.close(fig)
+        if self._calpicts:
+            ax.set_xlim(series['Start'], series['Stop'])
+            fig.savefig(os.path.join(self.calfolder, name + '_fits'),
+                    dpi=self._dpi)
+            plt.close(fig)
 
         conc = df['Concentration']
         integrals = np.array(integrals)
@@ -75,7 +80,8 @@ class Calibrate(object):
             conc = conc/stdconc
 
         slope, intercept, r, p, stderr = sps.linregress(conc, integrals)
-        self._cal_plot(name, integrals, conc, slope, intercept, r)
+        if self._calpicts:
+            self._cal_plot(name, integrals, conc, slope, intercept, r)
 
         series.pop('File')
         series.pop('Concentration')
@@ -99,14 +105,16 @@ class Calibrate(object):
                 dpi=self._dpi)
         plt.close(fig)
             
-    def datagen(self, datafolder='proc'):
+    def datagen(self, datafolder='proc', picts=True):
         self.datafolder = datafolder
+        self._datapicts = picts
 
-        if os.path.isdir(self.datafolder) and self._clear_folder:
-            shutil.rmtree(self.datafolder)
-            os.mkdir(self.datafolder)
-        elif not os.path.isdir(self.datafolder):
-            os.mkdir(self.datafolder)
+        if picts:
+            if os.path.isdir(self.datafolder) and self._clear_folder:
+                shutil.rmtree(self.datafolder)
+                os.mkdir(self.datafolder)
+            elif not os.path.isdir(self.datafolder):
+                os.mkdir(self.datafolder)
         
         mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File'])
         others_df = self.h5.pdh5.files[~mask]
@@ -131,7 +139,8 @@ class Calibrate(object):
             integral = gcms.int_extract(name, series)
             conc = (integral - series['intercept'])/series['slope']
             data[name] = conc
-            self._data_plot(name, gcms, conc, series, line)
+            if self._datapicts:
+                self._data_plot(name, gcms, conc, series, line)
         return data
 
     def _data_plot(self, name, gcms, conc, series, line):

@@ -11,12 +11,9 @@ from gcmstools.datastore import HDFStore
 
 
 class Calibrate(object):
-    def __init__(self, h5name, calfile=None, calfolder='cal',
-            datafolder='proc', clear_folder=True, quiet=False, dpi=100, 
+    def __init__(self, h5name, clear_folder=True, quiet=False, dpi=100, 
             **kwargs):
         self._quiet = quiet
-        self.calfolder = calfolder
-        self.datafolder = datafolder
         self._clear_folder = clear_folder
         self._dpi = dpi
 
@@ -25,16 +22,10 @@ class Calibrate(object):
         else:
             self.h5 = h5name
         
-        if calfile:
-            self.calfile = calfile
-            self._cal_proc()
-        else:
-            self.calinput = self.h5.pdh5.calinput
-            self.calibration = self.h5.pdh5.calibration
-        
-        self._data_proc()
+    def curvegen(self, calfile, calfolder='cal'):
+        self.calfolder = calfolder
+        self.calfile = calfile
 
-    def _cal_proc(self,):
         if os.path.isdir(self.calfolder) and self._clear_folder:
             shutil.rmtree(self.calfolder)
             os.mkdir(self.calfolder)
@@ -108,7 +99,9 @@ class Calibrate(object):
                 dpi=self._dpi)
         plt.close(fig)
             
-    def _data_proc(self,):
+    def datagen(self, datafolder='proc', multiproc=False):
+        self.datafolder = datafolder
+
         if os.path.isdir(self.datafolder) and self._clear_folder:
             shutil.rmtree(self.datafolder)
             os.mkdir(self.datafolder)
@@ -118,19 +111,22 @@ class Calibrate(object):
         mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File'])
         others_df = self.h5.pdh5.files[~mask]
         dicts = {}
-        for idx, line in others_df.iterrows():
-            datadict = self._data_group_proc(line)
-            dicts[line['filename']] = datadict
+
+        if not multiproc:
+            for idx, line in others_df.iterrows():
+                if not self._quiet:
+                    print("Processing: {}".format(line['filename']))
+                gcms = self.h5.extract_gcms_data(line['filename']) 
+                datadict = self._data_group_proc((line, gcms))
+                dicts[line['filename']] = datadict
+
         df = pd.DataFrame(dicts).T
         df.index.name = 'name'
         self.h5.pdh5['datacal'] = df
         self.h5.pdh5.flush()
 
-    def _data_group_proc(self, line):
-        if not self._quiet:
-            print("Processing: {}".format(line['filename']))
-
-        gcms = self.h5.extract_gcms_data(line['filename']) 
+    def _data_group_proc(self, linegcms):
+        line, gcms = linegcms
         data = {}
         for name, series in self.calibration.iterrows():
             integral = gcms.int_extract(name, series)

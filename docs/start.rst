@@ -13,16 +13,18 @@ This user guide is broken into a few sections.
 #. :ref:`Basic Usage <basics>`: This section covers the usage of *gcmstools*
    to manipulate and plot GCMS data. 
 
-#. :ref:`Fitting <fit>`: The information in this section covers manual fitting of a
-   GCMS data set. 
-   
-#. :ref:`Calibration <cal>` and :ref:`Batch Processing <batch>`: These final
-   sections cover calibration curves and automated data extraction.
+#. Referencing: Incorporate reference data along with the GCMS data set.
 
-You can skip to the final sections if all you want to do is automate some data
-extractions. It is not necessary to understand the basics of data
-manipulation/plotting as those tasks are automated in the calibration and
-batch processing steps.
+#. :ref:`Fitting <fit>`: Manually fit the GCMS data set using the reference
+   information.
+   
+#. :ref:`Calibration <cal>`: Make a calibration file and use this to extract
+   generate concentration information from your data. 
+
+#. :ref:`Batch Processing <batch>`: Covers a simple function for automating
+   this entire process. You can skip to this final sections if all you want to
+   do is automate some data extractions. It is not necessary to understand the
+   basics of data manipulation/plotting.
 
 .. note::
     

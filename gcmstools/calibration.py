@@ -47,6 +47,10 @@ class Calibrate(object):
         self.h5.pdh5['calinput'] = self.calinput
         self.h5.pdh5.flush()
 
+        if picts:
+            for i in self.calibration.index:
+                self.curveplot(i, folder=calfolder)
+
     def _cal_group_proc(self, group):
         name, df = group
         if not self._quiet:
@@ -72,8 +76,6 @@ class Calibrate(object):
         self.calinput.loc[mask, 'integral'] = integrals
 
         slope, intercept, r, p, stderr = sps.linregress(conc, integrals)
-        if self._calpicts:
-            self._cal_plot(name, integrals, conc, slope, intercept, r)
 
         series.pop('File')
         series.pop('Concentration')
@@ -111,16 +113,30 @@ class Calibrate(object):
             plt.show()
         plt.close(fig)
 
-    def _cal_plot(self, name, integrals, conc, slope, intercept, r):
+    def curveplot(self, name, folder='.', show=False, save=True):
+        if not hasattr(self, 'calinput'):
+            try:
+                self.calinput = self.h5.pdh5.calinput
+            except:
+                print("No calibration DataFrame!")
+                return
+
+        s = self.h5.pdh5.calibration.loc[name]
+        mask = self.calinput['Compound'] == name
+        df = self.calinput[mask]
+
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot(conc, slope*conc + intercept, 'k-')
-        ax.plot(conc, integrals, 'o', ms=8)
+        ax.plot(df.conc, s.slope*df.conc + s.intercept, 'k-')
+        ax.plot(df.conc, df.integral, 'o', ms=8)
         text_string = 'Slope: {:.2f}\nIntercept: {:.2f}\nR^2: {:.5f}'
-        ax.text(0.5, integrals.max()*0.8, text_string.format(slope, 
-            intercept, r**2))
-        fig.savefig(os.path.join(self.calfolder, name+'_cal_curve'), 
-                dpi=self._dpi)
+        ax.text(0.5, df.integral.max()*0.8, text_string.format(s.slope, 
+            s.intercept, s.r**2))
+        if save:
+            fig.savefig(os.path.join(folder, name+'_cal_curve'), 
+                    dpi=self._dpi)
+        if show:
+            plt.show()
         plt.close(fig)
             
     def datagen(self, datafolder='proc', picts=True):

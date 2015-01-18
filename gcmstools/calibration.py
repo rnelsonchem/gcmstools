@@ -52,23 +52,11 @@ class Calibrate(object):
         if not self._quiet:
             print("Calibrating: {}".format(name))
 
-        if self._calpicts:
-            fig = plt.figure()
-            ax = fig.add_subplot(111)
         integrals = []
         for idx, series in df.iterrows():
             filename = series['File']
             gcms = self.h5.extract_gcms_data(filename)
             integrals.append(gcms.int_extract(name, series))
-            if self._calpicts:
-                nameidx = gcms.ref_cpds.index(name)
-                ax.plot(gcms.times, gcms.int_sim[:,nameidx])
-        
-        if self._calpicts:
-            ax.set_xlim(series['Start'], series['Stop'])
-            fig.savefig(os.path.join(self.calfolder, name + '_fits'),
-                    dpi=self._dpi)
-            plt.close(fig)
 
         conc = df['Concentration']
         integrals = np.array(integrals)
@@ -96,6 +84,32 @@ class Calibrate(object):
         series['p'] = p
         series['stderr'] = stderr
         return series
+
+    def fitsplot(self, cpd, calfolder='.', show=False, save=True):
+        if not hasattr(self, 'calinput'):
+            try:
+                self.calinput = self.h5.pdh5.calinput
+            except:
+                print("No calibration DataFrame!")
+                return
+
+        mask = self.calinput['Compound'] == cpd
+        df = self.calinput[mask]
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for idx, row in df.iterrows():
+            gcms = self.h5.extract_gcms_data(row['File'])
+            nameidx = gcms.ref_cpds.index(cpd)
+            ax.plot(gcms.times, gcms.int_sim[:,nameidx])
+        
+        ax.set_xlim(row['Start'], row['Stop'])
+        if save:
+            fig.savefig(os.path.join(calfolder, cpd + '_fits'),
+                    dpi=self._dpi)
+        if show:
+            plt.show()
+        plt.close(fig)
 
     def _cal_plot(self, name, integrals, conc, slope, intercept, r):
         fig = plt.figure()

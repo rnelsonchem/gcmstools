@@ -121,4 +121,82 @@ short description of each.
 Fitting the data
 ++++++++++++++++
 
-Todo.
+A ``Nnls`` fitting object is provided in ``gcmstools.fitting`` for performing
+the non-negative least squares fit. To apply this fitting to a data set,
+simply call the fitting instance with a data object or list of objects.
+
+.. code::
+
+    In : from gcmstools.fitting import Nnls
+
+    In : fit = Nnls()
+
+    In : fit(data)
+    Fitting: datasample1.CDF
+
+    In : fit([data, otherdata1, otherdata2]) # If these other data sets exist.
+    Fitting: datasample1.CDF
+    Fitting: otherdata1.CDF
+    Fitting: otherdata2.CDF
+
+    In : data.<tab>
+    data.filename     data.tic          data.int_sim      data.ref_cpds     
+    data.filetype     data.index        data.intensity    data.ref_meta
+    data.fits         data.int_cum      data.masses       data.ref_type
+    data.fittype      data.int_extract  data.ref_array    data.times
+
+Again, several new attributes describing the fit have been added to our data
+set.
+
+* *fittype*: A string that names the fitting object used to generate this
+  data. (In this case, it would be "Nnls".)
+
+* *fits*: These are the raw fitting numbers from the NNLS routine. They do not
+  correspond to proper integrations, so they should be used with caution.
+
+* *int_sim*: This is a 2D numpy array of simulated GCMS curves that were
+  generated from the fit. Shape(# of time points, # of reference compounds)
+
+* *int_cum*: This is a cumulative summation of *int_sim*, so it has the same
+  shape as that array. The difference between any two points in this array can
+  be used to determine the integral over that region. 
+
+Plotting the Fit
+++++++++++++++++
+
+You can do a quick check of how the data looks using Matplotlib. More advanced
+examples are presented in Appendix B. The output of the commands below is
+shown in :num:`Figure #fitcheck`.
+
+.. code::
+
+    In : import matplotlib.pyplot as plt
+
+    In : plt.plot(data.times, data.tic, 'k-', lw=1.5)
+    Out: [<matplotlib.lines.Line2D at 0x7f9b2905df60>]
+
+    In : plt.plot(data.times, data.int_sim)
+    Out:
+    [<matplotlib.lines.Line2D at 0x7f9b2f0df160>,
+     <matplotlib.lines.Line2D at 0x7f9b29063ac8>,
+     <matplotlib.lines.Line2D at 0x7f9b29063d30>,
+     <matplotlib.lines.Line2D at 0x7f9b29063f98>,
+     <matplotlib.lines.Line2D at 0x7f9b28fef240>,
+     <matplotlib.lines.Line2D at 0x7f9b28fef4a8>,
+     <matplotlib.lines.Line2D at 0x7f9b28fef710>,
+     <matplotlib.lines.Line2D at 0x7f9b28faf720>]
+
+    In : plt.legend(["TIC",] + data.ref_cpds) # This isn't necessary
+    Out: <matplotlib.legend.Legend at 0x7f9b25a35438>
+
+    In : plt.show()
+
+.. _fitcheck:
+
+.. figure:: _static/images/fitcheck.png
+    :width: 3.5in
+    
+    An interactive check of our fit. This has been zoomed in a little to
+    highlight the fit and data.
+
+    

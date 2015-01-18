@@ -22,7 +22,7 @@ class Calibrate(object):
         else:
             self.h5 = h5name
         
-    def curvegen(self, calfile, calfolder='cal', picts=True):
+    def curvegen(self, calfile, calfolder='cal', picts=True, **kwargs):
         self.calfolder = calfolder
         self.calfile = calfile
         self._calpicts = picts
@@ -87,7 +87,7 @@ class Calibrate(object):
         series['stderr'] = stderr
         return series
 
-    def fitsplot(self, cpd, calfolder='.', show=False, save=True):
+    def fitsplot(self, cpd, calfolder='cal', show=False, save=True, **kwargs):
         if not hasattr(self, 'calinput'):
             try:
                 self.calinput = self.h5.pdh5.calinput
@@ -139,7 +139,7 @@ class Calibrate(object):
             plt.show()
         plt.close(fig)
             
-    def datagen(self, datafolder='proc', picts=True):
+    def datagen(self, datafolder='proc', picts=True, **kwargs):
         self.datafolder = datafolder
         self._datapicts = picts
         if not hasattr(self, 'calibration'):

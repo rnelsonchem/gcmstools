@@ -11,12 +11,9 @@ from gcmstools.datastore import HDFStore
 
 
 class Calibrate(object):
-    def __init__(self, h5name, calfile=None, calfolder='cal',
-            datafolder='proc', clear_folder=True, quiet=False, dpi=100, 
+    def __init__(self, h5name, clear_folder=True, quiet=False, dpi=100, 
             **kwargs):
         self._quiet = quiet
-        self.calfolder = calfolder
-        self.datafolder = datafolder
         self._clear_folder = clear_folder
         self._dpi = dpi
 
@@ -25,21 +22,17 @@ class Calibrate(object):
         else:
             self.h5 = h5name
         
-        if calfile:
-            self.calfile = calfile
-            self._cal_proc()
-        else:
-            self.calinput = self.h5.pdh5.calinput
-            self.calibration = self.h5.pdh5.calibration
-        
-        self._data_proc()
+    def curvegen(self, calfile, calfolder='cal', picts=True, **kwargs):
+        self.calfolder = calfolder
+        self.calfile = calfile
+        self._calpicts = picts
 
-    def _cal_proc(self,):
-        if os.path.isdir(self.calfolder) and self._clear_folder:
-            shutil.rmtree(self.calfolder)
-            os.mkdir(self.calfolder)
-        elif not os.path.isdir(self.calfolder):
-            os.mkdir(self.calfolder)
+        if picts:
+            if os.path.isdir(self.calfolder) and self._clear_folder:
+                shutil.rmtree(self.calfolder)
+                os.mkdir(self.calfolder)
+            elif not os.path.isdir(self.calfolder):
+                os.mkdir(self.calfolder)
 
         self.calinput = pd.read_csv(self.calfile)
         gb = self.calinput.groupby('Compound')
@@ -54,25 +47,20 @@ class Calibrate(object):
         self.h5.pdh5['calinput'] = self.calinput
         self.h5.pdh5.flush()
 
+        if picts:
+            for i in self.calibration.index:
+                self.curveplot(i, folder=calfolder)
+
     def _cal_group_proc(self, group):
         name, df = group
         if not self._quiet:
             print("Calibrating: {}".format(name))
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
         integrals = []
         for idx, series in df.iterrows():
             filename = series['File']
             gcms = self.h5.extract_gcms_data(filename)
             integrals.append(gcms.int_extract(name, series))
-            nameidx = gcms.ref_cpds.index(name)
-            ax.plot(gcms.times, gcms.int_sim[:,nameidx])
-        
-        ax.set_xlim(series['Start'], series['Stop'])
-        fig.savefig(os.path.join(self.calfolder, name + '_fits'),
-                dpi=self._dpi)
-        plt.close(fig)
 
         conc = df['Concentration']
         integrals = np.array(integrals)
@@ -82,9 +70,12 @@ class Calibrate(object):
         if has_std:
             stdconc = df['Standard Conc']
             conc = conc/stdconc
+        
+        mask = self.calinput['Compound'] == name
+        self.calinput.loc[mask, 'conc'] = conc
+        self.calinput.loc[mask, 'integral'] = integrals
 
         slope, intercept, r, p, stderr = sps.linregress(conc, integrals)
-        self._cal_plot(name, integrals, conc, slope, intercept, r)
 
         series.pop('File')
         series.pop('Concentration')
@@ -96,54 +87,117 @@ class Calibrate(object):
         series['stderr'] = stderr
         return series
 
-    def _cal_plot(self, name, integrals, conc, slope, intercept, r):
+    def fitsplot(self, cpd, calfolder='cal', show=False, save=True, **kwargs):
+        if not hasattr(self, 'calinput'):
+            try:
+                self.calinput = self.h5.pdh5.calinput
+            except:
+                print("No calibration DataFrame!")
+                return
+
+        mask = self.calinput['Compound'] == cpd
+        df = self.calinput[mask]
+
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot(conc, slope*conc + intercept, 'k-')
-        ax.plot(conc, integrals, 'o', ms=8)
+        for idx, row in df.iterrows():
+            gcms = self.h5.extract_gcms_data(row['File'])
+            nameidx = gcms.ref_cpds.index(cpd)
+            ax.plot(gcms.times, gcms.int_sim[:,nameidx])
+        
+        ax.set_xlim(row['Start'], row['Stop'])
+        if save:
+            fig.savefig(os.path.join(calfolder, cpd + '_fits'),
+                    dpi=self._dpi)
+        if show:
+            plt.show()
+        plt.close(fig)
+
+    def curveplot(self, name, folder='.', show=False, save=True):
+        if not hasattr(self, 'calinput'):
+            try:
+                self.calinput = self.h5.pdh5.calinput
+            except:
+                print("No calibration DataFrame!")
+                return
+
+        s = self.h5.pdh5.calibration.loc[name]
+        mask = self.calinput['Compound'] == name
+        df = self.calinput[mask]
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(df.conc, s.slope*df.conc + s.intercept, 'k-')
+        ax.plot(df.conc, df.integral, 'o', ms=8)
         text_string = 'Slope: {:.2f}\nIntercept: {:.2f}\nR^2: {:.5f}'
-        ax.text(0.5, integrals.max()*0.8, text_string.format(slope, 
-            intercept, r**2))
-        fig.savefig(os.path.join(self.calfolder, name+'_cal_curve'), 
-                dpi=self._dpi)
+        ax.text(0.5, df.integral.max()*0.8, text_string.format(s.slope, 
+            s.intercept, s.r**2))
+        if save:
+            fig.savefig(os.path.join(folder, name+'_cal_curve'), 
+                    dpi=self._dpi)
+        if show:
+            plt.show()
         plt.close(fig)
             
-    def _data_proc(self,):
-        if os.path.isdir(self.datafolder) and self._clear_folder:
-            shutil.rmtree(self.datafolder)
-            os.mkdir(self.datafolder)
-        elif not os.path.isdir(self.datafolder):
-            os.mkdir(self.datafolder)
+    def datagen(self, datafolder='proc', picts=True, **kwargs):
+        self.datafolder = datafolder
+        self._datapicts = picts
+        if not hasattr(self, 'calibration'):
+            try:
+                self.calibration = self.h5.pdh5.calibration
+            except:
+                print("No calibration DataFrame!")
+                return
+
+        if picts:
+            if os.path.isdir(self.datafolder) and self._clear_folder:
+                shutil.rmtree(self.datafolder)
+                os.mkdir(self.datafolder)
+            elif not os.path.isdir(self.datafolder):
+                os.mkdir(self.datafolder)
         
         mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File'])
         others_df = self.h5.pdh5.files[~mask]
         dicts = {}
+
         for idx, line in others_df.iterrows():
-            datadict = self._data_group_proc(line)
+            if not self._quiet:
+                print("Processing: {}".format(line['filename']))
+            gcms = self.h5.extract_gcms_data(line['filename']) 
+            datadict = self._data_group_proc((line, gcms))
             dicts[line['filename']] = datadict
+
         df = pd.DataFrame(dicts).T
         df.index.name = 'name'
         self.h5.pdh5['datacal'] = df
         self.h5.pdh5.flush()
 
-    def _data_group_proc(self, line):
-        if not self._quiet:
-            print("Processing: {}".format(line['filename']))
-
-        gcms = self.h5.extract_gcms_data(line['filename']) 
+    def _data_group_proc(self, linegcms):
+        line, gcms = linegcms
         data = {}
         for name, series in self.calibration.iterrows():
             integral = gcms.int_extract(name, series)
             conc = (integral - series['intercept'])/series['slope']
             data[name] = conc
-            self._data_plot(name, gcms, conc, series, line)
+            if self._datapicts:
+                self.dataplot(name, gcms, conc, folder=self.datafolder)
         return data
 
-    def _data_plot(self, name, gcms, conc, series, line):
+    def dataplot(self, name, gcmsfile, conc=None, folder='.', show=False,
+            save=True):
+        if isinstance(gcmsfile, str):
+            gcms = self.h5.extract_gcms_data(gcmsfile)
+        else:
+            gcms = gcmsfile
+
+        if not conc:
+            conc = self.h5.pdh5.datacal.loc[gcmsfile, name]
+
+        s = self.h5.pdh5.calibration.loc[name]
         cpdidx = gcms.ref_cpds.index(name)
         sim = gcms.int_sim[:,cpdidx]
 
-        start, stop = series['Start'], series['Stop']
+        start, stop = s.Start, s.Stop
         mask = (gcms.times > start) & (gcms.times < stop)
 
         fig = plt.figure()
@@ -151,8 +205,11 @@ class Calibrate(object):
         ax.plot(gcms.times[mask], sim[mask])
         ax.plot(gcms.times[mask], gcms.tic[mask], 'k', lw=1.5)
         ax.set_title('Concentration = {:.2f}'.format(conc))
-        fig.savefig(os.path.join(self.datafolder, 
-                line['name'] + '_' + name + '.png'), dpi=self._dpi)
+        if save:
+            fig.savefig(os.path.join(folder, gcms.shortname + '_' + name + '.png'),
+                    dpi=self._dpi)
+        if show:
+            plt.show()
         plt.close(fig)
 
     def close(self,):

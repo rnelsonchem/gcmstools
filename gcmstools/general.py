@@ -42,7 +42,8 @@ def get_sample_data(fname=None):
     
 
 def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
-        filetype='aia', reffile=None, fittype=None, **kwargs):
+        filetype='aia', reffile=None, fittype=None, calfile=None,
+        picts=False, **kwargs):
 
     if filetype == 'aia':
         GcmsObj = gcf.AiaFile
@@ -74,13 +75,14 @@ def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
             error += "Stop cluster with: ipcluster stop"
             print(error)
             h5.close()
-            sys.exit(1)
+            return 
+
         dview = client[:]
         dview.block = True
         dview['ref'] = ref
         dview['fit'] = fit
         dview['GcmsObj'] = GcmsObj
-        chunk_size == len(dview)
+        chunk_size = len(dview)
 
     # Chunk the data so lots of data files aren't opened in memory.
     for chunk in _chunker(files, chunk_size):
@@ -95,6 +97,11 @@ def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
                 fit(datafiles)
 
         h5.append_files(datafiles)
+
+    if calfile:
+        cal = gcc.Calibrate(h5, **kwargs)
+        cal.curvegen(calfile, picts=picts, **kwargs)
+        cal.datagen(picts=picts, **kwargs)
 
     h5.close()
 

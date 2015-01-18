@@ -21,6 +21,8 @@ setup(
         'netCDF4>=1.0.4',
         'tables>=3.1.1',
         'scipy>=0.14.0',
+        'pandas>=0.15.2',
+        'IPython>=2.3.1',
     ],
 
     package_data = {

@@ -142,6 +142,12 @@ class Calibrate(object):
     def datagen(self, datafolder='proc', picts=True):
         self.datafolder = datafolder
         self._datapicts = picts
+        if not hasattr(self, 'calibration'):
+            try:
+                self.calibration = self.h5.pdh5.calibration
+            except:
+                print("No calibration DataFrame!")
+                return
 
         if picts:
             if os.path.isdir(self.datafolder) and self._clear_folder:
@@ -174,14 +180,24 @@ class Calibrate(object):
             conc = (integral - series['intercept'])/series['slope']
             data[name] = conc
             if self._datapicts:
-                self._data_plot(name, gcms, conc, series, line)
+                self.dataplot(name, gcms, conc, folder=self.datafolder)
         return data
 
-    def _data_plot(self, name, gcms, conc, series, line):
+    def dataplot(self, name, gcmsfile, conc=None, folder='.', show=False,
+            save=True):
+        if isinstance(gcmsfile, str):
+            gcms = self.h5.extract_gcms_data(gcmsfile)
+        else:
+            gcms = gcmsfile
+
+        if not conc:
+            conc = self.h5.pdh5.datacal.loc[gcmsfile, name]
+
+        s = self.h5.pdh5.calibration.loc[name]
         cpdidx = gcms.ref_cpds.index(name)
         sim = gcms.int_sim[:,cpdidx]
 
-        start, stop = series['Start'], series['Stop']
+        start, stop = s.Start, s.Stop
         mask = (gcms.times > start) & (gcms.times < stop)
 
         fig = plt.figure()
@@ -189,8 +205,11 @@ class Calibrate(object):
         ax.plot(gcms.times[mask], sim[mask])
         ax.plot(gcms.times[mask], gcms.tic[mask], 'k', lw=1.5)
         ax.set_title('Concentration = {:.2f}'.format(conc))
-        fig.savefig(os.path.join(self.datafolder, 
-                line['name'] + '_' + name + '.png'), dpi=self._dpi)
+        if save:
+            fig.savefig(os.path.join(folder, gcms.shortname + '_' + name + '.png'),
+                    dpi=self._dpi)
+        if show:
+            plt.show()
         plt.close(fig)
 
     def close(self,):

@@ -55,20 +55,10 @@ class HDFStore(object):
 
     def extract_gcms_data(self, filename):
         '''Extract a data set from the HDF storage file.'''
-        # Find the file info that corresponds to the filename
-        mask = self.files['filename'].str.contains(filename)
-        info = self.files[mask]
-        # Check to make sure there aren't too many files selected.
-        # This would be very bad
-        if len(info) > 1:
-            print("Too many files with that name!")
-            return None
-        elif len(info) == 0:
-            print("No files with name {}".format(filename))
-        info = info.iloc[0]
+        name = self._name_fix(filename)
     
         # Find the group and info that corresponds to this file
-        group = getattr(self.data, info['name'])
+        group = getattr(self.data, name)
         gdict = group._v_attrs.gcmsinfo
     
         # Create a new file object
@@ -82,6 +72,8 @@ class HDFStore(object):
         # Add all the Numpy arrays back
         for child in group:
             setattr(gcms, child.name, child[:])
+
+        gcms.shortname = name
     
         return gcms
     

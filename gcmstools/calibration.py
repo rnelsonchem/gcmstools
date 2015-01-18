@@ -99,7 +99,7 @@ class Calibrate(object):
                 dpi=self._dpi)
         plt.close(fig)
             
-    def datagen(self, datafolder='proc', multiproc=False):
+    def datagen(self, datafolder='proc'):
         self.datafolder = datafolder
 
         if os.path.isdir(self.datafolder) and self._clear_folder:
@@ -112,13 +112,12 @@ class Calibrate(object):
         others_df = self.h5.pdh5.files[~mask]
         dicts = {}
 
-        if not multiproc:
-            for idx, line in others_df.iterrows():
-                if not self._quiet:
-                    print("Processing: {}".format(line['filename']))
-                gcms = self.h5.extract_gcms_data(line['filename']) 
-                datadict = self._data_group_proc((line, gcms))
-                dicts[line['filename']] = datadict
+        for idx, line in others_df.iterrows():
+            if not self._quiet:
+                print("Processing: {}".format(line['filename']))
+            gcms = self.h5.extract_gcms_data(line['filename']) 
+            datadict = self._data_group_proc((line, gcms))
+            dicts[line['filename']] = datadict
 
         df = pd.DataFrame(dicts).T
         df.index.name = 'name'

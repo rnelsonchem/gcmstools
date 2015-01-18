@@ -80,7 +80,7 @@ def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
         dview['ref'] = ref
         dview['fit'] = fit
         dview['GcmsObj'] = GcmsObj
-        chunk_size == len(dview)
+        chunk_size = len(dview)
 
     # Chunk the data so lots of data files aren't opened in memory.
     for chunk in _chunker(files, chunk_size):

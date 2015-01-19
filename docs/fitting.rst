@@ -165,7 +165,7 @@ Plotting the Fit
 ++++++++++++++++
 
 You can do a quick check of how the data looks using Matplotlib. More advanced
-examples are presented in Appendix B. The output of the commands below is
+examples are presented in :doc:`appendB`. The output of the commands below is
 shown in :num:`Figure #fitcheck`.
 
 .. code::

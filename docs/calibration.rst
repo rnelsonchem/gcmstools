@@ -18,6 +18,17 @@ can also be passed in on construction to open a different HDF file.
 
     In : # Or: cal = Calibrate('other.h5') if you have a different name
 
+Closing the HDF File
+++++++++++++++++++++
+
+In general, you will want to close the calibration file when you're done. This
+is not necessary, but it does ensure that the file gets properly recompressed,
+which saves some disk space.
+
+.. code::
+
+    In : cal.close() # Only do this when you're done
+
 Calibration Information File
 ----------------------------
 
@@ -154,9 +165,9 @@ of ways to get some plots of the calibration data.
 Integrating Data
 ++++++++++++++++
 
-Once the calibration curves have been generated, you can integrate all of the
-remaining data in the HDF file using the ``datagen`` method of the
-``Calibrate`` object.
+Generating calibration curves *does not* automatically process the other data
+files. In order to integrate and determine concentrations for all of the remaining
+data in the HDF file, use the ``datagen`` method of the ``Calibrate`` object.
 
 .. code:: 
 
@@ -179,6 +190,14 @@ saved to the HDF file.
     otherdata1                5475.778519    20.401981   ...
     otherdata2                4355.094930    19.171877   ...
     ...
+
+.. note::
+
+    Again, the data *ARE NOT* automatically integrated after generating
+    calibration curves. If you change your calibration information by
+    re-runing ``curvegen``, you must re-run ``datagen`` to apply these changes
+    to the other data sets contained in the HDF file.
+
 
 Plotting Integrals
 ++++++++++++++++++
@@ -211,3 +230,4 @@ plots of the integrals, there are a couple of methods.
    does provide a method to look at calibration data from an previously
    processed HDF file without rerunning the calibration and data integration
    functions.
+

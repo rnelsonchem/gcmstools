@@ -12,6 +12,9 @@ access of this file is controlled using a combination of two Python libraries:
 file types, and Pandas is a very powerful package for working with tabular
 data. Both of these project have extensive documentation on their use.
 
+Create Container
+----------------
+
 A *gcmstools* ``HDFStore`` object can be created without any arguments, and in
 this case, it automatically creates a file called "data.h5". If this file
 already exists, it will open that file for appending or modification. If you
@@ -25,6 +28,9 @@ name as the first argument to the object creation.
     In : h5 = HDFStore()
 
     In : # Or: h5 = HDFStore('data.h5') or whatever file name you'd like
+
+Adding Data
+-----------
 
 Added files to this storage container can be done with the ``append_files``
 method, which can take either a single data object or a list of objects, if
@@ -40,6 +46,9 @@ you have many objects to add at one time.
     HDF Appending: otherdata2.CDF
 
 .. _procfiles:
+
+Viewing the File List
+---------------------
 
 You can see a list of the files that are stored in this file by viewing the
 ``files`` attribute, which is a Pandas DataFrame. 
@@ -64,6 +73,9 @@ addition, if "filename" starts with a number, the prefix "num" is added to
 you will run into problems. However, if you're file naming system does not
 produce unique filenames for different data sets, you will most certainly have
 more problems than just using these programs. 
+
+Extracting Stored Data
+----------------------
 
 You can extract data from the storage file using the ``extract_gcms_data``
 method. This function takes one argument which is the name of the dataset that
@@ -123,4 +135,13 @@ To view these tables, just append the table name after ``pdh5``.
     phenol         0.000030   726.257380  
     ...
 
+Closing the File
+----------------
 
+In general, you will want to close the HDF file when you're done. This is not
+necessary, but it does ensure that the file gets properly recompressed, which
+saves some disk space.
+
+.. code::
+
+    In : cal.close() # Only do this when you're done

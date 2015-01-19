@@ -18,4 +18,5 @@ Currently, this package implements the following:
 
 
 .. _online user guide: http://gcmstools.rcnelson.com/
-.. _available as a pdf: https://github.com/rnelsonchem/gcmstools/blob/master/gcmstools.pdf?raw=true)
+.. _available as a pdf: https://github.com/rnelsonchem/gcmstools/blob
+        /master/gcmstools.pdf?raw=true

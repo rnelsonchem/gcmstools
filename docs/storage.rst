@@ -39,6 +39,8 @@ you have many objects to add at one time.
     HDF Appending: otherdata1.CDF
     HDF Appending: otherdata2.CDF
 
+.. _procfiles:
+
 You can see a list of the files that are stored in this file by viewing the
 ``files`` attribute, which is a Pandas DataFrame. 
 

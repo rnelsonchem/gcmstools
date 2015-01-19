@@ -11,8 +11,8 @@ from gcmstools.datastore import HDFStore
 
 
 class Calibrate(object):
-    def __init__(self, h5name, clear_folder=True, quiet=False, dpi=100, 
-            **kwargs):
+    def __init__(self, h5name='data.h5', clear_folder=True, quiet=False,
+            dpi=100, **kwargs):
         self._quiet = quiet
         self._clear_folder = clear_folder
         self._dpi = dpi
@@ -22,7 +22,7 @@ class Calibrate(object):
         else:
             self.h5 = h5name
         
-    def curvegen(self, calfile, calfolder='cal', picts=True, **kwargs):
+    def curvegen(self, calfile, calfolder='cal', picts=False, **kwargs):
         self.calfolder = calfolder
         self.calfile = calfile
         self._calpicts = picts
@@ -34,7 +34,7 @@ class Calibrate(object):
             elif not os.path.isdir(self.calfolder):
                 os.mkdir(self.calfolder)
 
-        self.calinput = pd.read_csv(self.calfile)
+        self.calinput = pd.read_csv(self.calfile, comment='#')
         gb = self.calinput.groupby('Compound')
         all_calibration_data = []
         for group in gb:
@@ -139,7 +139,7 @@ class Calibrate(object):
             plt.show()
         plt.close(fig)
             
-    def datagen(self, datafolder='proc', picts=True, **kwargs):
+    def datagen(self, datafolder='proc', picts=False, **kwargs):
         self.datafolder = datafolder
         self._datapicts = picts
         if not hasattr(self, 'calibration'):
@@ -165,11 +165,12 @@ class Calibrate(object):
                 print("Processing: {}".format(line['filename']))
             gcms = self.h5.extract_gcms_data(line['filename']) 
             datadict = self._data_group_proc((line, gcms))
-            dicts[line['filename']] = datadict
+            dicts[line['name']] = datadict
 
         df = pd.DataFrame(dicts).T
         df.index.name = 'name'
         self.h5.pdh5['datacal'] = df
+        self.datacal = self.h5.pdh5.datacal
         self.h5.pdh5.flush()
 
     def _data_group_proc(self, linegcms):

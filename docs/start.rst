@@ -33,8 +33,9 @@ This user guide is broken into a few sections.
    interface and running Python commands from an IPython interpreter. This
    section covers some of the basics.
 
-#. Appendix B: Examples. Basic data extraction and plotting examples are
-   presented.
+#. :doc:`Appendix B <appendB>`: Examples. Basic data extraction and plotting
+   examples are presented. Check out this section if you want some ideas about
+   processing, plotting, or extracting data.
 
     
 .. _GitHub: https://github.com/rnelsonchem/gcmstools

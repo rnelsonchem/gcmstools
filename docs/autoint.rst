@@ -95,7 +95,7 @@ A complete version of this processing command might look like the following.
     ...
 
 The HDF file "data.h5" contains all of your data. See the :doc:`storage`,
-:doc:`calibration` documentation and Appendix B for more information on how to
+:doc:`calibration` documentation and :doc:`appendB` for more information on how to
 view and plot these data.
 
 

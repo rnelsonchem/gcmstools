@@ -21,6 +21,7 @@ gcmstools Documentation
     calibration
     autoint
     appendA
+    appendB
 
 .. Remove the indices and tables section
     Indices and tables

@@ -23,10 +23,10 @@ This user guide is broken into a few sections.
 #. :doc:`Calibration <calibration>`: Make a calibration file and use this to extract
    generate concentration information from your data. 
 
-#. :doc:`Batch Processing <autoint>`: Covers a simple function for automating
-   this entire process. You can skip to this final sections if all you want to
-   do is automate some data extractions. It is not necessary to understand the
-   basics of data manipulation/plotting.
+#. :doc:`Batch Processing <autoint>`: Introduces a simple function for
+   automating this entire process. You can skip to this section if all you
+   want to do is automate some data extractions. It is not necessary to
+   understand the basics of data manipulation/plotting.
 
 #. :doc:`Appendix A <appendA>`: Command line basics.The examples presented in
    this document require a basic working knowledge of a command-line terminal

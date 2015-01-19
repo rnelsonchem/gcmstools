@@ -81,7 +81,46 @@ object type as you stored originally.
 Several other tables are added to this file when you run data calibration,
 which is outlined in the next section.
 
-
 .. _HDF file: http://www.hdfgroup.org/HDF5/
 .. _PyTables: http://www.pytables.org/moin 
 .. _Pandas: http://pandas.pydata.org/
+
+
+Stored Data Tables
+------------------
+
+The data file may contain a number of data tables with information about the
+files, calibration, etc. These data tables are stored as Pandas DataFrames,
+and a list of currently available tables can be obtained from the ``pdh5``
+attribute of the ``HDFStore`` object.
+
+.. code::
+
+    In : h5.pdh5
+    Out: 
+    <class 'pandas.io.pytables.HDFStore'>
+    File path: data.h5
+    /calibration            frame        (shape->[6,8]) 
+    /calinput               frame        (shape->[30,9])
+    /datacal                frame        (shape->[49,6])
+    /files                  frame        (shape->[1,2]) 
+
+To view these tables, just append the table name after ``pdh5``.
+
+.. code::
+
+    In : h5.pdh5.calibration
+    Out: 
+                   Start  Stop  Standard         slope      intercept         r  \
+    Compound                                                                      
+    benzene          2.9   3.5       NaN  38629.931565 -367129.586850  0.998767   
+    phenol          14.6  15.1       NaN  30248.192619   65329.897933  0.999136   
+    ...
+
+                          p       stderr  
+    Compound                              
+    benzene        0.000052  1108.344872  
+    phenol         0.000030   726.257380  
+    ...
+
+

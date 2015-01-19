@@ -7,7 +7,7 @@ import tables as tb
 import gcmstools.filetypes as gcf
 
 class HDFStore(object):
-    def __init__(self, hdfname, quiet=False, **kwargs):
+    def __init__(self, hdfname='data.h5', quiet=False, **kwargs):
         self._quiet = quiet
         self.hdfname = hdfname
         # Open the HDF file with pandas
@@ -142,7 +142,10 @@ class HDFStore(object):
         '''
         pth, badname = os.path.split(badname_path)
         sp = badname.split('.')
-        nosuffix = '_'.join(sp[:-1])
+        if len(sp) > 1:
+            nosuffix = '_'.join(sp[:-1])
+        else:
+            nosuffix = sp[0]
         nohyp = nosuffix.replace('-', '_')
         nospace = nohyp.replace(' ', '_')
         if nospace[0].isdigit():

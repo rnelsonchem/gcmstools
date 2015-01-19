@@ -13,8 +13,12 @@ This user guide is broken into a few sections.
 #. :doc:`Basic Usage <basics>`: This section covers the usage of *gcmstools*
    to manipulate and plot GCMS data. 
 
-#. :doc:`Referenceing and Fitting <fitting>`: Incorportate refernce data into your
+#. :doc:`Referenceing and Fitting <fitting>`: Incorporate reference data into your
    GCMS data set, and use this to manually fit the GCMS data set.   
+
+#. :doc:`Data Storage <storage>`: Create a storage container for your
+   processed GCMS datasets. This provides a convenient storage container for
+   your data, and is necessary for the next step in the process.
 
 #. :doc:`Calibration <calibration>`: Make a calibration file and use this to extract
    generate concentration information from your data. 

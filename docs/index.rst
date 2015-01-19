@@ -17,6 +17,7 @@ gcmstools Documentation
     install
     basics
     fitting
+    storage
     calibration
     autoint
     appendA

@@ -5,9 +5,10 @@ Calibration Object
 ------------------
 
 The calibration class ``Calibrate`` is defined in the
-``gcmstools.calibration`` module. This object must have access to an HDF
-storage file that contains *all* of your data to be processed. The default
-object creationg tries to open a file "data.h5"; however, an alternate name
+``gcmstools.calibration`` module. Before you start, you must have access to an
+HDF storage file that contains *all* of the data to be processed. By default,
+the ``Calibrate`` instance creation attempts to open a file "data.h5" in the
+current folder. If this is not the name of your HDF file, an alternate name
 can also be passed in on construction to open a different HDF file. 
 
 .. code::
@@ -16,14 +17,16 @@ can also be passed in on construction to open a different HDF file.
 
     In : cal = Calibrate() # Opens 'data.h5' by default
 
-    In : # Or: cal = Calibrate('other.h5') if you have a different name
+    # Equivalent to above, but using a different file name
+    In : cal = Calibrate('other.h5') 
 
 Closing the HDF File
 ++++++++++++++++++++
 
 In general, you will want to close the calibration file when you're done. This
-is not necessary, but it does ensure that the file gets properly recompressed,
-which saves some disk space.
+is not necessary, but it does ensure that the file gets properly compressed,
+which saves some disk space. If you don't do this, though, it won't hurt
+anything.
 
 .. code::
 
@@ -32,7 +35,7 @@ which saves some disk space.
 Calibration Information File
 ----------------------------
 
-In order to integrate your GCMS data, you must first create a csv file
+In order to calibrate your GCMS data, you must first create a csv file
 containing all of the relevant calibration information. Again, the structure
 of this file is very important, so an example, "calibration.csv", is contained
 with the sample data.
@@ -48,23 +51,22 @@ The first row in this csv file is critical, and it must look like this::
     Compound,File,Concentration,Start,Stop,Standard,Standard Conc
 
 Each row after this describes a set of calibration information that you'd like
-to use for The columns of this file are as follows:
+to use. The columns of this file are as follows:
 
 * *Compound*: The name of the compound that you are calibrating. This *must*
   correspond to one of the compound names (case-sensitive) used when
   referencing and fitting the GCMS file. See the :doc:`relevant page
   <fitting>` for more information.
 
-* *File*: This is the name of the data set that you'll use for this compound
-  at a particular, known concentration. Again, this filename can be the full
-  filename (with or without the path) or the simplified name. See the
-  :ref:`files attribute <procfiles>` section of the HDFStore docs for more
-  info.
+* *File*: This is the name of the data set that was collected at a particular
+  concentration of *Compound*. Again, this filename can be the full filename
+  (with or without the path) or the simplified name. See the :ref:`files
+  attribute <procfiles>` section of the HDFStore docs for more info.
 
-* *Concentration*: This is the concentration of *Compound* in *File*. This
-  should only be a number. Do not include units. All of the concentrations
+* *Concentration*: This is the known concentration of the  *Compound*. This
+  should only be a number: do not include units. All of the concentrations
   should be in the same units, and keep in mind that all calibration and
-  integration data will then be in that same unit of measurement. 
+  concentration data will then be in that same unit of measurement. 
 
 * *Start* and *Stop*: These are the integration range start and stop times in
   minutes. Again use only numbers, no units.

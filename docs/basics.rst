@@ -6,9 +6,9 @@ Basics of working with GCMS data files
 Set up the processing environment
 ---------------------------------
 
-In these examples, we will run *gcmstools* form a :ref:`terminal IPython
-<ipython>` session in a folder "gcms", which is located in your home
-directory.
+In these examples, we will run *gcmstools* from a terminal IPython session in
+a folder "gcms", which is located in your home directory. Basic information
+about using the terminal and IPython is found in :doc:`appendA`.
 
 .. code::
 
@@ -37,8 +37,7 @@ function.
     In : get_sample_data()
 
 This invocation copies all of the example files to the current directory.
-Individual file names can be passed to this function, if you only want a few
-data files.
+Individual files can be downloaded by passing the name to this function.
 
 .. code::
 
@@ -58,18 +57,12 @@ the file is not located in the current directory.
 AIA Files
 ---------
 
-`AIA, ANDI, or CDF`_ are all related types of standard GCMS files that are all
+`AIA, ANDI, or CDF`_ are all related types of standard GCMS files that are
 `derived from`_ the Network Common Data Format (`netCDF`_). They may have
 the file extension "AIA" or "CDF". This file type may not be the default for
 your instrument, so consult the documentation for your GCMS software to
 determine how to export your data in these formats. 
 
-.. _AIA, ANDI, or CDF: http://en.wikipedia.org/wiki/
-    Mass_spectrometry_data_format#ANDI-MS_or_netCDF
-.. _derived from: https://www.unidata.ucar.edu/support/
-    help/MailArchives/netcdf/msg05748.html
-.. _netCDF: http://en.wikipedia.org/wiki/NetCDF
-  
 To import this type of data, use the ``AiaFile`` object, which is located in
 the ``gcmstools.filetypes`` module.
 
@@ -77,14 +70,25 @@ the ``gcmstools.filetypes`` module.
 
     In : from gcmstools.filetype import AiaFile 
 
+.. note::
+
+    Currently, *gcmstools* can only process CDF version 3 files using
+    ``scipy.io.netcdf`` library. Version 4 support could be available upon
+    request.
+
+.. _AIA, ANDI, or CDF: http://en.wikipedia.org/wiki/
+    Mass_spectrometry_data_format#ANDI-MS_or_netCDF
+.. _derived from: https://www.unidata.ucar.edu/support/
+    help/MailArchives/netcdf/msg05748.html
+.. _netCDF: http://en.wikipedia.org/wiki/NetCDF
+  
 Read a Data File
 ----------------
 
-First of all, you will need to import a file reader from
-``gcmstools.filetypes`` module. In this example, we'll use the AIA file
-reader, ``AiaFile``; however, the results should be identical with other
-readers. To read a file, you can create a new instance of this object with a
-filename given as a string. 
+File readers are imported from the ``gcmstools.filetypes`` module. In this
+example, we'll use the AIA file reader, ``AiaFile``; however, the results
+should be identical with other readers. To read a file, you can create a new
+instance of this object with a filename given as a string. 
 
 .. code::
 
@@ -99,11 +103,11 @@ its contents using :ref:`tab completion <ipytab>` in IPython.
 .. code::
 
     In: data.<tab>
-    data.filename   data.intensity    data.tic    data.index  data.masses 
-    data.filetype  data.int_extract  data.index  data.times
+    data.filename   data.intensity    data.tic    data.masses 
+    data.filetype   data.int_extract  data.index  data.times
 
 Most of these attributes are data that describe our dataset. You can inspect
-these attributes very easily in IPython by just typing the name at the prompt.
+these attributes by typing the name at the IPython prompt.
 
 .. code::
 
@@ -120,27 +124,29 @@ these attributes very easily in IPython by just typing the name at the prompt.
 
 This is a short description of these initial attributes:
 
-* *filename*: This is the name of the file that you imported.
+* *filename*: String. This is the name of the file that you imported.
 
-* *times*: A Numpy array of the times that each MS was collected.
+* *times*: A 1D Numpy array of the elution time points. 
 
-* *tic*: A Numpy array of the total ion chromatogram intensities.
+* *tic*: A 1D Numpy array of the total ion chromatogram (TIC) intensity
+  values.
 
-* *masses*: A Numpy array the masses that cover the data collected by the MS.
+* *masses*: A 1D Numpy array the m/z values for the data collected by the MS.
 
-* *intensity*: This is the 2D Numpy array of raw MS intensity data. The
-  columns correspond to the masses in the ``masses`` array and the rows
-  correspond to the times in the ``times`` array. 
+* *intensity*: This is the 2D Numpy array of raw MS intensity data. The rows
+  correspond to the times in the ``times`` array, and the columns correspond
+  to the masses in the ``masses`` array. Shape(length of times, length of
+  masses) 
 
-* *filetype*: This is the type of file importer that was used.
+* *filetype*: String. This is the type of file importer that was used.
 
-The *index* and *int_extract* methods are used for finding the indices from an
-array and extracting integrals, respectively. Their usage is described later.
+The *index* method is used for finding the indices from an array. Its usage is
+explained by example in :doc:`appendB`.
 
 Simple plotting
 ---------------
 
-Now that we've opened a GCMS data set. We can easily visualize these data
+Now that we've opened a GCMS data set, we can easily visualize these data
 using the plotting package Matplotlib. As an example, let's try plotting the
 total ion chromatogram. In this case, ``data.times`` will be our "x-axis"
 data, and ``data.tic`` will be our "y-axis" data.
@@ -155,25 +161,27 @@ data, and ``data.tic`` will be our "y-axis" data.
 
     In: plt.show()
 
-This produces a pop-up window with an interactive plot, :num:`Figure
-#ticplot`.  (This should happen fairly quickly. However, sometimes the plot
-window appears behind the other windows, which makes it seem like things are
-stuck. Be sure to scroll through your windows to find it.) The buttons at the
-top of the window give you some interactive control of the plot. See the
-`Matplotlib documentation`_ for more information.
+This produces a interactive plot window shown in :num:`Figure #ticplot`.
+(This should happen fairly quickly. However, sometimes the plot window appears
+behind the other windows, which makes it seem like things are stuck. Be sure
+to scroll through your windows to find it.) The buttons at the top of the
+window give you some interactive control of the plot. See the `Matplotlib
+documentation`_ for more information.
 
 .. _ticplot:
 
-.. figure:: _static/images/tic.png
+.. figure:: ./images/tic.png
     :width: 3.5in
     
     Total ion chromatogram.
 
 One drawback here is that you have to type these commands every time you want
-to see this plot. There is another alternative, though. You can also put all
-of these commands into a text file and run it with Python directly. Copy the
-following code into a plain text file called "tic\_plot.py". (See
-:ref:`textfiles` for more information on making Python program files.) 
+to see this plot. Alternatively, you can put all of these commands into a text
+file and run it with Python directly. Copy the following code into a plain
+text file called "tic\_plot.py". (See :ref:`textfiles` for more information on
+making Python program files.) Note: It is common practice to do all imports at
+the top of a Python program. That way it is clear exactly what code is being
+brought into play. 
 
 .. code::
 
@@ -184,11 +192,9 @@ following code into a plain text file called "tic\_plot.py". (See
     plt.plot(data.times, data.tic)
     plt.show()
 
-It is common practice to do all imports at the top of a Python program. That
-way it is clear exactly what code is being brought into play. Run this new
-file using the ``python`` command from the terminal. Again, the plot window
-will appear, but you will not be able to work in the terminal until you close
-this window. 
+Run this new file using the ``python`` command from the terminal. The plot
+window will appear, and you can interact with the data. However, you will not
+be able to work in the terminal again until you close this window. 
 
 .. code:: 
 
@@ -196,8 +202,8 @@ this window.
 
 Alternatively, you can run this program directly from IPython.  This has the
 advantage that once the window is closed, you are dropped back into an IPython
-session that "remembers" all of the variables and imports that you created in
-your program file. See :doc:`Appendix A <appendA>` for more information here.
+session that "remembers" all of the variables and imports from your program
+file. See :doc:`Appendix A <appendA>` for more information here.
 
 .. code::
 
@@ -239,9 +245,9 @@ the plot to see the differences.)
 
 .. _twotic:
 
-.. figure:: _static/images/tic2.png
+.. figure:: ./images/tic2.png
     :width: 3.5in
     
-    Two tic plotted together
+    Two TIC plotted together.
 
 

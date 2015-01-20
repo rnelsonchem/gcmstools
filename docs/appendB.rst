@@ -84,7 +84,7 @@ Or by reading out a data file from a HDF storage file::
 
     In : h5 = HDFStore('data.h5')
 
-    In : data = h5.extract_gcms_data('datasample1')
+    In : data = h5.extract_data('datasample1')
 
 *Step 2: Optional*
 
@@ -144,7 +144,7 @@ You should see something like the plot in :num:`Figure #singlems`.
 
 .. _singlems:
 
-.. figure:: _static/images/singlems.png
+.. figure:: ./images/singlems.png
     :width: 3.5 in
 
     The MS of octane plotted from our sample data set. In this case, the plot
@@ -185,7 +185,7 @@ Or from the HDF file.
 
     In : h5 = HDFStore('data.h5')
 
-    In : data = h5.extract_gcms_data('datasample1.CDF')
+    In : data = h5.extract_data('datasample1.CDF')
 
 *Step 2* 
 
@@ -249,7 +249,7 @@ width of the bars. The resulting plot is show in :num:`Figure #sidebyside`.
 
 .. _sidebyside:
 
-.. figure:: _static/images/sidebyside.png
+.. figure:: ./images/sidebyside.png
     :width: 3.5in
 
     A side-by-side MS plot. This has been zoomed in to highlight the important
@@ -274,7 +274,7 @@ data sets. The resulting plot is shown in :num:`Figure #updownms`.
 
 .. _updownms:
 
-.. figure:: _static/images/updownms.png
+.. figure:: ./images/updownms.png
     :width: 3.5in
 
     A Up-Down MS plot. This has been zoomed in to highlight the important
@@ -298,7 +298,7 @@ resulting plot is shown in :num:`Figure #diffms`.
 
 .. _diffms:
 
-.. figure:: _static/images/diffms.png
+.. figure:: ./images/diffms.png
     :width: 3.5in
 
     A difference mass spectrum plot. This has been zoomed in to highlight the
@@ -327,16 +327,16 @@ Bar Plot
 ++++++++
 
 In this case, we need to do a little Numpy index magic. Remember that the
-fitting generate a ``fit`` array. These are the least-squares coefficients at
-every data point. This is a 2D array with shape (# of time points, # of
-reference compounds). We will use our time index (``idx``) and our reference
-index (``refidx``) to select out one least-squares coefficient and then
-multiply this by our reference mass spectrum. The final plot window is shown
-in :num:`Figure #fitms`.
+fitting generate a ``fit_coef`` array. These are the least-squares
+coefficients at every data point. This is a 2D array with shape (# of time
+points, # of reference compounds). We will use our time index (``idx``) and
+our reference index (``refidx``) to select out one least-squares coefficient
+and then multiply this by our reference mass spectrum. The final plot window
+is shown in :num:`Figure #fitms`.
 
 .. code::
 
-    In : fitspec = data.fits[idx, refidx]*data.ref_array[refidx]
+    In : fitspec = data.fit_coef[idx, refidx]*data.ref_array[refidx]
 
     In : plt.bar(data.masses, data.intensity[idx], width=0.5, fc='b')
     Out: <Container object of 462 artists>
@@ -348,7 +348,7 @@ in :num:`Figure #fitms`.
 
 .. _fitms:
 
-.. figure:: _static/images/fitms.png
+.. figure:: ./images/fitms.png
     :width: 3.5in
 
     A side-by-side MS plot of the sample data versus the fitted data for
@@ -365,7 +365,7 @@ as a solid black line (``'k-'``). This plot window is shown in :num:`Figure
 
 .. code::
 
-    In : fitspec = data.fits[idx, refidx]*data.ref_array[refidx]
+    In : fitspec = data.fit_coef[idx, refidx]*data.ref_array[refidx]
 
     In : plt.plot(data.intensity[idx], fitspec, 'o')
     [<matplotlib.lines.Line2D at 0x7f34>]
@@ -377,7 +377,7 @@ as a solid black line (``'k-'``). This plot window is shown in :num:`Figure
 
 .. _dotplot:
 
-.. figure:: _static/images/dotplot.png
+.. figure:: ./images/dotplot.png
     :width: 3.5in
 
     A dot plot comparing the sample data versus the fitted data for benzene. A
@@ -398,7 +398,7 @@ contained in the sample data folder along with a copy of the PDF output
 
 .. _fancyms:
 
-.. figure:: _static/images/fancy_plot.png
+.. figure:: ./images/fancy_plot.png
     :width: 5.5in
 
     A fancy plot comparing the sample data (blue) and the fitted data (red)

@@ -1,5 +1,8 @@
 NAME:phenol
+START:14.6
+STOP:15.1
 ID_NUM:JP001317
+FROM:www.massbank.jp
 NUM PEAKS:
   27 2.62 26
   37 3.26 33
@@ -23,9 +26,10 @@ NUM PEAKS:
   93 1.64 16
   94 99.99 999
   95 6.07 61
-FROM:www.massbank.jp
 
 NAME:octane
+START:7.0
+STOP:7.6
 FROM:www.massbank.jp
 ID_NUM: JP004695
 NUM PEAKS:
@@ -55,6 +59,8 @@ NUM PEAKS:
   114 12.48 125
 
 NAME:benzene
+START:2.9
+STOP:3.5
 NUM PEAKS:
   36 1.82 18
   37 6.5 65
@@ -77,6 +83,8 @@ NUM PEAKS:
   79 7.4 74
 
 NAME:cyclohexane
+START:2.9
+STOP:3.5
 NUM PEAKS:
   27 11.09 111
   28 12.66 127
@@ -99,6 +107,8 @@ NUM PEAKS:
   85 3.05 31
 
 NAME:cyclohexanol
+START:10.5
+STOP:11.5
 NUM PEAKS:
   15 1.29 13
   18 7.09 71
@@ -137,6 +147,8 @@ NUM PEAKS:
   100 3.16 32
 
 NAME:cyclohexanone
+START:10.5
+STOP:12.
 NUM PEAKS:
   27 3.2 32
   28 4.4 44
@@ -160,6 +172,8 @@ NUM PEAKS:
   99 3.8 38
 
 NAME:cyclohexene
+START:3.2
+STOP:3.8
 NUM PEAKS:
   15 1.2 12
   26 3.29 33

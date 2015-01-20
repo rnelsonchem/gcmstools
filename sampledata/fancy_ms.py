@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from gcmstools.datastore import HDFStore
 
 h5 = HDFStore('data.h5')
-data = h5.extract_gcms_data('datasample1')
+data = h5.extract_data('datasample1')
 h5.close()
 
 refcpd = 'benzene'
@@ -12,7 +12,7 @@ refidx = data.ref_cpds.index(refcpd)
 time = 3.07
 idx = data.index(data.times, time)
 
-fitspec = data.fits[idx, refidx]*data.ref_array[refidx]
+fitspec = data.fit_coef[idx, refidx]*data.ref_array[refidx]
 dataspec = data.intensity[idx]
 
 ### This is all the plotting stuff

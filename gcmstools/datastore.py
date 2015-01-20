@@ -53,7 +53,7 @@ class HDFStore(object):
 
         self.pdh5.flush()
 
-    def extract_gcms_data(self, filename):
+    def extract_data(self, filename):
         '''Extract a data set from the HDF storage file.'''
         name = self._name_fix(filename)
     

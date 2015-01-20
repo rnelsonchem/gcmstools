@@ -110,22 +110,11 @@ class AiaFile(GcmsFile):
 
         self.tic = self.intensity.sum(axis=1)
 
-    def int_extract(self, name, series):
+    def _int_extract(self, name, start, stop):
+        '''Integrate the simulated data over a given range.'''
         cpdidx = self.ref_cpds.index(name)
-        std = series['Standard']
-        has_std = isinstance(std, str) and not std.isspace()
-        if has_std:
-            stdidx = self.ref_cpds.index(std)
-
-        start = series['Start']
-        stop = series['Stop']
         startidx, stopidx = self.index(self.times, start, stop)
-        cpdint = self.int_cum[stopidx, cpdidx] - self.int_cum[startidx, cpdidx]
-        if has_std:
-            stdint = self.int_cum[stopidx, stdidx] - \
-                    self.int_cum[startidx, stdidx]
-            cpdint = cpdint/stdint
-
+        cpdint = self.fit_csum[stopidx, cpdidx] - self.fit_csum[startidx, cpdidx]
         return cpdint
 
 

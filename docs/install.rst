@@ -13,7 +13,6 @@ complete list of packages and minium versions:
 * Matplotlib >= 1.4.2
 * Pandas >=0.15.2
 * IPython >=2.3.1
-* netCDF4 >=1.0.4
 * PyTables >=3.1.1
 * Scipy >=0.14.0
 * Sphinx >=1.2.2 (Optional for documentation.)
@@ -49,12 +48,6 @@ documentation, it will be assumed that your are using Anaconda.
     "activated" before running the commands in this document. (See the
     Anaconda documentation for more information on the activation process.)
     
-.. note::
- 
-    On Windows, Anaconda may not install netCDF4. In this case, you can get a
-    prebuilt installer from `Christoph Gohlke`_; be sure to get the Python 3.4
-    ("cp34") 64-bit ("amd64") build for the most recent version. 
-
 Learning the usage of all of these Python packages is far beyond the scope of
 this document. However, excellent documentation for most of the packages as
 well as full tutorials are `easily discovered`_.

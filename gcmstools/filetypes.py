@@ -1,7 +1,7 @@
 import itertools as it
 
 import numpy as np
-import netCDF4 as cdf
+import scipy.io.netcdf as cdf
 import pandas as pd
 
 
@@ -54,7 +54,7 @@ class AiaFile(GcmsFile):
         return x[0]
 
     def _file_proc(self, ):
-        data = cdf.Dataset(self.filename)
+        data = cdf.netcdf_file(self.filename, mmap=False)
 
         points = data.variables['point_count'][:]
 

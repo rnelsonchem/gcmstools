@@ -193,7 +193,7 @@ shown in :num:`Figure #fitcheck`.
 
 .. _fitcheck:
 
-.. figure:: _static/images/fitcheck.png
+.. figure:: ./images/fitcheck.png
     :width: 3.5in
     
     An interactive check of our fit. This has been zoomed in a little to

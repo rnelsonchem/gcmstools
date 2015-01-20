@@ -164,7 +164,7 @@ top of the window give you some interactive control of the plot. See the
 
 .. _ticplot:
 
-.. figure:: _static/images/tic.png
+.. figure:: ./images/tic.png
     :width: 3.5in
     
     Total ion chromatogram.
@@ -239,7 +239,7 @@ the plot to see the differences.)
 
 .. _twotic:
 
-.. figure:: _static/images/tic2.png
+.. figure:: ./images/tic2.png
     :width: 3.5in
     
     Two tic plotted together

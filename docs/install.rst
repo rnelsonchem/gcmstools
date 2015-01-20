@@ -85,7 +85,7 @@ this package wherever you'd like.
 
 .. _gitzip:
 
-.. figure:: ./_static/images/git_zip.png
+.. figure:: ./images/git_zip.png
     
     The zipfile download button.
 

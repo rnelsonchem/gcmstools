@@ -144,7 +144,7 @@ You should see something like the plot in :num:`Figure #singlems`.
 
 .. _singlems:
 
-.. figure:: _static/images/singlems.png
+.. figure:: ./images/singlems.png
     :width: 3.5 in
 
     The MS of octane plotted from our sample data set. In this case, the plot
@@ -249,7 +249,7 @@ width of the bars. The resulting plot is show in :num:`Figure #sidebyside`.
 
 .. _sidebyside:
 
-.. figure:: _static/images/sidebyside.png
+.. figure:: ./images/sidebyside.png
     :width: 3.5in
 
     A side-by-side MS plot. This has been zoomed in to highlight the important
@@ -274,7 +274,7 @@ data sets. The resulting plot is shown in :num:`Figure #updownms`.
 
 .. _updownms:
 
-.. figure:: _static/images/updownms.png
+.. figure:: ./images/updownms.png
     :width: 3.5in
 
     A Up-Down MS plot. This has been zoomed in to highlight the important
@@ -298,7 +298,7 @@ resulting plot is shown in :num:`Figure #diffms`.
 
 .. _diffms:
 
-.. figure:: _static/images/diffms.png
+.. figure:: ./images/diffms.png
     :width: 3.5in
 
     A difference mass spectrum plot. This has been zoomed in to highlight the
@@ -348,7 +348,7 @@ in :num:`Figure #fitms`.
 
 .. _fitms:
 
-.. figure:: _static/images/fitms.png
+.. figure:: ./images/fitms.png
     :width: 3.5in
 
     A side-by-side MS plot of the sample data versus the fitted data for
@@ -377,7 +377,7 @@ as a solid black line (``'k-'``). This plot window is shown in :num:`Figure
 
 .. _dotplot:
 
-.. figure:: _static/images/dotplot.png
+.. figure:: ./images/dotplot.png
     :width: 3.5in
 
     A dot plot comparing the sample data versus the fitted data for benzene. A
@@ -398,7 +398,7 @@ contained in the sample data folder along with a copy of the PDF output
 
 .. _fancyms:
 
-.. figure:: _static/images/fancy_plot.png
+.. figure:: ./images/fancy_plot.png
     :width: 5.5in
 
     A fancy plot comparing the sample data (blue) and the fitted data (red)

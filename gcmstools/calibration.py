@@ -60,7 +60,7 @@ class Calibrate(object):
         for idx, series in df.iterrows():
             filename = series['File']
             gcms = self.h5.extract_gcms_data(filename)
-            integrals.append(gcms.int_extract(name, series))
+            integrals.append(gcms._int_extract(name, series))
 
         conc = df['Concentration']
         integrals = np.array(integrals)
@@ -177,7 +177,7 @@ class Calibrate(object):
         line, gcms = linegcms
         data = {}
         for name, series in self.calibration.iterrows():
-            integral = gcms.int_extract(name, series)
+            integral = gcms._int_extract(name, series)
             conc = (integral - series['intercept'])/series['slope']
             data[name] = conc
             if self._datapicts:

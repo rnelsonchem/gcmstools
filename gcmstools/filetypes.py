@@ -110,7 +110,7 @@ class AiaFile(GcmsFile):
 
         self.tic = self.intensity.sum(axis=1)
 
-    def int_extract(self, name, series):
+    def _int_extract(self, name, series):
         cpdidx = self.ref_cpds.index(name)
         std = series['Standard']
         has_std = isinstance(std, str) and not std.isspace()

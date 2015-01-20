@@ -7,8 +7,8 @@ Installation
 complete list of packages and minium versions:
 
 * Python >=3.4 (2.x versions not supported any longer)
-* Pip >=6.0.6 (might be part of new Python releases)
-* Setuptools >=11.3.1 (might be part of newer Python releases)
+* Pip >=6.0.6 (might be part of newer Python releases)
+* Setuptools >=11.3.1 
 * Numpy >=1.9.1 
 * Matplotlib >= 1.4.2
 * Pandas >=0.15.2
@@ -21,8 +21,8 @@ complete list of packages and minium versions:
   * numfig is a Sphinx extenstion that is needed to autonumber figures
     references in the docuementation.
 
-IPython also provides a very useful advanced interactive Python interpreter,
-and examples in this documentation assume that you are using this environment.
+IPython is also a very useful advanced interactive Python interpreter.
+Examples in this documentation assume that you are using this environment.
 See the :ref:`ipython` section of :doc:`Appendix A <appendA>` for more
 details.
 
@@ -34,9 +34,9 @@ is the all-in-one `Anaconda Python distribution`_. It combines a large number
 of Python packages for scientific data analysis and a program (``conda``) for
 managing package updates (in addition to many other advanced features). The
 Anaconda developers (Continuum Analytics) provide a lot of useful
-documentation for `installing Anaconda`_ and `using conda`_. There are other
-ways to install Python and it's packages, but for this documentation, it will
-be assumed that your are using Anaconda.
+documentation on `installing Anaconda`_ and `using conda`_. There are other
+ways to install Python and the third-party packages, but for this
+documentation, it will be assumed that your are using Anaconda.
 
 .. note::
 
@@ -52,8 +52,8 @@ be assumed that your are using Anaconda.
 .. note::
  
     On Windows, Anaconda may not install netCDF4. In this case, you can get a
-    prebuilt installer from `Christoph Gohlke`_; be sure to get the Python 2.7
-    ("cp27") 64-bit ("amd64") build for the most recent version. 
+    prebuilt installer from `Christoph Gohlke`_; be sure to get the Python 3.4
+    ("cp34") 64-bit ("amd64") build for the most recent version. 
 
 Learning the usage of all of these Python packages is far beyond the scope of
 this document. However, excellent documentation for most of the packages as
@@ -68,9 +68,8 @@ well as full tutorials are `easily discovered`_.
 gcmstools
 ---------
 
-To install *gcmstools* from `the main repository`_, there are two options: 1)
-install using ``git`` (recommended) or 2) download the source file and install
-the package. 
+There are two installation options for *gcmstools*: 1) install using ``git``
+(recommended) or 2) download the source file and install the package. 
 
 *Option 1 (recommended)*
 
@@ -82,12 +81,13 @@ downloaded and installed with one command.
     home>$ pip install git+https://github.com/rnelsonchem/gcmstools.git
 
 The advantage here is that the same command will update your *gcmstools*
-installation with any any changes that have been made to the main repository. 
+installation with any any changes that have been made to `the main
+repository`_. 
 
 *Option 2*
 
 Download a zip file of the current state of the repository. (Look for the
-button shown below (:num:`Figure #gitzip`)at `the main repository`_.) Unzip
+button shown below (:num:`Figure #gitzip`) at `the main repository`_.) Unzip
 this package wherever you'd like.
 
 .. _gitzip:

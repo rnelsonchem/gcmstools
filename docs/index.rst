@@ -3,12 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-gcmstools Documentation
-=======================
-
 .. only:: html
 
     Welcome to the *gcmstools* documentation.
+
+Table of Contents
+=================
 
 .. toctree::
     :maxdepth: 2

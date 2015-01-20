@@ -27,6 +27,7 @@ class Calibrate(object):
         self.calfile = calfile
         self._calpicts = picts
 
+        # If pictures are requested remove directory and create clean one
         if picts:
             if os.path.isdir(self.calfolder) and self._clear_folder:
                 shutil.rmtree(self.calfolder)
@@ -34,10 +35,12 @@ class Calibrate(object):
             elif not os.path.isdir(self.calfolder):
                 os.mkdir(self.calfolder)
 
+        # Read the calibration file as Pandas DF
         self.calinput = pd.read_csv(self.calfile, comment='#')
         gb = self.calinput.groupby('Compound')
         all_calibration_data = []
         for group in gb:
+            # group = (compound name, DF subset)
             cal = self._cal_group_proc(group)
             all_calibration_data.append(cal)
 
@@ -56,27 +59,36 @@ class Calibrate(object):
         if not self._quiet:
             print("Calibrating: {}".format(name))
 
+        # Collect the integrals for compound "name" from the reference metadata
         integrals = []
         for idx, series in df.iterrows():
             filename = series['File']
             gcms = self.h5.extract_data(filename)
-            integrals.append(gcms._int_extract(name, series))
+            if not "integral" in gcms.ref_meta[name]:
+                err = "You didn't include integration times for {}"
+                raise ValueError(err.format(name)) 
+            integrals.append(gcms.ref_meta[name]["integral"])
 
         conc = df['Concentration']
         integrals = np.array(integrals)
 
+        # Get the internal standard name
         std = series['Standard']
-        has_std = isinstance(std, str) and not std.isspace()
-        if has_std:
+        # Make sure it isn't NaN or empty string
+        if isinstance(std, str) and not std.isspace():
             stdconc = df['Standard Conc']
             conc = conc/stdconc
         
+        # Find the rows of the input table that correspond to cpd "name"
         mask = self.calinput['Compound'] == name
+        # Add the conc and integral data as columns to input tabel
         self.calinput.loc[mask, 'conc'] = conc
         self.calinput.loc[mask, 'integral'] = integrals
 
+        # Do the linear regression
         slope, intercept, r, p, stderr = sps.linregress(conc, integrals)
 
+        # Create a series to return for the calibration table
         series.pop('File')
         series.pop('Concentration')
         series.pop('Standard Conc')
@@ -177,7 +189,9 @@ class Calibrate(object):
         line, gcms = linegcms
         data = {}
         for name, series in self.calibration.iterrows():
-            integral = gcms._int_extract(name, series)
+            # Get the appropriate integral from the metadata
+            integral = gcms.ref_meta[name]["integral"]
+            # Calulate the concentration
             conc = (integral - series['intercept'])/series['slope']
             data[name] = conc
             if self._datapicts:

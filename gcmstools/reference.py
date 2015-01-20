@@ -16,7 +16,7 @@ class ReferenceFileGeneric(object):
         self.bkg_time = bkg_time
         self._quiet = quiet
 
-        self.ref_build()
+        self._ref_build()
 
     def __call__(self, datafiles):
         if isinstance(datafiles, gcf.GcmsFile):
@@ -35,6 +35,8 @@ class ReferenceFileGeneric(object):
         data_max = data.masses.max()
         spec = np.empty(data.masses.size, dtype=float)
 
+        # Generate the reference spectrum over the mass range defined by the
+        # data.
         for mass, inten in self.ref_mass_inten:
             spec[:] = 0.
             mask = (mass > data_min) & (mass < data_max)
@@ -44,6 +46,7 @@ class ReferenceFileGeneric(object):
             spec[mass_mask] = inten_mask
             ref_array.append( spec/spec.max() )
 
+        # Add a background spectrum to the reference array
         if self.bkg == True:
             times = data.times
             inten = data.intensity
@@ -56,6 +59,8 @@ class ReferenceFileGeneric(object):
                     }
             self.ref_meta['Background'] = bkg_dict
 
+        # Remove Background if present. This may be necessary if the object is
+        # modified in some way, but usually not a problem
         if (self.bkg == False) and ('Background' in self.ref_meta):
             self.ref_meta.pop('Background')
         
@@ -64,17 +69,11 @@ class ReferenceFileGeneric(object):
         data.ref_meta = self.ref_meta.copy()
         data.ref_cpds = self.ref_cpds.copy()
         
-    def ref_build(self, ):
+    def _ref_build(self, ):
         self.ref_mass_inten = []
         self.ref_cpds = []
         self.ref_meta = {}
 
-        self._ref_file_proc()
-        
-        if self.bkg == True:
-            self.ref_cpds.append( 'Background' )
-
-    def _ref_file_proc(self, ):
         fname = self.ref_file
         f = open(fname)
 
@@ -99,6 +98,10 @@ class ReferenceFileGeneric(object):
                     self.ref_meta[name][sp[0]] = sp[1]
             else:
                 self.ref_meta[name][sp[0]] = sp[1]
+
+        if self.bkg == True:
+            self.ref_cpds.append( 'Background' )
+
 
 class TxtReference(ReferenceFileGeneric):
     '''txt Reference File class.

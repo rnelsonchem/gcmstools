@@ -399,7 +399,7 @@ contained in the sample data folder along with a copy of the PDF output
 .. _fancyms:
 
 .. figure:: _static/images/fancy_plot.png
-    :width: 3.5in
+    :width: 5.5in
 
     A fancy plot comparing the sample data (blue) and the fitted data (red)
     for benzene.  The PDF version is a vector graphic, so it has unlimited

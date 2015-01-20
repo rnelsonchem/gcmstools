@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from gcmstools.datastore import HDFStore
 
 h5 = HDFStore('data.h5')
-data = h5.extract_gcms_data('datasample1')
+data = h5.extract_data('datasample1')
 h5.close()
 
 refcpd = 'benzene'

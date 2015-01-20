@@ -59,7 +59,7 @@ class Calibrate(object):
         integrals = []
         for idx, series in df.iterrows():
             filename = series['File']
-            gcms = self.h5.extract_gcms_data(filename)
+            gcms = self.h5.extract_data(filename)
             integrals.append(gcms._int_extract(name, series))
 
         conc = df['Concentration']
@@ -101,7 +101,7 @@ class Calibrate(object):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for idx, row in df.iterrows():
-            gcms = self.h5.extract_gcms_data(row['File'])
+            gcms = self.h5.extract_data(row['File'])
             nameidx = gcms.ref_cpds.index(cpd)
             ax.plot(gcms.times, gcms.fit_sim[:,nameidx])
         
@@ -163,7 +163,7 @@ class Calibrate(object):
         for idx, line in others_df.iterrows():
             if not self._quiet:
                 print("Processing: {}".format(line['filename']))
-            gcms = self.h5.extract_gcms_data(line['filename']) 
+            gcms = self.h5.extract_data(line['filename']) 
             datadict = self._data_group_proc((line, gcms))
             dicts[line['name']] = datadict
 
@@ -187,7 +187,7 @@ class Calibrate(object):
     def dataplot(self, name, gcmsfile, conc=None, folder='.', show=False,
             save=True):
         if isinstance(gcmsfile, str):
-            gcms = self.h5.extract_gcms_data(gcmsfile)
+            gcms = self.h5.extract_data(gcmsfile)
         else:
             gcms = gcmsfile
 

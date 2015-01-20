@@ -12,7 +12,7 @@ refidx = data.ref_cpds.index(refcpd)
 time = 3.07
 idx = data.index(data.times, time)
 
-fitspec = data.fits[idx, refidx]*data.ref_array[refidx]
+fitspec = data.fit_coef[idx, refidx]*data.ref_array[refidx]
 dataspec = data.intensity[idx]
 
 ### This is all the plotting stuff

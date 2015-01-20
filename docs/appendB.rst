@@ -327,16 +327,16 @@ Bar Plot
 ++++++++
 
 In this case, we need to do a little Numpy index magic. Remember that the
-fitting generate a ``fit`` array. These are the least-squares coefficients at
-every data point. This is a 2D array with shape (# of time points, # of
-reference compounds). We will use our time index (``idx``) and our reference
-index (``refidx``) to select out one least-squares coefficient and then
-multiply this by our reference mass spectrum. The final plot window is shown
-in :num:`Figure #fitms`.
+fitting generate a ``fit_coef`` array. These are the least-squares
+coefficients at every data point. This is a 2D array with shape (# of time
+points, # of reference compounds). We will use our time index (``idx``) and
+our reference index (``refidx``) to select out one least-squares coefficient
+and then multiply this by our reference mass spectrum. The final plot window
+is shown in :num:`Figure #fitms`.
 
 .. code::
 
-    In : fitspec = data.fits[idx, refidx]*data.ref_array[refidx]
+    In : fitspec = data.fit_coef[idx, refidx]*data.ref_array[refidx]
 
     In : plt.bar(data.masses, data.intensity[idx], width=0.5, fc='b')
     Out: <Container object of 462 artists>
@@ -365,7 +365,7 @@ as a solid black line (``'k-'``). This plot window is shown in :num:`Figure
 
 .. code::
 
-    In : fitspec = data.fits[idx, refidx]*data.ref_array[refidx]
+    In : fitspec = data.fit_coef[idx, refidx]*data.ref_array[refidx]
 
     In : plt.plot(data.intensity[idx], fitspec, 'o')
     [<matplotlib.lines.Line2D at 0x7f34>]

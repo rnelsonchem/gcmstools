@@ -103,7 +103,7 @@ class Calibrate(object):
         for idx, row in df.iterrows():
             gcms = self.h5.extract_gcms_data(row['File'])
             nameidx = gcms.ref_cpds.index(cpd)
-            ax.plot(gcms.times, gcms.int_sim[:,nameidx])
+            ax.plot(gcms.times, gcms.fit_sim[:,nameidx])
         
         ax.set_xlim(row['Start'], row['Stop'])
         if save:
@@ -196,7 +196,7 @@ class Calibrate(object):
 
         s = self.h5.pdh5.calibration.loc[name]
         cpdidx = gcms.ref_cpds.index(name)
-        sim = gcms.int_sim[:,cpdidx]
+        sim = gcms.fit_sim[:,cpdidx]
 
         start, stop = s.Start, s.Stop
         mask = (gcms.times > start) & (gcms.times < stop)

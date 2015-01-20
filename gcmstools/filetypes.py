@@ -120,10 +120,10 @@ class AiaFile(GcmsFile):
         start = series['Start']
         stop = series['Stop']
         startidx, stopidx = self.index(self.times, start, stop)
-        cpdint = self.int_cum[stopidx, cpdidx] - self.int_cum[startidx, cpdidx]
+        cpdint = self.fit_csum[stopidx, cpdidx] - self.fit_csum[startidx, cpdidx]
         if has_std:
-            stdint = self.int_cum[stopidx, stdidx] - \
-                    self.int_cum[startidx, stdidx]
+            stdint = self.fit_csum[stopidx, stdidx] - \
+                    self.fit_csum[startidx, stdidx]
             cpdint = cpdint/stdint
 
         return cpdint

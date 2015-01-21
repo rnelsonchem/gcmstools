@@ -4,21 +4,21 @@ Data Storage
 Processed data files can be stored on-disk using the ``HDFStore`` object
 located in the ``gcmstools.datastore`` module. Not only does this create a
 convenient storage solution for processed data sets, it is also necessary when
-running calibrations on a group of related data sets. This file is stored
-on-disk as a `HDF file`_, which is an open-source high performance data
-storage container optimized for numerical data. Creation and manipulation of
-this file is controlled using a combination of two Python libraries:
-`PyTables`_ and `Pandas`_. PyTables provides a high-level interface to create
-and modify HDF files, and Pandas is a very powerful package for working with
-tabular data. Both of these project have extensive documentation of their many
-advanced features, so little detail on their usage is provided here.
+running calibrations on a group of related data sets. The file is a `HDF
+file`_, which is an open-source high performance data storage container
+optimized for numerical data. Creation and manipulation of this file is
+controlled using a combination of two Python libraries: `PyTables`_ and
+`Pandas`_. PyTables provides a high-level interface to create and modify HDF
+files, and Pandas is a very powerful package for working with tabular data.
+Both of these project have extensive documentation of their many advanced
+features, so little detail on their usage is provided here.
 
 .. _HDF file: http://www.hdfgroup.org/HDF5/
 .. _PyTables: http://www.pytables.org/moin 
 .. _Pandas: http://pandas.pydata.org/
 
-Create Container
-----------------
+Create/Open the Container
+-------------------------
 
 A *gcmstools* ``HDFStore`` object can be created without any arguments, and in
 which case, it automatically creates a HDF storage file called "data.h5". If
@@ -32,15 +32,28 @@ in a custom data file name as the first argument to the object creation.
 
     In : h5 = HDFStore()
     
-    # Equivalent to above, change name if desired
+    # Equivalent to above, change name if desired, you don't need to do both
     In : h5 = HDFStore('data.h5') 
+
+Closing the File
+----------------
+
+In general, you will want to close the HDF file when you're done. This is not
+necessary, but it does ensure that the file gets properly recompressed, which
+saves some disk space.
+
+.. code::
+
+    In : h5.close() # Only do this when you're done
 
 Adding Data
 -----------
 
 Added files to this storage container is done using the ``append_files``
 method, which can take either a single data object or a list of objects, if
-you have many objects to add at one time. 
+you have many objects to add at one time. It is not necessary to reference
+and/or fit the data in any way before storage; however, the calibration
+process will not work properly if you don't reference/fit the data.
 
 .. code::
 
@@ -141,13 +154,3 @@ To view these tables, just append the table name after ``pdh5``.
 More information on using these tables is provided in :doc:`appendB`.
 
 
-Closing the File
-----------------
-
-In general, you will want to close the HDF file when you're done. This is not
-necessary, but it does ensure that the file gets properly recompressed, which
-saves some disk space.
-
-.. code::
-
-    In : cal.close() # Only do this when you're done

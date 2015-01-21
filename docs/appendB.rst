@@ -3,11 +3,15 @@ Appendix B
 
 This appendix contains some examples of common usage scenarios. In some cases,
 the code will be presented as it would be written in a Python program file.
-These can also be run from the IPython interpreter by using ``%run`` or by
-individually typing each line. See the :ref:`IPython instructions <ipython>`
-for more information. Little explanation is provided here. See the
-documentation for detailed descriptions of the *gcmstools* objects or any
-third-party packages.
+These can be run from the command line as follows::
+
+    datafolder>$ python program_file.py
+
+In addition, these scripts can be run from the IPython interpreter by using
+``%run`` or by individually typing each line. See the :ref:`IPython
+instructions <ipython>` for more information. Little explanation is provided
+here. See the documentation for detailed descriptions of the *gcmstools*
+objects or any third-party packages.
 
 Full Manual Processing Example
 ------------------------------
@@ -15,7 +19,7 @@ Full Manual Processing Example
 Below is an example script that does a complete analysis starting from loading
 the files all the way through running a calibration and extracting
 concentrations. This is approximately equivalent to what the function
-``data_proc`` is doing (see :doc:`autoint` for that function).
+``data_proc`` is doing (see :doc:`autoint` for a description that function).
 
 This program is saved in the sample data folder under the name
 "full_manual.py".
@@ -283,9 +287,8 @@ data sets. The resulting plot is shown in :num:`Figure #updownms`.
 Difference Plot
 +++++++++++++++
 
-To plot the difference between the data and the reference, here's the plotting
-command. Notice that we are just subtracting one spectrum form the other. The
-resulting plot is shown in :num:`Figure #diffms`.
+To plot the difference between the data and the reference, just subtract one
+spectrum form the other. The resulting plot is shown in :num:`Figure #diffms`.
 
 .. code::
 

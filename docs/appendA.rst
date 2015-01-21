@@ -10,7 +10,7 @@ Running the code samples in this documentation requires a rudimentary
 knowledge of the command-line terminal (command prompt on Windows). The
 terminal can seem very "texty" and confusing at first; however, with a little
 practice it gets to be fairly intuitive and *efficient*. There are many
-tutorials online, for example, `The Command Line Crash Course`_. However, A
+tutorials online, for example, `The Command Line Crash Course`_. However, a
 few basic command line concepts are covered here, for reference.
 
 When you start a terminal, you will be presented with a window to type
@@ -27,7 +27,7 @@ commands: "change directory" (``cd``) and "present working directory"
 (``pwd``).  When you open the terminal, you will usually start in your "home"
 directory. This will probably be "/Users/username" on Mac, "/home/username" on
 Linux, or "C:\\Users\\username" on Windows. To move to a different directory,
-use the ``cd`` command; to find out the location of the current folder, use
+use the ``cd`` command; to see the location of the current folder, use
 ``pwd``.  Here's an example. 
 
 .. code::
@@ -40,8 +40,8 @@ use the ``cd`` command; to find out the location of the current folder, use
     folder1$> pwd
     /home/username/folder1
 
-The second command here moved active directory to the folder *folder1*. There
-are also a few special directory shortcuts:
+The second command here moved active directory to the folder called *folder1*.
+There are also a few special directory shortcuts:
 
 * ``~`` This refers to the home directory.
 * ``..`` (Double dot) This refers to the parent directory of the current
@@ -222,11 +222,11 @@ Notice that when you type tab here IPython automatically expands this to
 Magic Commands
 ++++++++++++++
 
-IPython has a number of special commands that make its interpreter behave much
-like a command-line terminal. These commands, called Magic Commands, are
-preceded by ``%`` or ``%%``. The `magic command documentation`_ covers many of
-them, but a few that are useful to the examples in this document are discussed
-here.
+IPython has a number of special, non-Python, commands that make its
+interpreter behave much like a command-line terminal. These commands, called
+Magic Commands, are preceded by ``%`` or ``%%``. The `magic command
+documentation`_ covers many of these, but a few that are useful to the
+examples in this document are discussed here.
 
 The magics ``%cd``, ``%pwd``, and ``%ls`` serve the exact same purpose as in
 the terminal. Another very useful magic is ``%run``. This command executes a
@@ -302,17 +302,17 @@ Working with Text Files
 -----------------------
 
 There are many instances where you will need to work with plain text files,
-including when writing Python programs. Plain text files are *not* word
-processing documents (e.g. MS Word), so you will want to use a dedicated text
-editor. Another source of problems for beginners is that leading white space in
-Python programs is important. For these reasons, a dedicated Python text
-editor can be very useful for beginners. Anaconda is bundled with `Spyder`_,
-which has a builtin text editor. The Anaconda FAQ has `information on running
-Spyder`_ on your system. Spyder is actually a full development environment, so
-it can be very intimidating for beginners. Don't worry! The far left panel is
-the text editor, and you can use that without knowing what any of the other
-panels are doing. Some internet searches will reveal other text editors if
-you'd prefer something smaller. (Do *not* use MS Notepad.)
+including writing Python programs. Plain text files are *not* word processing
+documents (e.g. MS Word), so you will want to use a dedicated text editor.
+Another source of problems for beginners is that leading white space in Python
+programs is important. For these reasons, a dedicated Python text editor can
+be very useful for beginners. Anaconda is bundled with `Spyder`_, which has a
+builtin text editor. The Anaconda FAQ has `information on running Spyder`_ on
+your system. Spyder is actually a full development environment, so it can be
+very intimidating for beginners. Don't worry! The far left panel is the text
+editor, and you can use that without knowing what any of the other panels are
+doing. Some internet searches will reveal other text editors if you'd prefer
+something smaller. (Do *not* use MS Notepad.)
 
 The ".py" suffix for Python programs can be important.  On Windows, however,
 file extensions are not shown by default, which makes them difficult to

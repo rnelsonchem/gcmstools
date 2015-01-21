@@ -1,5 +1,5 @@
-Calibration and Integration
-###########################
+Calibration and Concentration Determination
+###########################################
 
 Calibration Object
 ------------------
@@ -17,7 +17,7 @@ can also be passed in on construction to open a different HDF file.
 
     In : cal = Calibrate() # Opens 'data.h5' by default
 
-    # Equivalent to above, but using a different file name
+    # Equivalent to above, but using a different file name, don't do both
     In : cal = Calibrate('other.h5') 
 
 Closing the HDF File
@@ -48,15 +48,14 @@ with the sample data.
 
 The first row in this csv file is critical, and it must look like this::
 
-    Compound,File,Concentration,Start,Stop,Standard,Standard Conc
+    Compound,File,Concentration,Standard,Standard Conc
 
 Each row after this describes a set of calibration information that you'd like
 to use. The columns of this file are as follows:
 
 * *Compound*: The name of the compound that you are calibrating. This *must*
   correspond to one of the compound names (case-sensitive) used when
-  referencing and fitting the GCMS file. See the :doc:`relevant page
-  <fitting>` for more information.
+  :doc:`referencing and fitting <fitting>` the GCMS file. 
 
 * *File*: This is the name of the data set that was collected at a particular
   concentration of *Compound*. Again, this filename can be the full filename
@@ -67,9 +66,6 @@ to use. The columns of this file are as follows:
   should only be a number: do not include units. All of the concentrations
   should be in the same units, and keep in mind that all calibration and
   concentration data will then be in that same unit of measurement. 
-
-* *Start* and *Stop*: These are the integration range start and stop times in
-  minutes. Again use only numbers, no units.
 
 * *Standard* and *Standard Conc*: If there is an internal standard used in
   this file, you should provide the name and concentration in these columns.
@@ -84,11 +80,8 @@ starting a line with a ``#`` character. This is useful if you want to ignore
 a bad data point without completely removing the line from the calibration
 file.
 
-Run Calibrations and Integrations
----------------------------------
-
-Calibration Curves
-++++++++++++++++++
+Generate Calibration Curves
+---------------------------
 
 The calibration curves can be generated using the ``curvegen`` method of the
 ``Calibrate`` object. This function must be called with the name of your
@@ -113,7 +106,7 @@ then "conc" and "integral" will be these values divided by the corresponding
 internal standard values. These tables also stored in the HDF file as well, if
 you want to check them at a later date.
 
-The calibration table contains all of the newly created calibration curve
+The ``calibration`` table contains all of the newly created calibration curve
 information, such as slope, intercept, r value, etc.
 
 .. code::
@@ -135,15 +128,16 @@ information, such as slope, intercept, r value, etc.
 Plotting Calibrations
 +++++++++++++++++++++
 
-By default, no plots are generated for these calibrations. There are a couple
-of ways to get some plots of the calibration data.
+By default, no plots are generated for these calibrations. There are, however,
+a couple of functions that automatically plot some of the calibration data.
 
 #. ``cal.curvegen('calibration.csv', calfolder='cal', picts=True)`` : This
-   method will auto generate pictures for all of the calibration compounds and
-   place them in a folder defined by the keyword argument ``calfolder``. This
-   argument is optional, if you don't mind the default folder name of "cal".
-   Be careful! This will delete this folder before generating new plots, so if
-   this folder exists, make sure it is clear of important data.
+   invocation will auto generate pictures for all of the calibration compounds
+   and place them in a folder defined by the keyword argument ``calfolder``.
+   This argument is optional, if you don't mind the default folder name of
+   "cal".  Be careful! This folder and its contents will be deleted before
+   generating new plots, so if this folder exists, make sure it is clear of
+   important data.
 
 #. ``cal.curveplot('benzene')`` : This method will generate a plot of the
    benzene calibration information and save it to the current folder. There
@@ -159,17 +153,17 @@ of ways to get some plots of the calibration data.
 
    If both ``save`` and ``show`` are set to ``False``, nothing will happen.
    
-   Of course, this function must be done after a call to ``curvegen``, but it
-   does provide a method to look at calibration data from an previously
-   processed HDF file without rerunning the calibration.
+   Of course, this function must be done after a call to ``curvegen``. But it
+   can be used to look at calibration data from an previously processed HDF
+   file without rerunning the calibration.
 
 
-Integrating Data
-++++++++++++++++
+Determine Sample Concentrations
+-------------------------------
 
 Generating calibration curves *does not* automatically process the other data
-files. In order to integrate and determine concentrations for all of the remaining
-data in the HDF file, use the ``datagen`` method of the ``Calibrate`` object.
+files. In order to determine concentrations for all of the remaining data in
+the HDF file, use the ``datagen`` method of the ``Calibrate`` object.
 
 .. code:: 
 
@@ -179,7 +173,7 @@ data in the HDF file, use the ``datagen`` method of the ``Calibrate`` object.
     Processing: otherdata2.CDF
     ...
 
-After processing, another data table attributed (``datacal``) is created and
+After processing, another data table attribute (``datacal``) is created and
 saved to the HDF file. 
 
 .. code::
@@ -201,8 +195,8 @@ saved to the HDF file.
     to the other data sets contained in the HDF file.
 
 
-Plotting Integrals
-++++++++++++++++++
+Plotting Integrals with Concentrations
+++++++++++++++++++++++++++++++++++++++
 
 By default, no plots are generated for the integrals. If you'd like to see
 plots of the integrals, there are a couple of methods.
@@ -228,8 +222,7 @@ plots of the integrals, there are a couple of methods.
 
    If both ``save`` and ``show`` are set to ``False``, nothing will happen.
    
-   Of course, this function must be done after a call to ``datagen``, but it
-   does provide a method to look at calibration data from an previously
-   processed HDF file without rerunning the calibration and data integration
-   functions.
+   Of course, this function call can only be done after a call to ``datagen``,
+   but it can be used to look at calibration data from an previously processed
+   HDF file without rerunning the calibration and data integration functions.
 

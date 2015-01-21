@@ -22,8 +22,8 @@ The ``data_proc`` function accepts numerous keyword arguments to allow some
 process control.
 
 * *filetype='aia'* : This flag can be used to control the type of GCMS objects
-  used for processing the data in your folder. The default value ``aia`` uses
-  the ``AiaFile`` object. See :doc:`basics` for detailed information.
+  used for processing the data in your folder. The default value ``'aia'``
+  uses the ``AiaFile`` object. See :doc:`basics` for detailed information.
 
 * *reffile=None* : Pass the name of a reference file for referencing your GCMS
   data. The default is ``None``, so no referencing will be done. Otherwise,
@@ -37,16 +37,19 @@ process control.
   
     * ``'nnls'`` for non-negative least squares fitting.
 
-* *calfile=None* : Pass in the name of a reference csv file to generate
+* *calfile=None* : Pass in the name of a calibration csv file to generate
   calibration curves and integrate the data. For example,
   ``calfile='calibration.csv'`` will calibrate your data using the information
   in the csv file "calibration.csv". See :doc:`calibration` for detailed
   information, especially on the expected structure of the csv file.
   
 * *picts=False* : Set this argument to true if you want to generate pictures
-  of your calibration curves and data fits. If you have a lot of data files,
-  this can be very slow. It is possible to view these plots after processing.
-  See :doc:`calibration` for detailed information.
+  of your calibration curves and data fits. These calibration curves will be
+  placed in the folder "cal", and plots of integrals with concentrations will
+  be place in the folder "proc". Be careful! All files in these folders will
+  be deleted before the plots are generated. Also, if you have a lot of data
+  files, this process can be very slow. It is possible to view these plots
+  after processing.  See :doc:`calibration` for detailed information.
 
 * *chunk_size=4* : This sets the number of files that will be processed at any
   given time. This keeps the total number of opened GCMS files to a minimum,
@@ -54,9 +57,10 @@ process control.
   probably don't need to change this.
   
 * *multiproc=False* : Setting this argument to ``True`` will use IPython's
-  parallel machinery to run the processing using multiple cores. Before using
-  this command, you must start an IPython node cluster from the command line.
-  Open a new terminal, and type the following command::
+  parallel machinery to run a lot of the processing using multiple cores on
+  your processor.  Before using this command, you must start an IPython node
+  cluster from the command line.  Open a new terminal, and type the following
+  command::
 
         home>$ ipcluster start -n 2
 
@@ -74,7 +78,7 @@ process control.
 
   See `IPython's parallel documentation`_ for more information.
 
-* This function can also accept any keyword arguments for any file type,
+* This function can also accept all keyword arguments for any file type,
   reference, fitting, and calibration objects. See their documentation for
   more information.
 
@@ -95,7 +99,7 @@ A complete version of this processing command might look like the following.
     ...
 
 The HDF file "data.h5" contains all of your data. See the :doc:`storage`,
-:doc:`calibration` documentation and :doc:`appendB` for more information on how to
-view and plot these data.
+:doc:`calibration`, and :doc:`appendB` for more information on how to view and
+plot these data.
 
 

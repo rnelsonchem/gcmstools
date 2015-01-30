@@ -10,7 +10,7 @@ setup(
     author = "Ryan Nelson",
     author_email = "rnelsonchem@gmail.com",
 
-    license = "MIT",
+    license = "BSD",
 
     keywords = "gcms aia nnls",
 

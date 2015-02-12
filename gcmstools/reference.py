@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 
 import numpy as np
 
@@ -66,8 +67,8 @@ class ReferenceFileGeneric(object):
         
         data.ref_type = self.ref_type
         data.ref_array = np.array(ref_array)
-        data.ref_meta = self.ref_meta.copy()
-        data.ref_cpds = self.ref_cpds.copy()
+        data.ref_meta = deepcopy(self.ref_meta)
+        data.ref_cpds = deepcopy(self.ref_cpds)
         
     def _ref_build(self, ):
         self.ref_mass_inten = []

@@ -117,7 +117,10 @@ class Calibrate(object):
             nameidx = gcms.ref_cpds.index(cpd)
             ax.plot(gcms.times, gcms.fit_sim[:,nameidx])
         
-        ax.set_xlim(row['Start'], row['Stop'])
+        start = float(gcms.ref_meta[cpd]['START'])
+        stop = float(gcms.ref_meta[cpd]['STOP'])
+        ax.set_xlim(start, stop)
+
         if save:
             fig.savefig(os.path.join(calfolder, cpd + '_fits'),
                     dpi=self._dpi)

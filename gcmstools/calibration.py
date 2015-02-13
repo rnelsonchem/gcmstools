@@ -56,6 +56,7 @@ class Calibrate(object):
         if picts:
             for i in self.calibration.index:
                 self.curveplot(i, folder=calfolder)
+                self.fitsplot(i, folder=calfolder)
 
     def _cal_group_proc(self, group):
         name, df = group
@@ -102,7 +103,7 @@ class Calibrate(object):
         series['stderr'] = stderr
         return series
 
-    def fitsplot(self, cpd, calfolder='cal', show=False, save=True, **kwargs):
+    def fitsplot(self, cpd, folder='.', show=False, save=True, **kwargs):
         if not hasattr(self, 'calinput'):
             try:
                 self.calinput = self.h5.pdh5.calinput
@@ -125,7 +126,9 @@ class Calibrate(object):
         ax.set_xlim(start, stop)
 
         if save:
-            fig.savefig(os.path.join(calfolder, cpd + '_fits'),
+            if not os.path.isdir(folder):
+                os.mkdir(folder)
+            fig.savefig(os.path.join(folder, cpd + '_fits'),
                     dpi=self._dpi)
         if show:
             plt.show()
@@ -151,6 +154,8 @@ class Calibrate(object):
         ax.text(0.5, df.integral.max()*0.8, text_string.format(s.slope, 
             s.intercept, s.r**2))
         if save:
+            if not os.path.isdir(folder):
+                os.mkdir(folder)
             fig.savefig(os.path.join(folder, name+'_cal_curve'), 
                     dpi=self._dpi)
         if show:
@@ -214,7 +219,8 @@ class Calibrate(object):
         cpdidx = gcms.ref_cpds.index(name)
         sim = gcms.fit_sim[:,cpdidx]
 
-        start, stop = s.Start, s.Stop
+        start = float(gcms.ref_meta[name]['START'])
+        stop = float(gcms.ref_meta[name]['STOP'])
         mask = (gcms.times > start) & (gcms.times < stop)
 
         fig = plt.figure()
@@ -222,9 +228,13 @@ class Calibrate(object):
         ax.plot(gcms.times[mask], sim[mask])
         ax.plot(gcms.times[mask], gcms.tic[mask], 'k', lw=1.5)
         ax.set_title('Concentration = {:.2f}'.format(conc))
+
         if save:
-            fig.savefig(os.path.join(folder, gcms.shortname + '_' + name + '.png'),
-                    dpi=self._dpi)
+            if not os.path.isdir(folder):
+                os.mkdir(folder)
+            fig.savefig(os.path.join(folder, 
+                gcms.shortname + '_' + name + '.png'), dpi=self._dpi)
+
         if show:
             plt.show()
         plt.close(fig)

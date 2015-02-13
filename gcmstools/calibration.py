@@ -22,6 +22,13 @@ class Calibrate(object):
         else:
             self.h5 = h5name
         
+    def _dir_check(self, directory):
+        if os.path.isdir(directory) and self._clear_folder:
+            shutil.rmtree(directory)
+            os.mkdir(directory)
+        elif not os.path.isdir(directory):
+            os.mkdir(directory)
+
     def curvegen(self, calfile, calfolder='cal', picts=False, **kwargs):
         self.calfolder = calfolder
         self.calfile = calfile
@@ -29,11 +36,7 @@ class Calibrate(object):
 
         # If pictures are requested remove directory and create clean one
         if picts:
-            if os.path.isdir(self.calfolder) and self._clear_folder:
-                shutil.rmtree(self.calfolder)
-                os.mkdir(self.calfolder)
-            elif not os.path.isdir(self.calfolder):
-                os.mkdir(self.calfolder)
+            self._dir_check(calfolder)
 
         # Read the calibration file as Pandas DF
         self.calinput = pd.read_csv(self.calfile, comment='#')
@@ -165,11 +168,7 @@ class Calibrate(object):
                 return
 
         if picts:
-            if os.path.isdir(self.datafolder) and self._clear_folder:
-                shutil.rmtree(self.datafolder)
-                os.mkdir(self.datafolder)
-            elif not os.path.isdir(self.datafolder):
-                os.mkdir(self.datafolder)
+            self._dir_check(self.datafolder)
         
         mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File'])
         others_df = self.h5.pdh5.files[~mask]

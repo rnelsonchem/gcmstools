@@ -6,7 +6,7 @@ import tables as tb
 
 import gcmstools.filetypes as gcf
 
-class HDFStore(object):
+class GcmsStore(object):
     def __init__(self, hdfname='data.h5', quiet=False, **kwargs):
         self._quiet = quiet
         self.hdfname = hdfname

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import tables as tb
 import scipy.stats as sps
 
-from gcmstools.datastore import HDFStore
+from gcmstools.datastore import GcmsStore
 
 
 class Calibrate(object):
@@ -18,7 +18,7 @@ class Calibrate(object):
         self._dpi = dpi
 
         if isinstance(h5name, str):
-            self.h5 = HDFStore(h5name)
+            self.h5 = GcmsStore(h5name)
         else:
             self.h5 = h5name
         

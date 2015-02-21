@@ -54,9 +54,9 @@ format using `Pandas' to_excel function`_ which is part of each DataFrame.
 
 .. code-block:: python
 
-    from gcmstools.datastore import HDFStore
+    from gcmstools.datastore import GcmsStore
 
-    h5 = HDFStore('data.h5')
+    h5 = GcmsStore('data.h5')
     h5.pdh5.datacal.to_excel('datacal.xlsx',)
     h5.close()
 
@@ -84,9 +84,9 @@ First read in your file. This can be done directly::
 
 Or by reading out a data file from a HDF storage file::
 
-    In : from gcmstools.datastore import HDFStore
+    In : from gcmstools.datastore import GcmsStore
 
-    In : h5 = HDFStore('data.h5')
+    In : h5 = GcmsStore('data.h5')
 
     In : data = h5.extract_data('datasample1')
 
@@ -185,9 +185,9 @@ Or from the HDF file.
 
 .. code::
 
-    In : from gcmstools.datastore import HDFStore
+    In : from gcmstools.datastore import GcmsStore
 
-    In : h5 = HDFStore('data.h5')
+    In : h5 = GcmsStore('data.h5')
 
     In : data = h5.extract_data('datasample1.CDF')
 

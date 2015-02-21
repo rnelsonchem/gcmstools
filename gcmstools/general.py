@@ -63,7 +63,7 @@ def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
         if fittype.lower() == 'nnls':
             fit = gcfit.Nnls(**kwargs)
 
-    h5 = gcd.HDFStore(h5name, **kwargs)
+    h5 = gcd.GcmsStore(h5name, **kwargs)
 
     if multiproc:
         try:

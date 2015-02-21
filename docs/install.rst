@@ -28,10 +28,10 @@ details.
 Python
 ------
 
-The most convenient installation method for Python other third-party packages
-is the all-in-one `Anaconda Python distribution`_. It combines a large number
-of Python packages for scientific data analysis and a program (``conda``) for
-managing package updates (in addition to many other advanced features). The
+The most convenient installation method for third-party Python packages is the
+all-in-one `Anaconda Python distribution`_. It combines a large number of
+Python packages for scientific data analysis and a program (``conda``) for
+managing package updates, in addition to many other advanced features. The
 Anaconda developers (Continuum Analytics) provide a lot of useful
 documentation on `installing Anaconda`_ and `using conda`_. There are other
 ways to install Python and the third-party packages, but for this
@@ -61,55 +61,60 @@ well as full tutorials are `easily discovered`_.
 gcmstools
 ---------
 
-There are two installation options for *gcmstools*: 1) install using ``git``
-(recommended) or 2) download the source file and install the package. 
+There are three installation options for *gcmstools*: 1) install using conda
+(recommended), 2) install using ``pip``, or 3) install the most recent
+development version using ``git``.
 
 *Option 1 (recommended)*
 
-First, install the `version-control software Git`_. *gcmstools* can now be
-downloaded and installed with one command.
+If you are using the Anaconda Python distribution, you can use ``conda`` to
+install the most recent distribution of *gcmstools* from `Binstar`_,
+Continuum's package repository.
+
+.. code:: 
+
+    home>$ conda install -c https://conda.binstar.org/rnelsonchem gcmstools
+
+To uninstall *gcmstools* from a ``conda`` environment, use the following
+command::
+
+    home>$ conda remove gcmstools
+
+*Option 2*
+
+*gcmstools* can also be installed from the official Python packaging site,
+`PyPI`_, using the standard Python installer script ``pip``. This installation
+method will work fine if you have the additional dependencies installed;
+otherwise, you may have some problems depending on your platform.
+
+.. code:: 
+
+    home>$ pip install gcmstools
+
+To uninstall *gcmstools* using ``pip``::
+
+    home>$ pip uninstall gcmstools
+
+
+*Option 3*
+
+The development version of *gcmstools* is hosted on `GitHub`_. To use this
+version, you must install the `version-control software Git`_. *gcmstools* can
+then be downloaded and installed with one ``pip`` command.
 
 .. code::
 
     home>$ pip install git+https://github.com/rnelsonchem/gcmstools.git
 
-The advantage here is that the same command will update your *gcmstools*
-installation with any any changes that have been made to `the main
-repository`_. 
+There are advantages and disadvantages with this approach. For example, the
+GitHub repo will always have the most recent updates and bug fixes; however,
+these new features might not be as well-tested so you might find new bugs.
 
-*Option 2*
+To uninstall, use the method described in *Option 2*
 
-Download a zip file of the current state of the repository. (Look for the
-button shown below (:num:`Figure #gitzip`) at `the main repository`_.) Unzip
-this package wherever you'd like.
-
-.. _gitzip:
-
-.. figure:: ./images/git_zip.png
-    
-    The zipfile download button.
-
-From the command line, navigate the newly extracted folder and use ``pip`` to
-install the package.  In this case, *path-to-gcmstools-folder* is the location
-of the newly unzipped *gcmstools* folder. Be sure to put a dot (``.``) at the
-end of that pip command.
-
-.. code::
-
-    home>$ cd path-to-gcmstools-folder
-    gcmstools>$ pip install .
-
-*Uninstall*
-
-Uninstallation of *gcmstools* is trivial. It may be a good idea to run this
-command before installing updates as well to ensure that the most recent
-version of *gmcstools* is being installed.
-
-.. code::
-
-    home>$ pip uninstall gcmstools
-
-.. _the main repository: https://github.com/rnelsonchem/gcmstools
+.. _GitHub: https://github.com/rnelsonchem/gcmstools
 .. _version-control software Git: http://git-scm.com/
+.. _Binstar: https://binstar.org/rnelsonchem
+.. _PyPI: https://pypi.python.org/pypi/gcmstools
 
 

@@ -40,6 +40,10 @@ class Calibrate(object):
 
         # Read the calibration file as Pandas DF
         self.calinput = pd.read_csv(self.calfile, comment='#')
+        # Add the simplified file names as a new column
+        self.calinput['simplename'] = self.calinput.File.apply(
+                self.h5._name_fix)
+
         gb = self.calinput.groupby('Compound')
         all_calibration_data = []
         for group in gb:
@@ -175,7 +179,9 @@ class Calibrate(object):
         if picts:
             self._dir_check(self.datafolder)
         
-        mask = self.h5.pdh5.files['filename'].isin(self.h5.pdh5.calinput['File'])
+        # Mask out the files that were used for calibration
+        mask = self.h5.pdh5.files['name'].isin(
+                self.h5.pdh5.calinput['simplename'])
         others_df = self.h5.pdh5.files[~mask]
         dicts = {}
 

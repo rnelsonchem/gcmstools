@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "gcmstools",
-    version = "0.1.0",
+    version = "0.1.1",
 
     description = "Tools for working with GCMS files.",
     url = "https://github.com/rnelsonchem/gcms_nnls",

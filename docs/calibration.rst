@@ -60,7 +60,7 @@ to use. The columns of this file are as follows:
 * *File*: This is the name of the data set that was collected at a particular
   concentration of *Compound*. Again, this filename can be the full filename
   (with or without the path) or the simplified name. See the :ref:`files
-  attribute <procfiles>` section of the HDFStore docs for more info.
+  attribute <procfiles>` section of the GcmsStore docs for more info.
 
 * *Concentration*: This is the known concentration of the  *Compound*. This
   should only be a number: do not include units. All of the concentrations

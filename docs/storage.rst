@@ -1,7 +1,7 @@
 Data Storage
 ############
 
-Processed data files can be stored on-disk using the ``HDFStore`` object
+Processed data files can be stored on-disk using the ``GcmsStore`` object
 located in the ``gcmstools.datastore`` module. Not only does this create a
 convenient storage solution for processed data sets, it is also necessary when
 running calibrations on a group of related data sets. The file is a `HDF
@@ -20,20 +20,20 @@ features, so little detail on their usage is provided here.
 Create/Open the Container
 -------------------------
 
-A *gcmstools* ``HDFStore`` object can be created without any arguments, and in
-which case, it automatically creates a HDF storage file called "data.h5". If
-this file already exists, it will open that file for appending or
+A *gcmstools* ``GcmsStore`` object can be created without any arguments, and
+in which case, it automatically creates a HDF storage file called "data.h5".
+If this file already exists, it will open that file for appending or
 modification. If you want to have more than one data file, you can also pass
 in a custom data file name as the first argument to the object creation. 
 
 .. code::
 
-    In : from gcmstools.datastore import HDFStore
+    In : from gcmstools.datastore import GcmsStore
 
-    In : h5 = HDFStore()
+    In : h5 = GcmsStore()
     
     # Equivalent to above, change name if desired, you don't need to do both
-    In : h5 = HDFStore('data.h5') 
+    In : h5 = GcmsStore('data.h5') 
 
 Closing the File
 ----------------
@@ -119,7 +119,7 @@ Stored Data Tables
 This HDF data file may contain a number of Pandas data tables (DataFrames)
 with information about the files, calibration, etc. A list of currently
 available tables can be obtained from the ``pdh5`` attribute of the
-``HDFStore`` object. (Note: you won't see these attributes using :ref:`tab
+``GcmsStore`` object. (Note: you won't see these attributes using :ref:`tab
 completion <ipytab>`. You must directly inspect ``pdh5``.
 
 .. code::

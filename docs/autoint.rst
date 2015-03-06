@@ -18,7 +18,7 @@ like to generate. In this example, our data is in the folder "data" and our proc
     ... # Lots of stuff will get printed at this point.
 
 
-The ``data_proc`` function accepts numerous keyword arguments to allow some
+The ``proc_data`` function accepts numerous keyword arguments to allow some
 process control.
 
 * *filetype='aia'* : This flag can be used to control the type of GCMS objects

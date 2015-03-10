@@ -96,14 +96,14 @@ def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
             if fit:
                 fit(datafiles)
 
-        h5.append_files(datafiles)
+        h5.append_gcms(datafiles)
 
     if calfile:
         cal = gcc.Calibrate(h5, **kwargs)
         cal.curvegen(calfile, picts=picts, **kwargs)
         cal.datagen(picts=picts, **kwargs)
 
-    h5.close()
+    h5.compress()
 
 # This function is from: http://stackoverflow.com/questions/434287
 def _chunker(seq, size):

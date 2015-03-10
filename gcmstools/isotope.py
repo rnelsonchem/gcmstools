@@ -36,7 +36,7 @@ class Isotope(object):
         else:
             self.h5 = h5file
 
-        self.data = self.h5.extract_data(datafile)
+        self.data = self.h5.extract_gcms(datafile)
         self.name = name
         self.datafile = datafile
         
@@ -89,7 +89,7 @@ class Isotope(object):
             err = 'Staring m/z value must be greater than base m/z.'
             raise ValueError(err)
 
-        gcms = self.h5.extract_data(reffile)
+        gcms = self.h5.extract_gcms(reffile)
 
         # Get the MS and select only the region of interest
         refms = self._ms_select(gcms)
@@ -158,26 +158,29 @@ class Isotope(object):
         self.simdf = simdf
 
     def save(self, ):
-        if not hasattr(self.h5.tbh5.root, 'isotope'):
-            self.h5.tbh5.create_group('/', 'isotope')
-        isogrp = self.h5.tbh5.root.isotope 
+        if not hasattr(self.h5.root, 'isotope'):
+            self.h5._handle.create_group('/', 'isotope',
+                    filters=self.h5._filters)
+        isogrp = self.h5.root.isotope 
 
         if not hasattr(isogrp, self.data.shortname):
-            self.h5.tbh5.create_group(isogrp, self.data.shortname)
+            self.h5._handle.create_group(isogrp, self.data.shortname,
+                    filters=self.h5._filters)
         datagrp = getattr(isogrp, self.data.shortname)
 
         if hasattr(datagrp, self.name):
-            self.h5.tbh5.remove_node(datagrp, self.name, recursive=True)
-        grp = self.h5.tbh5.create_group(datagrp, self.name)
+            self.h5._handle.remove_node(datagrp, self.name, recursive=True)
+        grp = self.h5._handle.create_group(datagrp, self.name,
+                filters=self.h5._filters)
 
         for k, v in self.__dict__.items():
             if isinstance(v, np.ndarray):
-                self.h5.tbh5.create_carray(grp, k, obj=v)
+                self.h5._handle.create_carray(grp, k, obj=v)
             elif isinstance(v, pd.DataFrame):
                 loc = grp._v_pathname
-                self.h5.pdh5.append(loc + '/' + k, v)
+                self.h5.append(loc + '/' + k, v)
             elif isinstance(v, (str, list, dict, tuple, int, float)):
-                self.h5.tbh5.set_node_attr(grp, k, v)
+                self.h5._handle.set_node_attr(grp, k, v)
         
 
     def _ms_select(self, gcms):

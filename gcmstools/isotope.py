@@ -9,13 +9,15 @@ class Isotope(object):
     Parameters
     ----------
     h5file : str or GcmsStore instance
-        This is the HDF file that contains all the processed data.
+        This is the HDF file that contains all of the processed GCMS data.
 
     datafile : str
-        The file name for the data to be processed.
+        The file name of the particular GCMS data file that contains the
+        isotopic data to be processed.
 
     name : str
-        The name to give to this particular analysis.
+        The name to give to this particular analysis. The isotopic data will
+        be saved into the HDF file under this name.
 
     start : float
         The starting elution time for the analysis.
@@ -52,7 +54,7 @@ class Isotope(object):
 
     def addref(self, reffile, refname, refmin, refmax, numiso, basemz,
             startmz=None):
-        '''Add a reference spectrum.
+        '''Add a reference spectrum to the analysis.
 
         Parameters
         ----------
@@ -69,13 +71,12 @@ class Isotope(object):
             The maximum m/z to select as a reference from this file.
 
         numiso : int
-            The number of isotopologues to try and fit with this particular
-            reference.
+            The number of isotopologues to fit with this particular reference.
 
         basemz : int
-            The starting m/z value that this reference will be used to fit.
-            This can be different than refmin, especially if a true reference
-            is contaminated.
+            The starting m/z value in the main data file that this reference
+            will be used to fit.  This can be different than refmin,
+            especially if a true reference is contaminated.
 
         startmz : int (default None)
             The starting m/z value to fit this particular reference. This can
@@ -86,8 +87,8 @@ class Isotope(object):
         if not startmz:
             startmz = basemz
         elif startmz < basemz:
-            err = 'Staring m/z value must be greater than base m/z.'
-            raise ValueError(err)
+            err = 'Staring m/z value ({}) must be greater than base m/z ({})'
+            raise ValueError(err.format(startmz, basemz))
 
         gcms = self.h5.extract_gcms(reffile)
 
@@ -114,6 +115,7 @@ class Isotope(object):
         tmpd['numiso'] = numiso
         tmpd['startmz'] = startmz
         tmpd['vals'] = refvals
+        # TODO: Do I need to store these values? I don't think so.
         #tmpd['gcms'] = gcms ###
         #tmpd['refms'] = refms ####
         #tmpd['refvals'] = refvals ####
@@ -158,6 +160,7 @@ class Isotope(object):
         self.simdf = simdf
 
     def save(self, ):
+        '''Save the fit data into the HDF file.'''
         if not hasattr(self.h5.root, 'isotope'):
             self.h5._handle.create_group('/', 'isotope',
                     filters=self.h5._filters)
@@ -184,7 +187,18 @@ class Isotope(object):
         
 
     def _ms_select(self, gcms):
-        '''Select the MS from a data set'''
+        '''Select the MS from a data set.
+        
+        Parameters
+        ----------
+        gcms : GcmsObj instance
+            The GCMS data object to process.
+
+        Returns
+        -------
+        ndarry
+            The normalized MS data over the given start/stop region.
+        '''
         if not self.stop:
             # Just grab a single slice
             idx = gcms.index(gcms.times, self.start)
@@ -202,7 +216,15 @@ class Isotope(object):
             return ms/ms.max()
 
     def _iso_matrix_prep(self, ):
-        '''Create the isotopic matrix used for fitting.'''
+        '''Create the isotopic matrix used for fitting.
+        
+        Returns
+        -------
+        DataFrame
+            The isotopic matrix with the m/z numbers as the columns and a
+            multiindex on the rows with the reference name and the number of
+            isotopic substitutions as the rows.
+        '''
         dfs = {}
         for refname in self.refs:
             ref = self.refs[refname]
@@ -211,6 +233,7 @@ class Isotope(object):
             base = ref['basemz']
             diff = smz - base
             rsz = ref['vals'].size
+            # This is going to be a problem
             isos = np.arange(diff, num+diff)
             zmat = np.zeros((num, self.vals.size))
 

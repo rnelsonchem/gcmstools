@@ -22,12 +22,12 @@ def get_sample_data(fname=None):
     question:
     http://stackoverflow.com/questions/4519127
 
-    Arguments
+    Parameters
     ----------
-
-    * *fname* -- ``None`` (default) or string. If None, all sample files are
-    copied to the current directory. Otherwise, a single filename string
-    can be passed in order to copied to the current folder.
+    fname : str (default None)
+        If None, all sample files are copied to the current directory.
+        Otherwise, a single filename string can be passed in order to copied
+        to the current folder.
     '''
     data_dir = os.path.join(_ROOT, 'sampledata')
     if fname == None:

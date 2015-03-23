@@ -7,6 +7,23 @@ import tables as tb
 import gcmstools.filetypes as gcf
 
 class GcmsStore(pd.HDFStore):
+    '''A GCMS data storage class using HDF files.
+
+    Parameters
+    ----------
+    hdfname : str
+        The name of the HDF storage file. If the file does not exist, it will
+        be created, or else the existing file will be opened in an appending
+        mode (``mode='a'``).
+
+    quiet : bool (default False)
+        Silence the printed notifications.
+
+    Notes
+    -----
+    This is a subclass of Pandas' HDFStore class. See the documentation for
+    that object for more information about addition parameters and methods.
+    '''
     def __init__(self, hdfname, quiet=False, **kwargs):
         if not 'mode' in kwargs:
             kwargs['mode'] = 'a'
@@ -27,7 +44,17 @@ class GcmsStore(pd.HDFStore):
         self.data = self._handle.root.data
 
     def append_gcms(self, datafiles):
-        '''Append a series of GCMS files into the HDF container.'''
+        '''Append a series of GCMS files into the HDF container.
+        
+        Parameters
+        ----------
+        datafiles : GcmsFile object or list of those objects
+            The data files to be added to the storage container. If the
+            container already contains an equivalent file, it will be compared
+            with the new object. If they are the same, the file appending will
+            be skipped; otherwise, the updated object will overwrite the
+            original.
+        '''
         # Make sure datafiles is iterable
         if not isinstance(datafiles, (tuple, list)):
             datafiles = [datafiles,]
@@ -49,7 +76,19 @@ class GcmsStore(pd.HDFStore):
         self.flush()
 
     def extract_gcms(self, filename):
-        '''Extract a data set from the HDF storage file.'''
+        '''Extract a data set from the HDF storage file.
+        
+        Paramters
+        ---------
+        filename : str
+            The full or simplified file name to be extracted from the HDF
+            storage file. 
+
+        Returns
+        -------
+        GcmsFile Object
+            The object corresponding to the filename in storage.
+        '''
         name = self._gcms_name_fix(filename)
     
         # Find the group and info that corresponds to this file
@@ -73,7 +112,13 @@ class GcmsStore(pd.HDFStore):
         return gcms
     
     def compress(self, ):
-        '''Close and compress the HDF file after creation.'''
+        '''Close and compress the HDF file after creation.
+        
+        Notes
+        -----
+        This is very important if lots of files have been appended to an
+        existing HDF file.
+        '''
         # Close the hdf file
         self.close()
         # Make a copy of the file.
@@ -83,7 +128,16 @@ class GcmsStore(pd.HDFStore):
         os.rename(self.filename+'temp', self.filename)
 
     def _append_single_gcms(self, name, gcmsobj):
-        '''Append a single GCMS file into the HDF container.'''
+        '''Append a single GCMS file into the HDF container.
+        
+        Parameters
+        ----------
+        name : str
+            The simplified name of the GCMS file.
+
+        gcmsobj : GcmsFile object
+            The object to be added to the HDF file.
+        '''
         # If this exists already, check for equivalence
         if hasattr(self.data, name):
             different = self._check_gcms_data(name, gcmsobj)
@@ -112,7 +166,22 @@ class GcmsStore(pd.HDFStore):
         group._v_attrs['gcmsinfo'] = gcmsinfo
 
     def _check_gcms_data(self, name, obj):
-        '''Check for equivalence between GCMS file and stored data.'''
+        '''Check for equivalence between GCMS file and stored data.
+        
+        Parameters
+        ----------
+        name : str
+            The simplified file name for the stored data set.
+
+        obj : str
+            The new GcmsFile object to compare with the stored one.
+
+        Returns
+        -------
+        bool
+            Will be True if the stored file object was removed; otherwise,
+            this will be False.
+        '''
         group = getattr(self.data, name)
         groupd = group._v_attrs.gcmsinfo
         d = obj.__dict__
@@ -136,6 +205,16 @@ class GcmsStore(pd.HDFStore):
 
         This is necessary for PyTables natural naming, which is very
         convenient. 
+
+        Parameters
+        ----------
+        badname_path : str
+            The long file name with optional path information.
+
+        Returns
+        -------
+        str
+            The simplified name that does not contain path information.
         '''
         pth, badname = os.path.split(badname_path)
         sp = badname.split('.')

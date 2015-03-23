@@ -9,8 +9,9 @@ located in the ``gcmstools.general`` module.
     In : from gcmstools.general import proc_data
 
 This function only has two required arguments: 1) the path to the folder that
-contains *all* of the GCMS files and 2) the name of the data file that you'd
-like to generate. In this example, our data is in the folder "data" and our processed data file is called "data.h5". 
+contains *all* of the GCMS files and 2) the name of the HDF data file that
+you'd like to generate. In this example, our data is in the folder "data" and
+our processed data file is called "data.h5". 
 
 .. code::
 

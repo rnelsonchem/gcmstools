@@ -57,7 +57,7 @@ format using `Pandas' to_excel function`_ which is part of each DataFrame.
     from gcmstools.datastore import GcmsStore
 
     h5 = GcmsStore('data.h5')
-    h5.pdh5.datacal.to_excel('datacal.xlsx',)
+    h5.datacal.to_excel('datacal.xlsx',)
     h5.close()
 
 Keep in mind that these Excel files are not tied in any way to the original
@@ -88,7 +88,7 @@ Or by reading out a data file from a HDF storage file::
 
     In : h5 = GcmsStore('data.h5')
 
-    In : data = h5.extract_data('datasample1')
+    In : data = h5.extract_gcms('datasample1')
 
 *Step 2: Optional*
 
@@ -189,7 +189,7 @@ Or from the HDF file.
 
     In : h5 = GcmsStore('data.h5')
 
-    In : data = h5.extract_data('datasample1.CDF')
+    In : data = h5.extract_gcms('datasample1.CDF')
 
 *Step 2* 
 

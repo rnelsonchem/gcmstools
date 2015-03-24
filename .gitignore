@@ -8,4 +8,4 @@ dist
 gcmstools.egg-info
 
 # Ignore sample data
-sampledata/*
+sampledata*

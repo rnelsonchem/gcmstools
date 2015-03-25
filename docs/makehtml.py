@@ -16,7 +16,7 @@ print('Creating Zip Archive')
 with ZipFile('../sampledata.zip', mode='a', compression=ZIP_DEFLATED) as zipf:
     for root, dirnames, fnames in os.walk('.'):
         for fname in fnames:
-            if fname == 'data.h5':
+            if fname == 'data.h5' or fname.endswith('pdf'):
                 continue
             dir_file = os.path.join(root, fname)
             print(dir_file)

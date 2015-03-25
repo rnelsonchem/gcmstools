@@ -208,7 +208,7 @@ class Isotope(object):
             # Select a range of MS spectra
             mask = (gcms.times > self.start) & (gcms.times < self.stop)
             region = gcms.intensity[mask]
-            if self.rmbkg:
+            if self.rmbkg and self.stop:
                 # Subtract the first MS
                 region = region - region[0]
             # Sum and normalize

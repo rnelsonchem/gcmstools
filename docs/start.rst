@@ -24,6 +24,9 @@ This user guide is broken into a few sections.
 #. :doc:`Calibration <calibration>`: Generate calibration curves and use this
    information to extract concentration information from you sample datasets.
 
+#. :doc:`Isotopic Analysis <isotope>`: Calculate the isotopic distribution of
+   a sample using a series of reference mass spectra.
+   
 #. :doc:`Batch Processing <autoint>`: A simple function for automating this
    entire process is presented. You can skip to this section if all you want
    to do is automate some data extractions. It is not necessary to understand

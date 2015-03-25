@@ -11,8 +11,12 @@ This user guide is broken into a few sections.
 #. :doc:`Installation <install>`: Information about getting a Python
    installation up and running and installing *gcmstools*.
 
-#. :doc:`Basic Usage <basics>`: This section covers the usage of *gcmstools*
-   to open a GCMS data file and make simple plots of the data. 
+#. :doc:`Basic Setup <basics>`: Go here first to learn about the basic setup
+   and to get some sample data. This is necessary to follow this
+   documentation.
+
+#. :doc:`File Types <filetypes>`: This covers the supported file types, their
+   properties, and some simple plotting.
 
 #. :doc:`Referenceing and Fitting <fitting>`: Incorporate reference data into
    your GCMS dataset and use this to fit the data.   

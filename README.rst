@@ -16,6 +16,10 @@ Currently, this package implements the following:
 
 * Non-negative least squares (nnls) fitting
 
+*Isotopic Analysis*
+
+* Analyze the distribution of isotopes (for isotopic labeling experiments)
+
 
 .. _online user guide: http://gcmstools.rcnelson.com/
 .. _available as a pdf: https://github.com/rnelsonchem/gcmstools/blob

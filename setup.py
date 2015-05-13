@@ -5,7 +5,7 @@ with open('README.rst') as file:
 
 setup(
     name = "gcmstools",
-    version = "0.1.1",
+    version = "0.2.0",
 
     description = "Tools for working with GCMS files.",
     long_description = long_description,

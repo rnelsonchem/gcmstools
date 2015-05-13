@@ -42,7 +42,7 @@ class Calibrate(object):
         self.calinput = pd.read_csv(self.calfile, comment='#')
         # Add the simplified file names as a new column
         self.calinput['simplename'] = self.calinput.File.apply(
-                self.h5._name_fix)
+                self.h5._gcms_name_fix)
 
         gb = self.calinput.groupby('Compound')
         all_calibration_data = []
@@ -51,11 +51,11 @@ class Calibrate(object):
             cal = self._cal_group_proc(group)
             all_calibration_data.append(cal)
 
-        self.h5.pdh5['calibration'] = pd.DataFrame(all_calibration_data)\
+        self.h5['calibration'] = pd.DataFrame(all_calibration_data)\
                 .set_index('Compound')
-        self.calibration = self.h5.pdh5['calibration']
-        self.h5.pdh5['calinput'] = self.calinput
-        self.h5.pdh5.flush()
+        self.calibration = self.h5['calibration']
+        self.h5['calinput'] = self.calinput
+        self.h5.flush()
 
         if picts:
             for i in self.calibration.index:
@@ -71,7 +71,7 @@ class Calibrate(object):
         integrals = []
         for idx, series in df.iterrows():
             filename = series['File']
-            gcms = self.h5.extract_data(filename)
+            gcms = self.h5.extract_gcms(filename)
             if not "integral" in gcms.ref_meta[name]:
                 err = "You didn't include integration times for {}"
                 raise ValueError(err.format(name)) 
@@ -110,7 +110,7 @@ class Calibrate(object):
     def fitsplot(self, cpd, folder='.', show=False, save=True, **kwargs):
         if not hasattr(self, 'calinput'):
             try:
-                self.calinput = self.h5.pdh5.calinput
+                self.calinput = self.h5.calinput
             except:
                 print("No calibration DataFrame!")
                 return
@@ -121,7 +121,7 @@ class Calibrate(object):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for idx, row in df.iterrows():
-            gcms = self.h5.extract_data(row['File'])
+            gcms = self.h5.extract_gcms(row['File'])
             nameidx = gcms.ref_cpds.index(cpd)
             ax.plot(gcms.times, gcms.fit_sim[:,nameidx])
         
@@ -141,12 +141,12 @@ class Calibrate(object):
     def curveplot(self, name, folder='.', show=False, save=True):
         if not hasattr(self, 'calinput'):
             try:
-                self.calinput = self.h5.pdh5.calinput
+                self.calinput = self.h5.calinput
             except:
                 print("No calibration DataFrame!")
                 return
 
-        s = self.h5.pdh5.calibration.loc[name]
+        s = self.h5.calibration.loc[name]
         mask = self.calinput['Compound'] == name
         df = self.calinput[mask]
 
@@ -171,7 +171,7 @@ class Calibrate(object):
         self._datapicts = picts
         if not hasattr(self, 'calibration'):
             try:
-                self.calibration = self.h5.pdh5.calibration
+                self.calibration = self.h5.calibration
             except:
                 print("No calibration DataFrame!")
                 return
@@ -180,23 +180,23 @@ class Calibrate(object):
             self._dir_check(self.datafolder)
         
         # Mask out the files that were used for calibration
-        mask = self.h5.pdh5.files['name'].isin(
-                self.h5.pdh5.calinput['simplename'])
-        others_df = self.h5.pdh5.files[~mask]
+        mask = self.h5.files['name'].isin(
+                self.h5.calinput['simplename'])
+        others_df = self.h5.files[~mask]
         dicts = {}
 
         for idx, line in others_df.iterrows():
             if not self._quiet:
                 print("Processing: {}".format(line['filename']))
-            gcms = self.h5.extract_data(line['filename']) 
+            gcms = self.h5.extract_gcms(line['filename']) 
             datadict = self._data_group_proc((line, gcms))
             dicts[line['name']] = datadict
 
         df = pd.DataFrame(dicts).T
         df.index.name = 'name'
-        self.h5.pdh5['datacal'] = df
-        self.datacal = self.h5.pdh5.datacal
-        self.h5.pdh5.flush()
+        self.h5['datacal'] = df
+        self.datacal = self.h5.datacal
+        self.h5.flush()
 
     def _data_group_proc(self, linegcms):
         line, gcms = linegcms
@@ -214,14 +214,14 @@ class Calibrate(object):
     def dataplot(self, name, gcmsfile, conc=None, folder='.', show=False,
             save=True):
         if isinstance(gcmsfile, str):
-            gcms = self.h5.extract_data(gcmsfile)
+            gcms = self.h5.extract_gcms(gcmsfile)
         else:
             gcms = gcmsfile
 
         if not conc:
-            conc = self.h5.pdh5.datacal.loc[gcmsfile, name]
+            conc = self.h5.datacal.loc[gcmsfile, name]
 
-        s = self.h5.pdh5.calibration.loc[name]
+        s = self.h5.calibration.loc[name]
         cpdidx = gcms.ref_cpds.index(name)
         sim = gcms.fit_sim[:,cpdidx]
 
@@ -246,5 +246,5 @@ class Calibrate(object):
         plt.close(fig)
 
     def close(self,):
-        self.h5.close()
+        self.h5.compress()
 

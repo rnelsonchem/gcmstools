@@ -23,7 +23,7 @@ can also be passed in on construction to open a different HDF file.
 Closing the HDF File
 ++++++++++++++++++++
 
-In general, you will want to close the calibration file when you're done. This
+In general, you will want to close the HDF file when you're done. This
 is not necessary, but it does ensure that the file gets properly compressed,
 which saves some disk space. If you don't do this, though, it won't hurt
 anything.

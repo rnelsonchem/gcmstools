@@ -1,6 +1,5 @@
 import os
-import shutil
-import sys
+from urllib.request import urlopen
 
 from IPython.parallel import Client, interactive
 
@@ -17,29 +16,14 @@ _PWD = os.getcwd()
 def get_sample_data(fname=None):
     '''Copy sample data to current folder.
 
-    Use this function to copy sample data from the gcmstools package directory
-    into the current folder. Found this solution on this StackOverflow
-    question:
-    http://stackoverflow.com/questions/4519127
-
-    Arguments
-    ----------
-
-    * *fname* -- ``None`` (default) or string. If None, all sample files are
-    copied to the current directory. Otherwise, a single filename string
-    can be passed in order to copied to the current folder.
+    Use this function to download sample data as a zip file into the current
+    folder. 
     '''
-    data_dir = os.path.join(_ROOT, 'sampledata')
-    if fname == None:
-        fnames = os.listdir(data_dir)
-    elif isinstance(fname, str):
-        fnames = [fname,]
-    else:
-        raise ValueError("Your filename must be a string or None.")
-
-    [shutil.copy(os.path.join(data_dir, name), os.path.join(_PWD, name)) for
-            name in fnames]
-    
+    url = "http://gcmstools.rcnelson.com/_downloads/sampledata.zip"
+    zipdata = urlopen(url)
+    with open('sampledata.zip', 'wb') as f:
+        f.write(zipdata.read())
+    zipdata.close()
 
 def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
         filetype='aia', reffile=None, fittype=None, calfile=None,
@@ -96,14 +80,14 @@ def proc_data(data_folder, h5name, multiproc=False, chunk_size=4,
             if fit:
                 fit(datafiles)
 
-        h5.append_files(datafiles)
+        h5.append_gcms(datafiles)
 
     if calfile:
         cal = gcc.Calibrate(h5, **kwargs)
         cal.curvegen(calfile, picts=picts, **kwargs)
         cal.datagen(picts=picts, **kwargs)
 
-    h5.close()
+    h5.compress()
 
 # This function is from: http://stackoverflow.com/questions/434287
 def _chunker(seq, size):

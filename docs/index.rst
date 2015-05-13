@@ -16,9 +16,11 @@ Table of Contents
     start
     install
     basics
+    filetypes
     fitting
     storage
     calibration
+    isotope
     autoint
     appendA
     appendB

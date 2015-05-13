@@ -17,43 +17,63 @@ features, so little detail on their usage is provided here.
 .. _PyTables: http://www.pytables.org/moin 
 .. _Pandas: http://pandas.pydata.org/
 
+
+About GcmsStore Implementation
+------------------------------
+
+The ``GcmsStore`` object is a subclass of the Pandas ``HDFStore`` object, so
+it will contain all of the `functions described for that object`. The
+``GcmsStore`` class simply adds a number of custom functions specific for GCMS
+data sets.
+
+.. _functions described for that object: http://pandas.pydata.org/
+        pandas-docs/dev/io.html#hdf5-pytables
+
 Create/Open the Container
 -------------------------
 
-A *gcmstools* ``GcmsStore`` object can be created without any arguments, and
-in which case, it automatically creates a HDF storage file called "data.h5".
-If this file already exists, it will open that file for appending or
-modification. If you want to have more than one data file, you can also pass
-in a custom data file name as the first argument to the object creation. 
+A *gcmstools* ``GcmsStore`` object must be created with a file name argument.
+If a file with this name already exists, it will be opened for appending or
+modification. The default behavior is to compress all the data going into this
+file using the 'blosc' compression library and the highest compression level
+(9). See the Pandas ``HDFStore`` documentation for other accepted keyword
+arguments, especially the compression arguments if different values are
+required.
 
 .. code::
 
     In : from gcmstools.datastore import GcmsStore
 
-    In : h5 = GcmsStore()
-    
-    # Equivalent to above, change name if desired, you don't need to do both
     In : h5 = GcmsStore('data.h5') 
 
 Closing the File
 ----------------
 
-In general, you will want to close the HDF file when you're done. This is not
-necessary, but it does ensure that the file gets properly recompressed, which
-saves some disk space.
+In general, you will want to close the HDF file when you're done, although
+this is not strictly necessary.
 
 .. code::
 
     In : h5.close() # Only do this when you're done
+
+Recompressing the HDF File
+--------------------------
+
+HDF files are designed to be written once and read many times. If you are
+repeatedly adding new files to the HDF storage container, the file size may
+become much larger than seems necessary. You can recompress the file using the
+``compress`` method (which first closes the HDF file).
+
+.. code::
+    
+    In : h5.compress() # This closes the file as well.
 
 Adding Data
 -----------
 
 Added files to this storage container is done using the ``append_files``
 method, which can take either a single data object or a list of objects, if
-you have many objects to add at one time. It is not necessary to reference
-and/or fit the data in any way before storage; however, the calibration
-process will not work properly if you don't reference/fit the data.
+you have many objects to add at one time. 
 
 .. code::
 
@@ -63,6 +83,13 @@ process will not work properly if you don't reference/fit the data.
     In : h5.append_files([otherdata1, otherdata2])
     HDF Appending: otherdata1.CDF
     HDF Appending: otherdata2.CDF
+
+Data files can be added at any stage of the processing chain; however, the
+calibration process will not work properly if you don't reference/fit the data
+first.  You can add an already existing data file as well. The GcmsStore
+object will check if that file is different than the saved version before
+overwriting the existing object. If it is not changed, then the file will be
+skipped.
 
 .. _procfiles:
 
@@ -99,7 +126,7 @@ with a number, the prefix "num" is added.
 Extracting Stored Data
 ----------------------
 
-You can extract data from the storage file using the ``extract_data`` method.
+You can extract data from the storage file using the ``extract_gcms`` method.
 This function takes one argument which is the name of the dataset that you
 want to extract. This name can be either the simplified name or the full
 filename (with or without the path). The extracted data is the same file
@@ -107,9 +134,9 @@ object type as you stored originally.
 
 .. code:: 
 
-    In : extracted = h5.extract_data('datasample1')
+    In : extracted = h5.extract_gcms('datasample1')
 
-    In : extratced.filetype
+    In : extracted.filetype
     Out: "AiaFile"
 
 
@@ -118,13 +145,13 @@ Stored Data Tables
 
 This HDF data file may contain a number of Pandas data tables (DataFrames)
 with information about the files, calibration, etc. A list of currently
-available tables can be obtained from the ``pdh5`` attribute of the
-``GcmsStore`` object. (Note: you won't see these attributes using :ref:`tab
-completion <ipytab>`. You must directly inspect ``pdh5``.
+available tables can be obtained by directly examining the ``GcmsStore`` by
+directly examining the ``GcmsStore`` instance. (Note: you won't see these
+attributes using :ref:`tab completion <ipytab>`.)
 
 .. code::
 
-    In : h5.pdh5
+    In : h5
     Out: 
     <class 'pandas.io.pytables.HDFStore'>
     File path: data.h5
@@ -133,11 +160,11 @@ completion <ipytab>`. You must directly inspect ``pdh5``.
     /datacal                frame        (shape->[49,6])
     /files                  frame        (shape->[1,2]) 
 
-To view these tables, just append the table name after ``pdh5``.
+Directly viewing these tables is trivial.
 
 .. code::
 
-    In : h5.pdh5.calibration
+    In : h5.calibration
     Out: 
                    Start  Stop  Standard         slope      intercept         r  \
     Compound                                                                      

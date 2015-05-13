@@ -28,8 +28,7 @@ This program is saved in the sample data folder under the name
     :linenos: 
 
 A couple of notes. ``os.listdir`` is simply returning a list of all the files
-that are contained in the folder defined by ``datafolder``
-("folderwithdata/").
+that are contained in the folder defined by ``datafolder`` ("data/").
 
 Because that folder may have many different types of files, we need to do some
 filtering. ``cdfs`` uses Python's list comprehension to build up a list of
@@ -57,7 +56,7 @@ format using `Pandas' to_excel function`_ which is part of each DataFrame.
     from gcmstools.datastore import GcmsStore
 
     h5 = GcmsStore('data.h5')
-    h5.pdh5.datacal.to_excel('datacal.xlsx',)
+    h5.datacal.to_excel('datacal.xlsx',)
     h5.close()
 
 Keep in mind that these Excel files are not tied in any way to the original
@@ -88,7 +87,7 @@ Or by reading out a data file from a HDF storage file::
 
     In : h5 = GcmsStore('data.h5')
 
-    In : data = h5.extract_data('datasample1')
+    In : data = h5.extract_gcms('datasample1')
 
 *Step 2: Optional*
 
@@ -189,7 +188,7 @@ Or from the HDF file.
 
     In : h5 = GcmsStore('data.h5')
 
-    In : data = h5.extract_data('datasample1.CDF')
+    In : data = h5.extract_gcms('datasample1.CDF')
 
 *Step 2* 
 
@@ -393,7 +392,7 @@ This example will be very similar to the Data vs Fit plots above; however, we
 will use a fully process HDF storage file to get our data set.  This will be
 presented as a complete script. A copy of which, called "fancy\_ms.py", is
 contained in the sample data folder along with a copy of the PDF output
-("fancy\_plot.pdf").  A picture of the resulting plot is shown in :num:`Figure
+("fancy\_ms.pdf").  A picture of the resulting plot is shown in :num:`Figure
 #fancyms`. 
 
 .. literalinclude:: ../sampledata/fancy_ms.py
@@ -401,7 +400,7 @@ contained in the sample data folder along with a copy of the PDF output
 
 .. _fancyms:
 
-.. figure:: ./images/fancy_plot.png
+.. figure:: ./images/fancy_ms.png
     :width: 5.5in
 
     A fancy plot comparing the sample data (blue) and the fitted data (red)

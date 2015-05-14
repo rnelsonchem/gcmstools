@@ -23,7 +23,7 @@ the ``gcmstools.filetypes`` module.
 
 .. code::
 
-    In : from gcmstools.filetype import AiaFile 
+    In : from gcmstools.filetypes import AiaFile 
 
 .. note::
 
@@ -47,7 +47,7 @@ instance of this object with a filename given as a string.
 
 .. code::
 
-    In : from gcmstools.filetype import AiaFile
+    In : from gcmstools.filetypes import AiaFile
 
     In : data = AiaFile('datasample1.CDF')
     Building: datasample1.CDF

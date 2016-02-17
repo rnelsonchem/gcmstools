@@ -87,11 +87,11 @@ class ReferenceFileGeneric(object):
             if len(sp) > 2:
                 sp[1] = ':'.join(sp[1:])
             
-            if sp[0] == "NAME":
+            if sp[0].lower() == "name":
                 name = sp[1]
                 self.ref_cpds.append(name)
                 self.ref_meta[name] = {}
-            elif sp[0] == "NUM PEAKS":
+            elif sp[0].lower() == "num peaks":
                 line = self._ref_entry_proc(f, name=name)
                 if line:
                     sp = line.split(":")
@@ -145,6 +145,39 @@ class MslReference(ReferenceFileGeneric):
         self.recomp = re.compile(self.regex)
         self.ref_type = 'MslReference'
         super(MslReference, self).__init__(*args, **kwargs)
+
+    def _ref_entry_proc(self, fobj, name):
+        inten = []
+        mass = []
+
+        for line in fobj:
+            if line[0] == '#': continue
+            elif line.isspace(): break
+            elif ":" in line:
+                return line
+
+            vals = self.recomp.findall(line)
+            for val in vals:
+                mass.append(val[0])
+                inten.append(val[1])
+            
+        mass = np.array(mass, dtype=int)
+        inten = np.array(inten, dtype=float)
+        self.ref_mass_inten.append((mass, inten))
+
+        return None
+
+
+class MspReference(ReferenceFileGeneric):
+    '''msp Reference File class.
+
+    These functions process a ".MSP" reference MS file.
+    '''
+    def __init__(self, *args, **kwargs):
+        self.regex = r'\s*(\d*)\s*(\d*);'
+        self.recomp = re.compile(self.regex)
+        self.ref_type = 'MslReference'
+        super(MspReference, self).__init__(*args, **kwargs)
 
     def _ref_entry_proc(self, fobj, name):
         inten = []

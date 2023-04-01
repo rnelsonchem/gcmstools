@@ -24,7 +24,7 @@ concentrations. This is approximately equivalent to what the function
 This program is saved in the sample data folder under the name
 "full_manual.py".
 
-.. literalinclude:: ../sampledata/full_manual.py
+.. literalinclude:: ./sampledata/full_manual.py
     :linenos: 
 
 A couple of notes. ``os.listdir`` is simply returning a list of all the files
@@ -143,11 +143,10 @@ before.)
 
     In : plt.show()
 
-You should see something like the plot in :num:`Figure #singlems`.
-
-.. _singlems:
+You should see something like the plot in :numref:`Figure {number} <singlems>`.
 
 .. figure:: ./images/singlems.png
+    :name: singlems
     :width: 3.5 in
 
     The MS of octane plotted from our sample data set. In this case, the plot
@@ -238,7 +237,8 @@ bars narrower otherwise the second bar plot will overlap. In addition, the
 x-axis for the second data set must be adjusted so the bars start at slightly
 adjusted positions. We'll also change the face color ("fc") otherwise they
 will be the same for both. In this case, we'll use the same adjustment as the
-width of the bars. The resulting plot is show in :num:`Figure #sidebyside`.
+width of the bars. The resulting plot is show in :numref:`Figure {number}
+<sidebyside>`.
 
 .. code::
 
@@ -250,9 +250,8 @@ width of the bars. The resulting plot is show in :num:`Figure #sidebyside`.
 
     In : plt.show()
 
-.. _sidebyside:
-
 .. figure:: ./images/sidebyside.png
+    :name: sidebyside
     :width: 3.5in
 
     A side-by-side MS plot. This has been zoomed in to highlight the important
@@ -263,7 +262,8 @@ Up-Down Plot
 
 As an alternative, you could plot one of the data sets upside down, which may
 have some utility. Notice, we just need to invert (``-``) one of the intensity
-data sets. The resulting plot is shown in :num:`Figure #updownms`.
+data sets. The resulting plot is shown in :numref:`Figure {number}
+<updownms>`.
 
 .. code::
 
@@ -275,9 +275,8 @@ data sets. The resulting plot is shown in :num:`Figure #updownms`.
 
     In : plt.show()
 
-.. _updownms:
-
 .. figure:: ./images/updownms.png
+    :name: updownms
     :width: 3.5in
 
     A Up-Down MS plot. This has been zoomed in to highlight the important
@@ -287,7 +286,8 @@ Difference Plot
 +++++++++++++++
 
 To plot the difference between the data and the reference, just subtract one
-spectrum form the other. The resulting plot is shown in :num:`Figure #diffms`.
+spectrum form the other. The resulting plot is shown in :numref:`Figure
+{number} <diffms>`.
 
 .. code::
 
@@ -298,9 +298,8 @@ spectrum form the other. The resulting plot is shown in :num:`Figure #diffms`.
 
     In : plt.show()
 
-.. _diffms:
-
 .. figure:: ./images/diffms.png
+    :name: diffms
     :width: 3.5in
 
     A difference mass spectrum plot. This has been zoomed in to highlight the
@@ -334,7 +333,7 @@ coefficients at every data point. This is a 2D array with shape (# of time
 points, # of reference compounds). We will use our time index (``idx``) and
 our reference index (``refidx``) to select out one least-squares coefficient
 and then multiply this by our reference mass spectrum. The final plot window
-is shown in :num:`Figure #fitms`.
+is shown in :numref:`Figure {number} <fitms>`.
 
 .. code::
 
@@ -348,9 +347,9 @@ is shown in :num:`Figure #fitms`.
 
     In : plt.show()
 
-.. _fitms:
 
 .. figure:: ./images/fitms.png
+    :name: fitms
     :width: 3.5in
 
     A side-by-side MS plot of the sample data versus the fitted data for
@@ -362,8 +361,8 @@ Dot Plot
 Alternatively, this comparison can be done with a standard plot, as long as
 the markers are set to be large dots (``'o'``). A perfect correlation would be
 a straight line. We can show this by plotting the sample data against itself
-as a solid black line (``'k-'``). This plot window is shown in :num:`Figure
-#dotplot`.
+as a solid black line (``'k-'``). This plot window is shown in :numref:`Figure
+{number} <dotplot>`.
 
 .. code::
 
@@ -377,9 +376,8 @@ as a solid black line (``'k-'``). This plot window is shown in :num:`Figure
 
     In : plt.show()
 
-.. _dotplot:
-
 .. figure:: ./images/dotplot.png
+    :name: dotplot
     :width: 3.5in
 
     A dot plot comparing the sample data versus the fitted data for benzene. A
@@ -392,15 +390,14 @@ This example will be very similar to the Data vs Fit plots above; however, we
 will use a fully process HDF storage file to get our data set.  This will be
 presented as a complete script. A copy of which, called "fancy\_ms.py", is
 contained in the sample data folder along with a copy of the PDF output
-("fancy\_ms.pdf").  A picture of the resulting plot is shown in :num:`Figure
-#fancyms`. 
+("fancy\_ms.pdf").  A picture of the resulting plot is shown in :numref:`Figure
+{number} <fancyms>`. 
 
-.. literalinclude:: ../sampledata/fancy_ms.py
+.. literalinclude:: ./sampledata/fancy_ms.py
     :linenos: 
 
-.. _fancyms:
-
 .. figure:: ./images/fancy_ms.png
+    :name: fancyms
     :width: 5.5in
 
     A fancy plot comparing the sample data (blue) and the fitted data (red)

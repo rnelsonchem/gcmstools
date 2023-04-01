@@ -7,8 +7,5 @@ build
 dist
 gcmstools.egg-info
 
-# Ignore sample data
-sampledata*
-
 # Documentation build dir
 _docbuild

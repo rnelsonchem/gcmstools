@@ -32,13 +32,5 @@ about using the terminal and IPython is found in :doc:`appendA`.
 Sample Data
 -----------
 
-A :download:`zip archive containing example files <../sampledata.zip>` is
-provided in the online *gcmstools* documentation. These files can be
-downloaded into the current directory using the ``get_sample_data`` function.
-
-.. code::
-
-    In : from gcmstools.general import get_sample_data
-
-    In : get_sample_data()
-
+A :download:`zip archive containing example files <./sampledata/sampledata.zip>` is
+available. 

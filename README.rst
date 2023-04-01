@@ -3,8 +3,7 @@ gcmstools - Basic GCMS File Import and Fitting
 
 This library serves two roles: 1) to provide a class to read standard GCMS
 data files, and 2) to fit the data using various fitting routines.  The usage
-and installation of this package is outlined in the `online user guide`_,
-which is also `available as a pdf`_.
+and installation of this package is outlined in the `online user guide`_.
 
 Currently, this package implements the following:
 
@@ -21,6 +20,4 @@ Currently, this package implements the following:
 * Analyze the distribution of isotopes (for isotopic labeling experiments)
 
 
-.. _online user guide: http://gcmstools.rcnelson.com/
-.. _available as a pdf: https://github.com/rnelsonchem/gcmstools/blob
-        /master/gcmstools.pdf?raw=true
+.. _online user guide: http://rnelsonchem.github.io/gcmstools/

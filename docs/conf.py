@@ -20,7 +20,6 @@ import os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.expanduser('~/code/sphinx_numfig-r13'))
 
 # -- General configuration ------------------------------------------------
 
@@ -36,12 +35,12 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
-    'numfig',
 ]
 
 # Numfig:
-numfig_number_figures = True
-numfig_figure_caption_prefix = "Figure"
+numfig = True
+#numfig_number_figures = True
+#numfig_figure_caption_prefix = "Figure"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

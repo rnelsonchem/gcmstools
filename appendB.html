@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Appendix B &#8212; gcmstools Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
+    <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Appendix A: Running Code Samples" href="appendA.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>gcmstools</span></a></h1>
+        <h2 class="heading"><span>Appendix B</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="appendA.html">Appendix A: Running Code Samples</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="appendix-b">
+<h1>Appendix B<a class="headerlink" href="#appendix-b" title="Permalink to this heading">¶</a></h1>
+<p>This appendix contains some examples of common usage scenarios. In some cases,
+the code will be presented as it would be written in a Python program file.
+These can be run from the command line as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>datafolder&gt;$ python program_file.py
+</pre></div>
+</div>
+<p>In addition, these scripts can be run from the IPython interpreter by using
+<code class="docutils literal notranslate"><span class="pre">%run</span></code> or by individually typing each line. See the <a class="reference internal" href="appendA.html#ipython"><span class="std std-ref">IPython
+instructions</span></a> for more information. Little explanation is provided
+here. See the documentation for detailed descriptions of the <em>gcmstools</em>
+objects or any third-party packages.</p>
+<section id="full-manual-processing-example">
+<h2>Full Manual Processing Example<a class="headerlink" href="#full-manual-processing-example" title="Permalink to this heading">¶</a></h2>
+<p>Below is an example script that does a complete analysis starting from loading
+the files all the way through running a calibration and extracting
+concentrations. This is approximately equivalent to what the function
+<code class="docutils literal notranslate"><span class="pre">data_proc</span></code> is doing (see <a class="reference internal" href="autoint.html"><span class="doc">Batch Processing</span></a> for a description that function).</p>
+<p>This program is saved in the sample data folder under the name
+“full_manual.py”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">os</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">gcmstools.filetypes</span> <span class="kn">import</span> <span class="n">AiaFile</span>
+<span class="linenos"> 4</span><span class="kn">from</span> <span class="nn">gcmstools.reference</span> <span class="kn">import</span> <span class="n">TxtReference</span>
+<span class="linenos"> 5</span><span class="kn">from</span> <span class="nn">gcmstools.fitting</span> <span class="kn">import</span> <span class="n">Nnls</span>
+<span class="linenos"> 6</span><span class="kn">from</span> <span class="nn">gcmstools.datastore</span> <span class="kn">import</span> <span class="n">GcmsStore</span>
+<span class="linenos"> 7</span><span class="kn">from</span> <span class="nn">gcmstools.calibration</span> <span class="kn">import</span> <span class="n">Calibrate</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="n">datafolder</span> <span class="o">=</span> <span class="s1">&#39;data/&#39;</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">datafolder</span><span class="p">)</span>
+<span class="linenos">12</span><span class="n">cdfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datafolder</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;CDF&#39;</span><span class="p">)]</span> 
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="n">ref</span> <span class="o">=</span> <span class="n">TxtReference</span><span class="p">(</span><span class="s1">&#39;ref_specs.txt&#39;</span><span class="p">)</span>
+<span class="linenos">15</span><span class="n">fit</span> <span class="o">=</span> <span class="n">Nnls</span><span class="p">()</span>
+<span class="linenos">16</span><span class="n">h5</span> <span class="o">=</span> <span class="n">GcmsStore</span><span class="p">(</span><span class="s1">&#39;data.h5&#39;</span><span class="p">)</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="k">for</span> <span class="n">cdf</span> <span class="ow">in</span> <span class="n">cdfs</span><span class="p">:</span>
+<span class="linenos">19</span>    <span class="n">data</span> <span class="o">=</span> <span class="n">AiaFile</span><span class="p">(</span><span class="n">cdf</span><span class="p">)</span> 
+<span class="linenos">20</span>    <span class="n">ref</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="linenos">21</span>    <span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="linenos">22</span>    <span class="n">h5</span><span class="o">.</span><span class="n">append_gcms</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="linenos">23</span><span class="n">h5</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="n">cal</span> <span class="o">=</span> <span class="n">Calibrate</span><span class="p">()</span>
+<span class="linenos">26</span><span class="n">cal</span><span class="o">.</span><span class="n">curvegen</span><span class="p">(</span><span class="s1">&#39;calibration.csv&#39;</span><span class="p">)</span>
+<span class="linenos">27</span><span class="n">cal</span><span class="o">.</span><span class="n">datagen</span><span class="p">()</span>
+<span class="linenos">28</span><span class="n">cal</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span>
+</pre></div>
+</div>
+<p>A couple of notes. <code class="docutils literal notranslate"><span class="pre">os.listdir</span></code> is simply returning a list of all the files
+that are contained in the folder defined by <code class="docutils literal notranslate"><span class="pre">datafolder</span></code> (“data/”).</p>
+<p>Because that folder may have many different types of files, we need to do some
+filtering. <code class="docutils literal notranslate"><span class="pre">cdfs</span></code> uses Python’s list comprehension to build up a list of
+filenames that end with “CDF”. It also appends the <code class="docutils literal notranslate"><span class="pre">datafolder</span></code> path to the
+beginning of the file name. This list comprehension syntax is a very compact
+and efficient way to represent the following loop structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># The following for loop is equivalent to</span>
+<span class="c1"># cdfs = [os.path.join(datafolder, f) for f in files if f.endswith(&#39;CDF&#39;)]</span>
+<span class="n">cdfs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;CDF&#39;</span><span class="p">):</span>
+        <span class="n">path_plus_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datafolder</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="n">cdfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_plus_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extracting-calibration-tables-to-excel">
+<h2>Extracting Calibration Tables to Excel<a class="headerlink" href="#extracting-calibration-tables-to-excel" title="Permalink to this heading">¶</a></h2>
+<p>It may be cumbersome to view calibration and concentration data directly from
+the HDF file. You can save any of the tables in the HDF file to an Excel
+format using <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.to_excel.html">Pandas’ to_excel function</a> which is part of each DataFrame.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gcmstools.datastore</span> <span class="kn">import</span> <span class="n">GcmsStore</span>
+
+<span class="n">h5</span> <span class="o">=</span> <span class="n">GcmsStore</span><span class="p">(</span><span class="s1">&#39;data.h5&#39;</span><span class="p">)</span>
+<span class="n">h5</span><span class="o">.</span><span class="n">datacal</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s1">&#39;datacal.xlsx&#39;</span><span class="p">,)</span>
+<span class="n">h5</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Keep in mind that these Excel files are not tied in any way to the original
+HDF file. If you change the calibration information or add new data, you’ll
+have to regenerate this file to see the new data.</p>
+</section>
+<section id="plotting-a-mass-spectrum">
+<h2>Plotting a Mass Spectrum<a class="headerlink" href="#plotting-a-mass-spectrum" title="Permalink to this heading">¶</a></h2>
+<p>You may want to be able to plot a mass spectrum from a GCMS file. This is
+fairly straightforward, but requires a few steps.</p>
+<p><em>Step 1</em></p>
+<p>First read in your file. This can be done directly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.filetypes</span> <span class="kn">import</span> <span class="n">AiaFile</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">AiaFile</span><span class="p">(</span><span class="s1">&#39;datasample1.CDF&#39;</span><span class="p">)</span>
+<span class="n">Building</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span><span class="s1">&#39;</span>
+</pre></div>
+</div>
+<p>Or by reading out a data file from a HDF storage file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.datastore</span> <span class="kn">import</span> <span class="n">GcmsStore</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">h5</span> <span class="o">=</span> <span class="n">GcmsStore</span><span class="p">(</span><span class="s1">&#39;data.h5&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">extract_gcms</span><span class="p">(</span><span class="s1">&#39;datasample1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Step 2: Optional</em></p>
+<p>Plot the total ion chromatogram to find the elution time for the peak of
+interest. This is only necessary if you don’t already know the time.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">tic</span><span class="p">)</span>
+<span class="n">Out</span> <span class="p">:</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f34</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Hover the mouse over the peak you want. Somewhere at the bottom on the window,
+it should display the x and y coordinates of the cursor. Note the x number,
+and close the plot window. You don’t need to know the number to every last
+digit of precision – a rough approximation will probably get you close.</p>
+<p><em>Step 3</em></p>
+<p>Now you can find the array index that corresponds to that time. All GCMS file
+objects define an <code class="docutils literal notranslate"><span class="pre">index</span></code> function to help you with this. The first argument
+of the index function is the array to index. After that you can put one or
+more numbers. For a single input number, a single index will be returned. For
+several values, a list of indices will be returned. In “datasample1.CDF”,
+octane elutes at approximately 7.16 minutes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="mf">7.16</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">idx</span>
+<span class="n">Out</span><span class="p">:</span> <span class="mi">1311</span>
+</pre></div>
+</div>
+<p><em>Step 4</em></p>
+<p>Now we are ready to plot the data. The <code class="docutils literal notranslate"><span class="pre">GmsFile.intensity</span></code> attribute is a 2D
+array of all the measured MS intensities at every time point. Its shape is
+(number of time points, number of masses). We can use our time index to select
+a certain time. We’ll make this a box plot, which is more typical for this
+type of data. (You only need to import Matplotlib if you haven’t done it
+before.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You should see something like the plot in <a class="reference internal" href="#singlems"><span class="std std-numref">Figure 4</span></a>.</p>
+<figure class="align-default" id="singlems">
+<a class="reference internal image-reference" href="_images/singlems.png"><img alt="_images/singlems.png" src="_images/singlems.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">The MS of octane plotted from our sample data set. In this case, the plot
+was zoomed in a bit to highlight the relevant data region. Your initial
+plot may look different.</span><a class="headerlink" href="#singlems" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="plotting-data-and-reference-ms">
+<h2>Plotting Data and Reference MS<a class="headerlink" href="#plotting-data-and-reference-ms" title="Permalink to this heading">¶</a></h2>
+<p>Let’s say you want to compare the reference MS with your data set. This can be
+done in much the same manner as before but with a couple of extra steps. We’ll
+use ‘benzene’ as our reference compound of choice.</p>
+<p><em>Step 1</em></p>
+<p>Get your <em>referenced</em> MS data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.filetypes</span> <span class="kn">import</span> <span class="n">AiaFile</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.reference</span> <span class="kn">import</span> <span class="n">TxtReference</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">AiaFile</span><span class="p">(</span><span class="s1">&#39;datasample1.CDF&#39;</span><span class="p">)</span>
+<span class="n">Building</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span><span class="s1">&#39;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">TxtReference</span><span class="p">(</span><span class="s1">&#39;ref_specs.txt&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">ref</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">Referencing</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span>
+</pre></div>
+</div>
+<p>Or from the HDF file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.datastore</span> <span class="kn">import</span> <span class="n">GcmsStore</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">h5</span> <span class="o">=</span> <span class="n">GcmsStore</span><span class="p">(</span><span class="s1">&#39;data.h5&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">extract_gcms</span><span class="p">(</span><span class="s1">&#39;datasample1.CDF&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Step 2</em></p>
+<p>Get the time index as shown above. Benzene elutes at 3.07 minutes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="mf">3.07</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">idx</span>
+<span class="n">Out</span><span class="p">:</span> <span class="mi">553</span>
+</pre></div>
+</div>
+<p>You’ll also need an index for the reference compound.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">refidx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ref_cpds</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;benzene&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">refidx</span>
+<span class="n">Out</span><span class="p">:</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p><em>Step 3</em></p>
+<p>The reference MS are stored in the <code class="docutils literal notranslate"><span class="pre">ref_array</span></code> variable. This is also a 2D
+numerical array with the shape of (number of ref compounds, number of masses),
+so indices can be selected in the same manner as before. However, these data
+are normalized, and the sample data will be much larger. We can easily
+normalize the data spectrum.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">normdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Import Matplotlib for plotting before doing anything else.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<section id="side-by-side-plot">
+<h3>Side-by-Side Plot<a class="headerlink" href="#side-by-side-plot" title="Permalink to this heading">¶</a></h3>
+<p>Here we’ll do a side-by-side plot. By default, each bar will take up all of
+the space between each x-axis point (1.0 in this case), so we need to make the
+bars narrower otherwise the second bar plot will overlap. In addition, the
+x-axis for the second data set must be adjusted so the bars start at slightly
+adjusted positions. We’ll also change the face color (“fc”) otherwise they
+will be the same for both. In this case, we’ll use the same adjustment as the
+width of the bars. The resulting plot is show in <a class="reference internal" href="#sidebyside"><span class="std std-numref">Figure 5</span></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="p">,</span> <span class="n">normdata</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">ref_array</span><span class="p">[</span><span class="n">refidx</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="sidebyside">
+<a class="reference internal image-reference" href="_images/sidebyside.png"><img alt="_images/sidebyside.png" src="_images/sidebyside.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">A side-by-side MS plot. This has been zoomed in to highlight the important
+data region.</span><a class="headerlink" href="#sidebyside" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="up-down-plot">
+<h3>Up-Down Plot<a class="headerlink" href="#up-down-plot" title="Permalink to this heading">¶</a></h3>
+<p>As an alternative, you could plot one of the data sets upside down, which may
+have some utility. Notice, we just need to invert (<code class="docutils literal notranslate"><span class="pre">-</span></code>) one of the intensity
+data sets. The resulting plot is shown in <a class="reference internal" href="#updownms"><span class="std std-numref">Figure 6</span></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="p">,</span> <span class="n">normdata</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="n">data</span><span class="o">.</span><span class="n">ref_array</span><span class="p">[</span><span class="n">refidx</span><span class="p">],</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="updownms">
+<a class="reference internal image-reference" href="_images/updownms.png"><img alt="_images/updownms.png" src="_images/updownms.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">A Up-Down MS plot. This has been zoomed in to highlight the important
+data region.</span><a class="headerlink" href="#updownms" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="difference-plot">
+<h3>Difference Plot<a class="headerlink" href="#difference-plot" title="Permalink to this heading">¶</a></h3>
+<p>To plot the difference between the data and the reference, just subtract one
+spectrum form the other. The resulting plot is shown in <a class="reference internal" href="#diffms"><span class="std std-numref">Figure
+7</span></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">diff</span> <span class="o">=</span> <span class="n">normdata</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">ref_array</span><span class="p">[</span><span class="n">refidx</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="diffms">
+<a class="reference internal image-reference" href="_images/diffms.png"><img alt="_images/diffms.png" src="_images/diffms.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 7 </span><span class="caption-text">A difference mass spectrum plot. This has been zoomed in to highlight the
+important data region.</span><a class="headerlink" href="#diffms" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="plotting-data-and-fitted-ms">
+<h2>Plotting Data and Fitted MS<a class="headerlink" href="#plotting-data-and-fitted-ms" title="Permalink to this heading">¶</a></h2>
+<p>You may want to plot a mass spectrum relative to the fitted spectrum for one
+particular reference compound. This can be done in a very similar manner as
+above, but we must first fit our data. This will follow the side-by-side
+reference plotting section, check there to find out how to set some of these
+variables.  Again, we’ll use ‘benzene’ as our test case.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.fitting</span> <span class="kn">import</span> <span class="n">Nnls</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">fit</span> <span class="o">=</span> <span class="n">Nnls</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">Fitting</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span>
+</pre></div>
+</div>
+<section id="bar-plot">
+<h3>Bar Plot<a class="headerlink" href="#bar-plot" title="Permalink to this heading">¶</a></h3>
+<p>In this case, we need to do a little Numpy index magic. Remember that the
+fitting generate a <code class="docutils literal notranslate"><span class="pre">fit_coef</span></code> array. These are the least-squares
+coefficients at every data point. This is a 2D array with shape (# of time
+points, # of reference compounds). We will use our time index (<code class="docutils literal notranslate"><span class="pre">idx</span></code>) and
+our reference index (<code class="docutils literal notranslate"><span class="pre">refidx</span></code>) to select out one least-squares coefficient
+and then multiply this by our reference mass spectrum. The final plot window
+is shown in <a class="reference internal" href="#fitms"><span class="std std-numref">Figure 8</span></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">fitspec</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">fit_coef</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">refidx</span><span class="p">]</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">ref_array</span><span class="p">[</span><span class="n">refidx</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fitspec</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Container</span> <span class="nb">object</span> <span class="n">of</span> <span class="mi">462</span> <span class="n">artists</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="fitms">
+<a class="reference internal image-reference" href="_images/fitms.png"><img alt="_images/fitms.png" src="_images/fitms.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 8 </span><span class="caption-text">A side-by-side MS plot of the sample data versus the fitted data for
+benzene. This has been zoomed in to highlight the important data region.</span><a class="headerlink" href="#fitms" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="dot-plot">
+<h3>Dot Plot<a class="headerlink" href="#dot-plot" title="Permalink to this heading">¶</a></h3>
+<p>Alternatively, this comparison can be done with a standard plot, as long as
+the markers are set to be large dots (<code class="docutils literal notranslate"><span class="pre">'o'</span></code>). A perfect correlation would be
+a straight line. We can show this by plotting the sample data against itself
+as a solid black line (<code class="docutils literal notranslate"><span class="pre">'k-'</span></code>). This plot window is shown in <a class="reference internal" href="#dotplot"><span class="std std-numref">Figure
+9</span></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">fitspec</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">fit_coef</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">refidx</span><span class="p">]</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">ref_array</span><span class="p">[</span><span class="n">refidx</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">fitspec</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f34</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f34</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="dotplot">
+<a class="reference internal image-reference" href="_images/dotplot.png"><img alt="_images/dotplot.png" src="_images/dotplot.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 9 </span><span class="caption-text">A dot plot comparing the sample data versus the fitted data for benzene. A
+perfectly straight line (black) indicates a perfect fit.</span><a class="headerlink" href="#dotplot" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="fancy-data-versus-fit-ms-plot">
+<h3>Fancy Data Versus Fit MS Plot<a class="headerlink" href="#fancy-data-versus-fit-ms-plot" title="Permalink to this heading">¶</a></h3>
+<p>This example will be very similar to the Data vs Fit plots above; however, we
+will use a fully process HDF storage file to get our data set.  This will be
+presented as a complete script. A copy of which, called “fancy_ms.py”, is
+contained in the sample data folder along with a copy of the PDF output
+(“fancy_ms.pdf”).  A picture of the resulting plot is shown in <a class="reference internal" href="#fancyms"><span class="std std-numref">Figure
+10</span></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">gcmstools.datastore</span> <span class="kn">import</span> <span class="n">GcmsStore</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">h5</span> <span class="o">=</span> <span class="n">GcmsStore</span><span class="p">(</span><span class="s1">&#39;data.h5&#39;</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="n">data</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">extract_gcms</span><span class="p">(</span><span class="s1">&#39;data1&#39;</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="n">h5</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="n">refcpd</span> <span class="o">=</span> <span class="s1">&#39;benzene&#39;</span>
+<span class="linenos">10</span><span class="n">refidx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ref_cpds</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">refcpd</span><span class="p">)</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="n">time</span> <span class="o">=</span> <span class="mf">3.07</span>
+<span class="linenos">13</span><span class="n">idx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="n">fitspec</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">fit_coef</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">refidx</span><span class="p">]</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">ref_array</span><span class="p">[</span><span class="n">refidx</span><span class="p">]</span>
+<span class="linenos">16</span><span class="n">dataspec</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="c1">### This is all the plotting stuff</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="p">,</span> <span class="n">dataspec</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sample&quot;</span><span class="p">)</span>
+<span class="linenos">23</span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">masses</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fitspec</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
+<span class="linenos">24</span><span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+<span class="linenos">27</span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;m/z&#39;</span><span class="p">)</span>
+<span class="linenos">28</span><span class="c1"># Don&#39;t show the y-axis ticks</span>
+<span class="linenos">29</span><span class="n">plt</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">30</span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Benzene Mass Spectra&#39;</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="linenos">33</span><span class="c1"># We can save files in PDF format, which gives them unlimited resolution.</span>
+<span class="linenos">34</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;fancy_ms.pdf&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default" id="fancyms">
+<a class="reference internal image-reference" href="_images/fancy_ms.png"><img alt="_images/fancy_ms.png" src="_images/fancy_ms.png" style="width: 5.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 10 </span><span class="caption-text">A fancy plot comparing the sample data (blue) and the fitted data (red)
+for benzene.  The PDF version is a vector graphic, so it has unlimited
+resolution.</span><a class="headerlink" href="#fancyms" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="appendA.html">Appendix A: Running Code Samples</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Ryan Nelson.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+  Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59963257-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  </body>
+</html>

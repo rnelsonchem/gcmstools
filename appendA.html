@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Appendix A: Running Code Samples &#8212; gcmstools Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
+    <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix B" href="appendB.html" />
+    <link rel="prev" title="Batch Processing" href="autoint.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>gcmstools</span></a></h1>
+        <h2 class="heading"><span>Appendix A: Running Code Samples</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="autoint.html">Batch Processing</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="appendB.html">Appendix B</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="appendix-a-running-code-samples">
+<span id="cli"></span><h1>Appendix A: Running Code Samples<a class="headerlink" href="#appendix-a-running-code-samples" title="Permalink to this heading">¶</a></h1>
+<section id="using-the-command-line">
+<h2>Using the Command Line<a class="headerlink" href="#using-the-command-line" title="Permalink to this heading">¶</a></h2>
+<p>Running the code samples in this documentation requires a rudimentary
+knowledge of the command-line terminal (command prompt on Windows). The
+terminal can seem very “texty” and confusing at first; however, with a little
+practice it gets to be fairly intuitive and <em>efficient</em>. There are many
+tutorials online, for example, <a class="reference external" href="http://cli.learncodethehardway.org/book/">The Command Line Crash Course</a>. However, a
+few basic command line concepts are covered here, for reference.</p>
+<p>When you start a terminal, you will be presented with a window to type
+commands. In this documentation, the terminal command prompt will be denoted
+as <code class="docutils literal notranslate"><span class="pre">home&gt;$</span></code>, where “home” indicates the current folder where the commands
+will be executed and “&gt;$” is just a separator. These things do not need to be
+typed when entering commands. A similar format is common in a lot of online
+documentation.  Some commands generate output. The output will occur after the
+command prompt, but will not be preceded by a command prompt symbol.</p>
+<p>The most important thing you’ll want to be able to do is move to different
+directories (i.e. folders). To do this there are a couple of useful terminal
+commands: “change directory” (<code class="docutils literal notranslate"><span class="pre">cd</span></code>) and “present working directory”
+(<code class="docutils literal notranslate"><span class="pre">pwd</span></code>).  When you open the terminal, you will usually start in your “home”
+directory. This will probably be “/Users/username” on Mac, “/home/username” on
+Linux, or “C:\Users\username” on Windows. To move to a different directory,
+use the <code class="docutils literal notranslate"><span class="pre">cd</span></code> command; to see the location of the current folder, use
+<code class="docutils literal notranslate"><span class="pre">pwd</span></code>.  Here’s an example.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>home$&gt; pwd
+/home/username/
+
+home$&gt; cd folder1
+
+folder1$&gt; pwd
+/home/username/folder1
+</pre></div>
+</div>
+<p>The second command here moved active directory to the folder called <em>folder1</em>.
+There are also a few special directory shortcuts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">~</span></code> This refers to the home directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">..</span></code> (Double dot) This refers to the parent directory of the current
+directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.</span></code> (Single dot) This refers to the current directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\</span></code> or <code class="docutils literal notranslate"><span class="pre">/</span></code> Separators to combine directory names. The first works on
+Linux/Mac (and in IPython, see below), the second is required on Windows.</p></li>
+</ul>
+<p>Here’s these shortcuts in action.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>home&gt;$ cd folder1/folder2
+
+folder2&gt;$ pwd
+/home/username/folder1/folder2
+
+folder2&gt;$ cd .
+
+folder2&gt;$ pwd
+/home/username/folder1/folder2
+
+folder2&gt;$ cd ../..
+
+home&gt;$ pwd
+/home/username
+
+home&gt;$ cd folder1/folder2
+
+folder2&gt;$ cd ~
+
+home&gt;$ pwd
+/home/username
+
+home&gt;$ cd folder1/folder2
+
+folder2&gt;$ cd ~/folder3
+
+folder3&gt;$ pwd
+/home/username/folder3
+</pre></div>
+</div>
+<p>The other important command is <code class="docutils literal notranslate"><span class="pre">ls</span></code>, which lists the contents of the current
+directory. (In Windows, the equivalent command is <code class="docutils literal notranslate"><span class="pre">dir</span></code>.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>folder3&gt;$ ls
+file1 file2 folder4
+</pre></div>
+</div>
+</section>
+<section id="ipython">
+<span id="id1"></span><h2>IPython<a class="headerlink" href="#ipython" title="Permalink to this heading">¶</a></h2>
+<section id="start-ipython">
+<h3>Start IPython<a class="headerlink" href="#start-ipython" title="Permalink to this heading">¶</a></h3>
+<p>One of Python’s strengths as a data analysis language is its interactive
+interpreter. This mode is accessed from a terminal by typing <code class="docutils literal notranslate"><span class="pre">python</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>home&gt;$ python
+Python 3.4.1 (default, Oct 10 2014, 15:29:52)
+[GCC 4.7.3] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>Any command that is typed at the <code class="docutils literal notranslate"><span class="pre">&gt;&gt;&gt;</span></code> prompt is treated as Python code, and
+executed appropriately. That means you can interactively write and explore
+code in this manner.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
+<span class="go">Hello World</span>
+</pre></div>
+</div>
+<p>The default Python interpreter is very limited, which is why IPython was
+developed. IPython is an advanced Python interpreter, which has several
+advanced features like autocompletion and introspection, just to name two.
+Over the years, this project has grown substantially, and in addition to a
+terminal based interpreter, there is now a GUI version and a very cool
+web-based Notebook as well. To learn more about the other features, consult
+the <a class="reference external" href="http://ipython.org/documentation.html">IPython documentation</a>.</p>
+<p>IPython is started from the terminal using the <code class="docutils literal notranslate"><span class="pre">ipython</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>home&gt;$ ipython
+Python 3.4.1 (default, Oct 10 2014, 15:29:52)
+Type &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+
+IPython 2.3.1 -- An enhanced Interactive Python.
+?         -&gt; Introduction and overview of IPython&#39;s features.
+%quickref -&gt; Quick reference.
+help      -&gt; Python&#39;s own help system.
+object?   -&gt; Details about &#39;object&#39;, use &#39;object??&#39; for extra details.
+
+In [1]: 2 + 2
+Out[1]: 4
+
+In [2]: print(&#39;Hello World&#39;)
+Hello World
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">In</span> <span class="pre">[#]:</span></code> prompt now takes the place of <code class="docutils literal notranslate"><span class="pre">&gt;&gt;&gt;</span></code> in the regular Python
+interpreter. In addition, certain types of output are preceded by an
+<code class="docutils literal notranslate"><span class="pre">Out[#]:</span></code> prompt. The numbers in brackets help you to determine the order
+that commands are processed. For this documentation, though, the numbers will
+be stripped for clarity, e.g. <code class="docutils literal notranslate"><span class="pre">In</span> <span class="pre">:</span></code> and <code class="docutils literal notranslate"><span class="pre">Out:</span></code>. If you see these prompts,
+you should know that the commands are being run in an IPython session.</p>
+</section>
+<section id="autocompletion-and-introscpection">
+<span id="ipytab"></span><h3>Autocompletion and Introscpection<a class="headerlink" href="#autocompletion-and-introscpection" title="Permalink to this heading">¶</a></h3>
+<p>The take home message of this section is <em>use the Tab key a lot!</em> It will make
+you much more productive.</p>
+<p>Two very nice aspect of the IPython interpreter are autocompletion and object
+introspection. Both of these will make use of the Tab key on your keyboard; in
+code snippets, this key will be denoted as <code class="docutils literal notranslate"><span class="pre">&lt;tab&gt;</span></code>, which means you should
+press the Tab key rather than typing it out. To see these two operations in
+action, we can first create a new string object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">my_string</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">my_string</span><span class="p">)</span>
+<span class="n">Hello</span> <span class="n">World</span>
+</pre></div>
+</div>
+<p>To determine the methods available to a string object, we can use IPython’s
+object introspection.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">my_string</span><span class="o">.&lt;</span><span class="n">tab</span><span class="o">&gt;</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">capitalize</span>    <span class="n">my_string</span><span class="o">.</span><span class="n">isidentifier</span>  <span class="n">my_string</span><span class="o">.</span><span class="n">rindex</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">casefold</span>      <span class="n">my_string</span><span class="o">.</span><span class="n">islower</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">rjust</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">center</span>        <span class="n">my_string</span><span class="o">.</span><span class="n">isnumeric</span>     <span class="n">my_string</span><span class="o">.</span><span class="n">rpartition</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">count</span>         <span class="n">my_string</span><span class="o">.</span><span class="n">isprintable</span>   <span class="n">my_string</span><span class="o">.</span><span class="n">rsplit</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">encode</span>        <span class="n">my_string</span><span class="o">.</span><span class="n">isspace</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">rstrip</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">endswith</span>      <span class="n">my_string</span><span class="o">.</span><span class="n">istitle</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">split</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">expandtabs</span>    <span class="n">my_string</span><span class="o">.</span><span class="n">isupper</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">splitlines</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">find</span>          <span class="n">my_string</span><span class="o">.</span><span class="n">join</span>          <span class="n">my_string</span><span class="o">.</span><span class="n">startswith</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">format</span>        <span class="n">my_string</span><span class="o">.</span><span class="n">ljust</span>         <span class="n">my_string</span><span class="o">.</span><span class="n">strip</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">format_map</span>    <span class="n">my_string</span><span class="o">.</span><span class="n">lower</span>         <span class="n">my_string</span><span class="o">.</span><span class="n">swapcase</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">index</span>         <span class="n">my_string</span><span class="o">.</span><span class="n">lstrip</span>        <span class="n">my_string</span><span class="o">.</span><span class="n">title</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isalnum</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">maketrans</span>     <span class="n">my_string</span><span class="o">.</span><span class="n">translate</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isalpha</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">partition</span>     <span class="n">my_string</span><span class="o">.</span><span class="n">upper</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isdecimal</span>     <span class="n">my_string</span><span class="o">.</span><span class="n">replace</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">zfill</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isdigit</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">rfind</span>
+</pre></div>
+</div>
+<p>As you can see, there are many, many things that you can do with this string
+object. IPython can also use the Tab key to autocomplete long names for
+variables, path strings, etc. Here’s an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">my_string</span><span class="o">.</span><span class="ow">is</span><span class="o">&lt;</span><span class="n">tab</span><span class="o">&gt;</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isalnum</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">isidentifier</span>  <span class="n">my_string</span><span class="o">.</span><span class="n">isspace</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isalpha</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">islower</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">istitle</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isdecimal</span>     <span class="n">my_string</span><span class="o">.</span><span class="n">isnumeric</span>     <span class="n">my_string</span><span class="o">.</span><span class="n">isupper</span>
+<span class="n">my_string</span><span class="o">.</span><span class="n">isdigit</span>       <span class="n">my_string</span><span class="o">.</span><span class="n">isprintable</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">my_string</span><span class="o">.</span><span class="n">isi</span><span class="o">&lt;</span><span class="n">tab</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Notice that when you type tab here IPython automatically expands this to
+<code class="docutils literal notranslate"><span class="pre">my_string.isidentifier</span></code>. This works for path strings as well.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It should be pointed out that tab completion also works on the regular
+command line terminal interface as well.</p>
+</div>
+</section>
+<section id="magic-commands">
+<h3>Magic Commands<a class="headerlink" href="#magic-commands" title="Permalink to this heading">¶</a></h3>
+<p>IPython has a number of special, non-Python, commands that make its
+interpreter behave much like a command-line terminal. These commands, called
+Magic Commands, are preceded by <code class="docutils literal notranslate"><span class="pre">%</span></code> or <code class="docutils literal notranslate"><span class="pre">%%</span></code>. The <a class="reference external" href="http://ipython.org/ipython-doc/dev/interactive/tutorial.html">magic command
+documentation</a> covers many of these, but a few that are useful to the
+examples in this document are discussed here.</p>
+<p>The magics <code class="docutils literal notranslate"><span class="pre">%cd</span></code>, <code class="docutils literal notranslate"><span class="pre">%pwd</span></code>, and <code class="docutils literal notranslate"><span class="pre">%ls</span></code> serve the exact same purpose as in
+the terminal. Another very useful magic is <code class="docutils literal notranslate"><span class="pre">%run</span></code>. This command executes a
+Python program file from inside the IPython session, and in addition to
+executing the code, it also loads the data and variables into the current
+IPython session. This is best explained by example. Create a new folder called
+<code class="docutils literal notranslate"><span class="pre">folder1</span></code> in your home directory. Create the file <code class="docutils literal notranslate"><span class="pre">test.py</span></code> in <code class="docutils literal notranslate"><span class="pre">folder1</span></code>
+and paste the following code into that file. (See <a class="reference internal" href="#textfiles"><span class="std std-ref">Working with Text Files</span></a> for some
+information on text files and Python programs.)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">var1</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">var2</span> <span class="o">=</span> <span class="s2">&quot;Hello World&quot;</span>
+<span class="n">var3</span> <span class="o">=</span> <span class="n">var1</span><span class="o">*</span><span class="n">var2</span>
+</pre></div>
+</div>
+<p>Now let’s start up IPython and run this new program.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>home&gt;$ ipython
+Python 3.4.1 (default, Oct 10 2014, 15:29:52)
+Type &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+
+IPython 2.3.1 -- An enhanced Interactive Python.
+?         -&gt; Introduction and overview of IPython&#39;s features.
+%quickref -&gt; Quick reference.
+help      -&gt; Python&#39;s own help system.
+object?   -&gt; Details about &#39;object&#39;, use &#39;object??&#39; for extra details.
+
+In : %pwd
+/home/username
+
+In : %cd folder1
+/home/username/folder1
+
+In : %ls
+test.py
+
+In : %run test.py
+
+In :
+</pre></div>
+</div>
+<p>At this point, it seems like nothing has happened; however, the variable that
+we defined in our file “test.py” are now contained in our IPython session.
+Assuming that the following IPython code is the same session as above.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">var1</span>
+<span class="n">Out</span><span class="p">:</span> <span class="mi">7</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">var3</span>
+<span class="n">Out</span><span class="p">:</span> <span class="n">Hello</span> <span class="n">WorldHello</span> <span class="n">WorldHello</span> <span class="n">WorldHello</span> <span class="n">WorldHello</span> <span class="n">WorldHello</span>
+<span class="n">WorldHello</span> <span class="n">WorldHello</span> <span class="n">World</span>
+</pre></div>
+</div>
+<p>As you can see, this is a very powerful way to save your work for later or to
+run code that is fairly repetitive.</p>
+</section>
+<section id="notebook-interface">
+<h3>Notebook Interface<a class="headerlink" href="#notebook-interface" title="Permalink to this heading">¶</a></h3>
+<p>Todo.</p>
+</section>
+</section>
+<section id="working-with-text-files">
+<span id="textfiles"></span><h2>Working with Text Files<a class="headerlink" href="#working-with-text-files" title="Permalink to this heading">¶</a></h2>
+<p>There are many instances where you will need to work with plain text files,
+including writing Python programs. Plain text files are <em>not</em> word processing
+documents (e.g. MS Word), so you will want to use a dedicated text editor.
+Another source of problems for beginners is that leading white space in Python
+programs is important. For these reasons, a dedicated Python text editor can
+be very useful for beginners. Anaconda is bundled with <a class="reference external" href="https://code.google.com/p/spyderlib/">Spyder</a>, which has a
+builtin text editor. The Anaconda FAQ has <a class="reference external" href="http://docs.continuum.io/anaconda/faq.html#open-packages">information on running Spyder</a> on
+your system. Spyder is actually a full development environment, so it can be
+very intimidating for beginners. Don’t worry! The far left panel is the text
+editor, and you can use that without knowing what any of the other panels are
+doing. Some internet searches will reveal other text editors if you’d prefer
+something smaller. (Do <em>not</em> use MS Notepad.)</p>
+<p>The “.py” suffix for Python programs can be important.  On Windows, however,
+file extensions are not shown by default, which makes them difficult to
+modify. In these cases, you may inadvertently create a file with the extension
+“.py.txt”, which will not behave as you expect. Consult the internet for ways
+to show file extensions on a Windows machine.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="autoint.html">Batch Processing</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="appendB.html">Appendix B</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Ryan Nelson.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+  Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59963257-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  </body>
+</html>

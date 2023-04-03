@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Calibration and Concentration Determination &#8212; gcmstools Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
+    <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Isotopic Distribution Analysis" href="isotope.html" />
+    <link rel="prev" title="Data Storage" href="storage.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>gcmstools</span></a></h1>
+        <h2 class="heading"><span>Calibration and Concentration Determination</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="storage.html">Data Storage</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="isotope.html">Isotopic Distribution Analysis</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="calibration-and-concentration-determination">
+<h1>Calibration and Concentration Determination<a class="headerlink" href="#calibration-and-concentration-determination" title="Permalink to this heading">¶</a></h1>
+<section id="calibration-object">
+<h2>Calibration Object<a class="headerlink" href="#calibration-object" title="Permalink to this heading">¶</a></h2>
+<p>The calibration class <code class="docutils literal notranslate"><span class="pre">Calibrate</span></code> is defined in the
+<code class="docutils literal notranslate"><span class="pre">gcmstools.calibration</span></code> module. Before you start, you must have access to an
+HDF storage file that contains <em>all</em> of the data to be processed. By default,
+the <code class="docutils literal notranslate"><span class="pre">Calibrate</span></code> instance creation attempts to open a file “data.h5” in the
+current folder. If this is not the name of your HDF file, an alternate name
+can also be passed in on construction to open a different HDF file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.calibration</span> <span class="kn">import</span> <span class="n">Calibrate</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">cal</span> <span class="o">=</span> <span class="n">Calibrate</span><span class="p">()</span> <span class="c1"># Opens &#39;data.h5&#39; by default</span>
+
+<span class="c1"># Equivalent to above, but using a different file name, don&#39;t do both</span>
+<span class="n">In</span> <span class="p">:</span> <span class="n">cal</span> <span class="o">=</span> <span class="n">Calibrate</span><span class="p">(</span><span class="s1">&#39;other.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="closing-the-hdf-file">
+<h3>Closing the HDF File<a class="headerlink" href="#closing-the-hdf-file" title="Permalink to this heading">¶</a></h3>
+<p>In general, you will want to close the HDF file when you’re done. This
+is not necessary, but it does ensure that the file gets properly compressed,
+which saves some disk space. If you don’t do this, though, it won’t hurt
+anything.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">cal</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> <span class="c1"># Only do this when you&#39;re done</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="calibration-information-file">
+<h2>Calibration Information File<a class="headerlink" href="#calibration-information-file" title="Permalink to this heading">¶</a></h2>
+<p>In order to calibrate your GCMS data, you must first create a csv file
+containing all of the relevant calibration information. Again, the structure
+of this file is very important, so an example, “calibration.csv”, is contained
+with the sample data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.general</span> <span class="kn">import</span> <span class="n">get_sample_data</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">get_sample_data</span><span class="p">(</span><span class="s2">&quot;calibration.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first row in this csv file is critical, and it must look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Compound</span><span class="p">,</span><span class="n">File</span><span class="p">,</span><span class="n">Concentration</span><span class="p">,</span><span class="n">Standard</span><span class="p">,</span><span class="n">Standard</span> <span class="n">Conc</span>
+</pre></div>
+</div>
+<p>Each row after this describes a set of calibration information that you’d like
+to use. The columns of this file are as follows:</p>
+<ul class="simple">
+<li><p><em>Compound</em>: The name of the compound that you are calibrating. This <em>must</em>
+correspond to one of the compound names (case-sensitive) used when
+<a class="reference internal" href="fitting.html"><span class="doc">referencing and fitting</span></a> the GCMS file.</p></li>
+<li><p><em>File</em>: This is the name of the data set that was collected at a particular
+concentration of <em>Compound</em>. Again, this filename can be the full filename
+(with or without the path) or the simplified name. See the <a class="reference internal" href="storage.html#procfiles"><span class="std std-ref">files
+attribute</span></a> section of the GcmsStore docs for more info.</p></li>
+<li><p><em>Concentration</em>: This is the known concentration of the  <em>Compound</em>. This
+should only be a number: do not include units. All of the concentrations
+should be in the same units, and keep in mind that all calibration and
+concentration data will then be in that same unit of measurement.</p></li>
+<li><p><em>Standard</em> and <em>Standard Conc</em>: If there is an internal standard used in
+this file, you should provide the name and concentration in these columns.
+Again, the standard name should have been defined when referencing your GCMS
+data set, and do not include units with the concentration. Make sure your
+concentration units are the same as the reference compound to avoid
+confusion.</p></li>
+</ul>
+<p>You can add extra columns to this table without penalty, in case you need to
+add additional information to this table. You can also comment out lines by
+starting a line with a <code class="docutils literal notranslate"><span class="pre">#</span></code> character. This is useful if you want to ignore
+a bad data point without completely removing the line from the calibration
+file.</p>
+</section>
+<section id="generate-calibration-curves">
+<h2>Generate Calibration Curves<a class="headerlink" href="#generate-calibration-curves" title="Permalink to this heading">¶</a></h2>
+<p>The calibration curves can be generated using the <code class="docutils literal notranslate"><span class="pre">curvegen</span></code> method of the
+<code class="docutils literal notranslate"><span class="pre">Calibrate</span></code> object. This function must be called with the name of your
+calibration file. In this example, that filename is “calibration.csv”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">cal</span><span class="o">.</span><span class="n">curvegen</span><span class="p">(</span><span class="s1">&#39;calibration.csv&#39;</span><span class="p">)</span>
+<span class="n">Calibrating</span><span class="p">:</span> <span class="n">benzene</span>
+<span class="n">Calibrating</span><span class="p">:</span> <span class="n">phenol</span>
+<span class="o">...</span>
+
+<span class="n">In</span> <span class="p">:</span>
+</pre></div>
+</div>
+<p>This process creates two new tables as attributes to your calibration object,
+<code class="docutils literal notranslate"><span class="pre">calinput</span></code> and <code class="docutils literal notranslate"><span class="pre">calibration</span></code>. The former table is simply your input csv
+information with columns appended for the concentrations (“conc”) and
+integrals (“integral”) used for generating the calibration curve. If no
+internal standard is defined, then “conc” will be the same as the compound
+concentration you used in the input file. If an internal standard was defined,
+then “conc” and “integral” will be these values divided by the corresponding
+internal standard values. These tables also stored in the HDF file as well, if
+you want to check them at a later date.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">calibration</span></code> table contains all of the newly created calibration curve
+information, such as slope, intercept, r value, etc.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">cal</span><span class="o">.</span><span class="n">calibration</span>
+<span class="n">Out</span><span class="p">:</span>
+               <span class="n">Start</span>  <span class="n">Stop</span>  <span class="n">Standard</span>         <span class="n">slope</span>      <span class="n">intercept</span>         <span class="n">r</span>  \
+<span class="n">Compound</span>
+<span class="n">benzene</span>          <span class="mf">2.9</span>   <span class="mf">3.5</span>       <span class="n">NaN</span>  <span class="mf">38629.931565</span> <span class="o">-</span><span class="mf">367129.586850</span>  <span class="mf">0.998767</span>
+<span class="n">phenol</span>          <span class="mf">14.6</span>  <span class="mf">15.1</span>       <span class="n">NaN</span>  <span class="mf">30248.192619</span>   <span class="mf">65329.897933</span>  <span class="mf">0.999136</span>
+<span class="o">...</span>
+
+                      <span class="n">p</span>       <span class="n">stderr</span>
+<span class="n">Compound</span>
+<span class="n">benzene</span>        <span class="mf">0.000052</span>  <span class="mf">1108.344872</span>
+<span class="n">phenol</span>         <span class="mf">0.000030</span>   <span class="mf">726.257380</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<section id="plotting-calibrations">
+<h3>Plotting Calibrations<a class="headerlink" href="#plotting-calibrations" title="Permalink to this heading">¶</a></h3>
+<p>By default, no plots are generated for these calibrations. There are, however,
+a couple of functions that automatically plot some of the calibration data.</p>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">cal.curvegen('calibration.csv',</span> <span class="pre">calfolder='cal',</span> <span class="pre">picts=True)</span></code> : This
+invocation will auto generate pictures for all of the calibration compounds
+and place them in a folder defined by the keyword argument <code class="docutils literal notranslate"><span class="pre">calfolder</span></code>.
+This argument is optional, if you don’t mind the default folder name of
+“cal”.  Be careful! This folder and its contents will be deleted before
+generating new plots, so if this folder exists, make sure it is clear of
+important data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cal.curveplot('benzene')</span></code> : This method will generate a plot of the
+benzene calibration information and save it to the current folder. There
+are several keyword arguments to this function:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">folder='.'</span></code> : This sets the folder where the picture will be saved. By
+default it is the current directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show=False</span></code> : Change this value to <code class="docutils literal notranslate"><span class="pre">True</span></code> if you want an interactive
+plot window to be displayed. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save=True</span></code> : Save the calibration plot to the folder.</p></li>
+</ul>
+<p>If both <code class="docutils literal notranslate"><span class="pre">save</span></code> and <code class="docutils literal notranslate"><span class="pre">show</span></code> are set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, nothing will happen.</p>
+<p>Of course, this function must be done after a call to <code class="docutils literal notranslate"><span class="pre">curvegen</span></code>. But it
+can be used to look at calibration data from an previously processed HDF
+file without rerunning the calibration.</p>
+</li>
+</ol>
+</section>
+</section>
+<section id="determine-sample-concentrations">
+<h2>Determine Sample Concentrations<a class="headerlink" href="#determine-sample-concentrations" title="Permalink to this heading">¶</a></h2>
+<p>Generating calibration curves <em>does not</em> automatically process the other data
+files. In order to determine concentrations for all of the remaining data in
+the HDF file, use the <code class="docutils literal notranslate"><span class="pre">datagen</span></code> method of the <code class="docutils literal notranslate"><span class="pre">Calibrate</span></code> object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">cal</span><span class="o">.</span><span class="n">datagen</span><span class="p">()</span>
+<span class="n">Processing</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span>
+<span class="n">Processing</span><span class="p">:</span> <span class="n">otherdata1</span><span class="o">.</span><span class="n">CDF</span>
+<span class="n">Processing</span><span class="p">:</span> <span class="n">otherdata2</span><span class="o">.</span><span class="n">CDF</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>After processing, another data table attribute (<code class="docutils literal notranslate"><span class="pre">datacal</span></code>) is created and
+saved to the HDF file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">cal</span><span class="o">.</span><span class="n">datacal</span>
+<span class="n">Out</span><span class="p">:</span>
+                              <span class="n">benzene</span>       <span class="n">phenol</span>   <span class="o">...</span>
+<span class="n">name</span>
+<span class="n">datasample1</span>               <span class="mf">4239.070627</span>    <span class="mf">58.336917</span>   <span class="o">...</span>
+<span class="n">otherdata1</span>                <span class="mf">5475.778519</span>    <span class="mf">20.401981</span>   <span class="o">...</span>
+<span class="n">otherdata2</span>                <span class="mf">4355.094930</span>    <span class="mf">19.171877</span>   <span class="o">...</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Again, the data <em>ARE NOT</em> automatically integrated after generating
+calibration curves. If you change your calibration information by
+re-runing <code class="docutils literal notranslate"><span class="pre">curvegen</span></code>, you must re-run <code class="docutils literal notranslate"><span class="pre">datagen</span></code> to apply these changes
+to the other data sets contained in the HDF file.</p>
+</div>
+<section id="plotting-integrals-with-concentrations">
+<h3>Plotting Integrals with Concentrations<a class="headerlink" href="#plotting-integrals-with-concentrations" title="Permalink to this heading">¶</a></h3>
+<p>By default, no plots are generated for the integrals. If you’d like to see
+plots of the integrals, there are a couple of methods.</p>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">cal.datagen(datafolder='data',</span> <span class="pre">picts=True)</span></code> : This method will auto
+generate pictures for all of the calibration compounds and place them in a
+folder defined by the keyword argument <code class="docutils literal notranslate"><span class="pre">datafolder</span></code>. This argument is
+optional, if you don’t mind the default folder name of “data”.  Be careful!
+This will delete this folder before generating new plots, so if this folder
+exists, make sure it is clear of important data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cal.dataplot('benzene',</span> <span class="pre">'datasample1')</span></code> : This method will generate a
+plot of the benzene integral for ‘datasample1’ and save it to the current
+folder. There are several keyword arguments to this function:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">folder='.'</span></code> : This sets the folder where the picture will be saved. By
+default it is the current directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show=False</span></code> : Change this value to <code class="docutils literal notranslate"><span class="pre">True</span></code> if you want an interactive
+plot window to be displayed. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save=True</span></code> : Save the calibration plot to the folder.</p></li>
+</ul>
+<p>If both <code class="docutils literal notranslate"><span class="pre">save</span></code> and <code class="docutils literal notranslate"><span class="pre">show</span></code> are set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, nothing will happen.</p>
+<p>Of course, this function call can only be done after a call to <code class="docutils literal notranslate"><span class="pre">datagen</span></code>,
+but it can be used to look at calibration data from an previously processed
+HDF file without rerunning the calibration and data integration functions.</p>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="storage.html">Data Storage</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="isotope.html">Isotopic Distribution Analysis</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Ryan Nelson.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+  Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59963257-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  </body>
+</html>

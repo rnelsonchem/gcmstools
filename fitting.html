@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Referencing and Fitting &#8212; gcmstools Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
+    <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Storage" href="storage.html" />
+    <link rel="prev" title="GCMS Filetypes" href="filetypes.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>gcmstools</span></a></h1>
+        <h2 class="heading"><span>Referencing and Fitting</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="filetypes.html">GCMS Filetypes</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="storage.html">Data Storage</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="referencing-and-fitting">
+<h1>Referencing and Fitting<a class="headerlink" href="#referencing-and-fitting" title="Permalink to this heading">¶</a></h1>
+<p>In order to properly integrate your GCMS data, you must assign reference
+information followed by running an appropriate fitting routine. This section
+discusses methods to accomplish this using <em>gcmstools</em>.</p>
+<p>The general usage of the classes described in this section is identical.
+First, you will need one or more GCMS data objects, which you created in the
+<a class="reference internal" href="basics.html"><span class="doc">previous section</span></a>. Then you will create both reference and
+fitting object instances, which act as factories. You pass in a GcmsFile
+object, and the appropriate reference and fitting information will then be
+inserted into the object. Below is a pseudocode example that process:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will not work. See below for specific imports</span>
+<span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.reference</span> <span class="kn">import</span> <span class="n">FakeRef</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.fitting</span> <span class="kn">import</span> <span class="n">FakeFitter</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">FakeRef</span><span class="p">(</span><span class="s1">&#39;appropriate_reference_file&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">fit</span> <span class="o">=</span> <span class="n">FakeFitter</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">ref</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+<span class="n">Referencing</span><span class="p">:</span> <span class="n">fakedata1</span>
+
+<span class="c1"># Or pass in a list of many data objects</span>
+<span class="n">In</span> <span class="p">:</span> <span class="n">ref</span><span class="p">([</span><span class="n">data2</span><span class="p">,</span> <span class="n">data3</span><span class="p">])</span>
+<span class="n">Referencing</span><span class="p">:</span> <span class="n">fakedata2</span>
+<span class="n">Referencing</span><span class="p">:</span> <span class="n">fakedata3</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">fit</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+<span class="n">Fitting</span><span class="p">:</span> <span class="n">fakedata1</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">fit</span><span class="p">([</span><span class="n">data2</span><span class="p">,</span> <span class="n">data3</span><span class="p">])</span>
+<span class="n">Fitting</span><span class="p">:</span> <span class="n">fakedata2</span>
+<span class="n">Fitting</span><span class="p">:</span> <span class="n">fakedata3</span>
+
+<span class="c1"># all data sets now contain reference and fit information</span>
+</pre></div>
+</div>
+<p>Each reference and fitting type may append different types of information into
+your GCMS file object. In general, reference attributes will be preceded by
+“ref_”, whereas fitting attributes will be preceded by “fit_”.</p>
+<p>One exception is that all referencing objects will add both a <code class="docutils literal notranslate"><span class="pre">ref_cpds</span></code>
+list and a <code class="docutils literal notranslate"><span class="pre">ref_meta</span></code> dictionary to the GCMS data object. The former is a
+list of the reference compound names that you define in the reference file,
+called “appropriate_reference_file” in our example. (More on this file
+below.) The latter contains metadata also extracted from the reference input
+file. When you pass your GCMS data object into the fitting object, an
+extracted integral will be added to that dictionary. These raw integrals are
+not useful on their own, but are used in the <a class="reference internal" href="calibration.html"><span class="doc">Calibration and Concentration Determination</span></a> section later
+in this tutorial.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">data1</span><span class="o">.</span><span class="n">ref_cpds</span>
+<span class="p">[</span><span class="s1">&#39;ref_cpd_name1&#39;</span><span class="p">,</span> <span class="s1">&#39;ref_cpd_name2&#39;</span><span class="p">,</span> <span class="s1">&#39;ref_cpd_name3&#39;</span><span class="p">,</span> <span class="o">...</span> <span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data1</span><span class="o">.</span><span class="n">ref_meta</span><span class="p">[</span><span class="s1">&#39;ref_cpd_name1&#39;</span><span class="p">][</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span>
+<span class="mf">102237.01</span>
+</pre></div>
+</div>
+<section id="reference-files">
+<h2>Reference Files<a class="headerlink" href="#reference-files" title="Permalink to this heading">¶</a></h2>
+<p>In order to properly reference and fit your data set, you must prepare an
+appropriate reference input file. These files are simply plain text documents
+that describe the reference information for all of the compounds you would
+like to process. The structure of these files is very important. They are made
+up of a series of labels followed by the pertinent value. For example, all
+references must have a “NAME” label that provides the name of the reference
+compound. (It’s probably best if this is concise.) In addition, if you are
+going to be integrating this compound, then you <em>must</em> include “START” and
+“STOP” values, which are the starting and ending elution times for the
+integration region. (Don’t include the units.) Each reference compound <em>must</em>
+be separated by a blank line. Below is a truncated example for “benzene”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NAME</span><span class="p">:</span><span class="n">benzene</span>
+<span class="n">START</span><span class="p">:</span><span class="mf">2.9</span>
+<span class="n">STOP</span><span class="p">:</span><span class="mf">3.5</span>
+</pre></div>
+</div>
+<p>Additional labels can be added if you’d like to include extra metadata about
+your reference compound, such as retention index or molecular weight.  For all
+reference file types, lines starting with <code class="docutils literal notranslate"><span class="pre">#</span></code> are treated as comment lines
+and ignored. This can be useful if you want to add some notes or to remove
+reference information without deleting them entirely.</p>
+<p>Each reference/fitting type works with different reference files, so see the
+sections below for specifics.</p>
+</section>
+<section id="non-negative-least-squares">
+<h2>Non-negative Least Squares<a class="headerlink" href="#non-negative-least-squares" title="Permalink to this heading">¶</a></h2>
+<section id="collecting-references-for-nnls">
+<h3>Collecting References for NNLS<a class="headerlink" href="#collecting-references-for-nnls" title="Permalink to this heading">¶</a></h3>
+<p>The non-negative least squares (NNLS) fitting routine can use two different
+reference files. There are examples of both in the sample data directory:
+“ref_spec.txt” and “ref_spec2.MSL”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.general</span> <span class="kn">import</span> <span class="n">get_sample_data</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">get_sample_data</span><span class="p">(</span><span class="s1">&#39;ref_spec.txt&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">get_sample_data</span><span class="p">(</span><span class="s1">&#39;ref_spec2.MSL&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>MSL files are typically autogenerated by external software, such as AMDIS or
+the NIST Spectral Database. The “txt” file was hand generated. In addition to
+the “NAME” (and potentially “START” and “STOP”) label, these files have a
+section that starts with the label “NUM PEAKS” and is followed by the m/z and
+intensity information for the reference compound. As the MSL file is
+autogenerated, you will most like not have to adjust these data. However, you
+will have to add these data into the “txt” file by hand.</p>
+<p>The “NUM PEAKS” label in a “txt” file is followed by (at least) two
+space-separated columns of MS data. The first column must be the m/z values,
+and the second column contains the associated intensity values. Intensities
+are normalized on import, so it is not necessary to do this by hand.</p>
+<p>Remember, each reference compound <em>must</em> be separated by a blank line. Below
+is a small sample of one a “txt” file. An MSL file would differ only in the
+format of the “NUM PEAKS” section.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NAME</span><span class="p">:</span><span class="n">benzene</span>
+<span class="n">START</span><span class="p">:</span><span class="mf">2.9</span>
+<span class="n">STOP</span><span class="p">:</span><span class="mf">3.5</span>
+<span class="n">NUM</span> <span class="n">PEAKS</span><span class="p">:</span>
+  <span class="mi">36</span> <span class="mf">1.82</span> <span class="mi">18</span>
+  <span class="mi">37</span> <span class="mf">6.5</span> <span class="mi">65</span>
+  <span class="mi">38</span> <span class="mf">7.38</span> <span class="mi">74</span>
+  <span class="mi">39</span> <span class="mf">15.17</span> <span class="mi">152</span>
+  <span class="mi">49</span> <span class="mf">6.91</span> <span class="mi">69</span>
+<span class="o">.</span>
+<span class="o">.</span>
+<span class="o">.</span>
+</pre></div>
+</div>
+<p>The online MS repository <a class="reference external" href="http://www.massbank.jp/?lang=en">massBank</a> is a useful place to find these m/z and
+intensity values. The data from that site is already formated correctly for
+this file type.</p>
+</section>
+<section id="loading-reference-spectra">
+<h3>Loading Reference Spectra<a class="headerlink" href="#loading-reference-spectra" title="Permalink to this heading">¶</a></h3>
+<p>There are two objects located in <code class="docutils literal notranslate"><span class="pre">gcmstools.reference</span></code> for loading these reference
+data, <code class="docutils literal notranslate"><span class="pre">TxtReference</span></code> and <code class="docutils literal notranslate"><span class="pre">MslReferece</span></code>, which are used for “txt” and
+MSL reference files, respectively. In this example, we’ll use
+<code class="docutils literal notranslate"><span class="pre">TxtReferece</span></code>, but the MSL version behaves in the same manner. The variable
+<code class="docutils literal notranslate"><span class="pre">data</span></code> refers to a GCMS file object that we created earlier.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.reference</span> <span class="kn">import</span> <span class="n">TxtReference</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">TxtReference</span><span class="p">(</span><span class="s1">&#39;ref_specs.txt&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">ref</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">Referencing</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span><span class="o">.&lt;</span><span class="n">tab</span><span class="o">&gt;</span>
+<span class="n">data</span><span class="o">.</span><span class="n">filename</span>     <span class="n">data</span><span class="o">.</span><span class="n">index</span>        <span class="n">data</span><span class="o">.</span><span class="n">masses</span>       <span class="n">data</span><span class="o">.</span><span class="n">ref_meta</span>
+<span class="n">data</span><span class="o">.</span><span class="n">filetype</span>     <span class="n">data</span><span class="o">.</span><span class="n">ref_array</span>    <span class="n">data</span><span class="o">.</span><span class="n">ref_type</span>     <span class="n">data</span><span class="o">.</span><span class="n">tic</span>
+<span class="n">data</span><span class="o">.</span><span class="n">intensity</span>    <span class="n">data</span><span class="o">.</span><span class="n">ref_cpds</span>     <span class="n">data</span><span class="o">.</span><span class="n">times</span>
+</pre></div>
+</div>
+<p>Several new attributes have been added to our GCMS data object, all of which
+are prefixed with “ref_”. Below is a short description of each. <code class="docutils literal notranslate"><span class="pre">ref_meta</span></code>
+and <code class="docutils literal notranslate"><span class="pre">ref_cpds</span></code> are described above.</p>
+<ul class="simple">
+<li><p><em>ref_array</em>: A 2D Numpy array of the reference mass spectra. Shape(# of ref
+compounds, # of masses)</p></li>
+<li><p><em>ref_type</em>: The name of the reference object type that was used to generate
+this information. (In this example, this would be “TxtReference”.)</p></li>
+</ul>
+</section>
+<section id="fitting-the-data">
+<h3>Fitting the data<a class="headerlink" href="#fitting-the-data" title="Permalink to this heading">¶</a></h3>
+<p>A non-negative least squares fitting object, <code class="docutils literal notranslate"><span class="pre">Nnls</span></code>, is provided in the
+<code class="docutils literal notranslate"><span class="pre">gcmstools.fitting</span></code> module. To apply this fitting, simply call
+the fitting instance with a data object or list of data objects. This must be
+done after the data has been passed through a reference object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.fitting</span> <span class="kn">import</span> <span class="n">Nnls</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">fit</span> <span class="o">=</span> <span class="n">Nnls</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">Fitting</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span><span class="o">.&lt;</span><span class="n">tab</span><span class="o">&gt;</span>
+<span class="n">data</span><span class="o">.</span><span class="n">filename</span>     <span class="n">data</span><span class="o">.</span><span class="n">tic</span>          <span class="n">data</span><span class="o">.</span><span class="n">fit_sim</span>      <span class="n">data</span><span class="o">.</span><span class="n">ref_cpds</span>
+<span class="n">data</span><span class="o">.</span><span class="n">filetype</span>     <span class="n">data</span><span class="o">.</span><span class="n">index</span>        <span class="n">data</span><span class="o">.</span><span class="n">intensity</span>    <span class="n">data</span><span class="o">.</span><span class="n">ref_meta</span>
+<span class="n">data</span><span class="o">.</span><span class="n">fit_coef</span>     <span class="n">data</span><span class="o">.</span><span class="n">fit_csum</span>     <span class="n">data</span><span class="o">.</span><span class="n">masses</span>       <span class="n">data</span><span class="o">.</span><span class="n">ref_type</span>
+<span class="n">data</span><span class="o">.</span><span class="n">fit_type</span>     <span class="n">data</span><span class="o">.</span><span class="n">ref_array</span>    <span class="n">data</span><span class="o">.</span><span class="n">times</span>
+</pre></div>
+</div>
+<p>Again, several new attributes describing the fit, all starting with “fit_”,
+have been added to our data set.</p>
+<ul class="simple">
+<li><p><em>fit_type</em>: A string that names the fitting object used to generate this
+data. (In this case, it would be “Nnls”.)</p></li>
+<li><p><em>fit_coef</em>: A 2D Numpy array of the least squares coefficients at every time
+point. They do not correspond to proper integrations, so they should be used
+with caution. An example using these values to simulate a MS spectrum is
+shown in <a class="reference internal" href="appendB.html"><span class="doc">Appendix B</span></a>.</p></li>
+<li><p><em>fit_sim</em>: A 2D numpy array of simulated GCMS curves that were generated
+from the fit. Shape(# of time points, # of reference compounds)</p></li>
+<li><p><em>fit_csum</em>: A 2D numpy array that is the cumulative summation of <em>fit_sim</em>
+along the time axis, so it has the same shape as that array. An integral of
+a particular region can be obtained by determining the difference between
+any two points along the time dimension in this array. However, the
+<a class="reference internal" href="calibration.html"><span class="doc">calibration object</span></a> automatically handles this
+integration, so you shouldn’t need to do integrations in this manner.</p></li>
+</ul>
+<p>As stated above, the integrals for the reference compounds have also been
+added to the <code class="docutils literal notranslate"><span class="pre">ref_meta</span></code> dictionaries.</p>
+</section>
+<section id="plotting-the-fit">
+<h3>Plotting the Fit<a class="headerlink" href="#plotting-the-fit" title="Permalink to this heading">¶</a></h3>
+<p>You can do a quick visual check of the fits using Matplotlib. More advanced
+examples are presented in <a class="reference internal" href="appendB.html"><span class="doc">Appendix B</span></a>. The output of the commands below is
+shown in <a href="#id1"><span class="problematic" id="id2">:num:`Figure #fitcheck`</span></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">tic</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b2905df60</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">fit_sim</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b2f0df160</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b29063ac8</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b29063d30</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b29063f98</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b28fef240</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b28fef4a8</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b28fef710</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f9b28faf720</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;TIC&quot;</span><span class="p">,]</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">ref_cpds</span><span class="p">)</span> <span class="c1"># This isn&#39;t necessary</span>
+<span class="n">Out</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x7f9b25a35438</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id3">
+<span id="fitcheck"></span><a class="reference internal image-reference" href="_images/fitcheck.png"><img alt="_images/fitcheck.png" src="_images/fitcheck.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">An interactive plot of the TIC and the NNLS simulated fits. This has been
+zoomed in to highlight the fit and data.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="filetypes.html">GCMS Filetypes</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="storage.html">Data Storage</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Ryan Nelson.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+  Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59963257-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  </body>
+</html>

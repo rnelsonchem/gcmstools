@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>GCMS Filetypes &#8212; gcmstools Documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
+    <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Referencing and Fitting" href="fitting.html" />
+    <link rel="prev" title="Basic Setup" href="basics.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>gcmstools</span></a></h1>
+        <h2 class="heading"><span>GCMS Filetypes</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="basics.html">Basic Setup</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="fitting.html">Referencing and Fitting</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="gcms-filetypes">
+<h1>GCMS Filetypes<a class="headerlink" href="#gcms-filetypes" title="Permalink to this heading">¶</a></h1>
+<p>There are potentially many types of GCMS files; however, all file importing
+objects discussed in this section should have identical properties. This is
+important for later sections of the documentation, because fitting routines,
+etc., usually do not require a specific file type importer. All of the import
+objects are constructed with a single string input, which is the name of the
+file to process. This file name string can also contain path information if
+the file is not located in the current directory.</p>
+<section id="aia-files">
+<h2>AIA Files<a class="headerlink" href="#aia-files" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Mass_spectrometry_data_format#ANDI-MS_or_netCDF">AIA, ANDI, or CDF</a> are all related types of standard GCMS files that are
+<a class="reference external" href="https://www.unidata.ucar.edu/support/help/MailArchives/netcdf/msg05748.html">derived from</a> the Network Common Data Format (<a class="reference external" href="http://en.wikipedia.org/wiki/NetCDF">netCDF</a>). They may have
+the file extension “AIA” or “CDF”. This file type may not be the default for
+your instrument, so consult the documentation for your GCMS software to
+determine how to export your data in these formats.</p>
+<p>To import this type of data, use the <code class="docutils literal notranslate"><span class="pre">AiaFile</span></code> object, which is located in
+the <code class="docutils literal notranslate"><span class="pre">gcmstools.filetypes</span></code> module.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.filetypes</span> <span class="kn">import</span> <span class="n">AiaFile</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, <em>gcmstools</em> can only process CDF version 3 files using
+<code class="docutils literal notranslate"><span class="pre">scipy.io.netcdf</span></code> library. Version 4 support could be available upon
+request.</p>
+</div>
+<section id="read-an-aia-file">
+<h3>Read an AIA File<a class="headerlink" href="#read-an-aia-file" title="Permalink to this heading">¶</a></h3>
+<p>File readers are imported from the <code class="docutils literal notranslate"><span class="pre">gcmstools.filetypes</span></code> module. In this
+example, we’ll use the AIA file reader, <code class="docutils literal notranslate"><span class="pre">AiaFile</span></code>; however, the results
+should be identical with other readers. To read a file, you can create a new
+instance of this object with a filename given as a string.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">from</span> <span class="nn">gcmstools.filetypes</span> <span class="kn">import</span> <span class="n">AiaFile</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">AiaFile</span><span class="p">(</span><span class="s1">&#39;datasample1.CDF&#39;</span><span class="p">)</span>
+<span class="n">Building</span><span class="p">:</span> <span class="n">datasample1</span><span class="o">.</span><span class="n">CDF</span>
+</pre></div>
+</div>
+<p>The variable <code class="docutils literal notranslate"><span class="pre">data</span></code> now contains our processed GCMS data set. You can see
+its contents using <a class="reference internal" href="appendA.html#ipytab"><span class="std std-ref">tab completion</span></a> in IPython.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span><span class="p">:</span> <span class="n">data</span><span class="o">.&lt;</span><span class="n">tab</span><span class="o">&gt;</span>
+<span class="n">data</span><span class="o">.</span><span class="n">filename</span>   <span class="n">data</span><span class="o">.</span><span class="n">intensity</span>    <span class="n">data</span><span class="o">.</span><span class="n">tic</span>    <span class="n">data</span><span class="o">.</span><span class="n">masses</span>
+<span class="n">data</span><span class="o">.</span><span class="n">filetype</span>   <span class="n">data</span><span class="o">.</span><span class="n">int_extract</span>  <span class="n">data</span><span class="o">.</span><span class="n">index</span>  <span class="n">data</span><span class="o">.</span><span class="n">times</span>
+</pre></div>
+</div>
+<p>Most of these attributes are data that describe our dataset. You can inspect
+these attributes by typing the name at the IPython prompt.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">times</span>
+<span class="n">Out</span><span class="p">:</span>
+<span class="n">array</span><span class="p">([</span><span class="mf">0.08786667</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">49.8351</span><span class="p">])</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">tic</span>
+<span class="n">Out</span><span class="p">:</span>
+<span class="n">array</span><span class="p">([</span><span class="mf">158521.</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">filetype</span>
+<span class="n">Out</span><span class="p">:</span> <span class="s1">&#39;AiaFile&#39;</span>
+</pre></div>
+</div>
+<p>This is a short description of these initial attributes:</p>
+<ul class="simple">
+<li><p><em>filename</em>: String. This is the name of the file that you imported.</p></li>
+<li><p><em>times</em>: A 1D Numpy array of the elution time points.</p></li>
+<li><p><em>tic</em>: A 1D Numpy array of the total ion chromatogram (TIC) intensity
+values.</p></li>
+<li><p><em>masses</em>: A 1D Numpy array the m/z values for the data collected by the MS.</p></li>
+<li><p><em>intensity</em>: This is the 2D Numpy array of raw MS intensity data. The rows
+correspond to the times in the <code class="docutils literal notranslate"><span class="pre">times</span></code> array, and the columns correspond
+to the masses in the <code class="docutils literal notranslate"><span class="pre">masses</span></code> array. Shape(length of times, length of
+masses)</p></li>
+<li><p><em>filetype</em>: String. This is the type of file importer that was used.</p></li>
+</ul>
+<p>The <em>index</em> method is used for finding the indices from an array. Its usage is
+explained by example in <a class="reference internal" href="appendB.html"><span class="doc">Appendix B</span></a>.</p>
+</section>
+</section>
+<section id="simple-plotting">
+<h2>Simple plotting<a class="headerlink" href="#simple-plotting" title="Permalink to this heading">¶</a></h2>
+<p>Now that we’ve opened a GCMS data set, we can easily visualize these data
+using the plotting package Matplotlib. As an example, let’s try plotting the
+total ion chromatogram. In this case, <code class="docutils literal notranslate"><span class="pre">data.times</span></code> will be our “x-axis”
+data, and <code class="docutils literal notranslate"><span class="pre">data.tic</span></code> will be our “y-axis” data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">tic</span><span class="p">)</span>
+<span class="n">Out</span> <span class="p">:</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f34</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This produces a interactive plot window shown in <a href="#id1"><span class="problematic" id="id2">:num:`Figure #ticplot`</span></a>.
+(This should happen fairly quickly. However, sometimes the plot window appears
+behind the other windows, which makes it seem like things are stuck. Be sure
+to scroll through your windows to find it.) The buttons at the top of the
+window give you some interactive control of the plot. See the <a class="reference external" href="http://matplotlib.org/contents.html">Matplotlib
+documentation</a> for more information.</p>
+<figure class="align-default" id="id5">
+<span id="ticplot"></span><a class="reference internal image-reference" href="_images/tic.png"><img alt="_images/tic.png" src="_images/tic.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Total ion chromatogram.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>One drawback here is that you have to type these commands every time you want
+to see this plot. Alternatively, you can put all of these commands into a text
+file and run it with Python directly. Copy the following code into a plain
+text file called “tic_plot.py”. (See <a class="reference internal" href="appendA.html#textfiles"><span class="std std-ref">Working with Text Files</span></a> for more information on
+making Python program files.) Note: It is common practice to do all imports at
+the top of a Python program. That way it is clear exactly what code is being
+brought into play.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">gcmstools.filetypes</span> <span class="kn">import</span> <span class="n">AiaFile</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">AiaFile</span><span class="p">(</span><span class="s1">&#39;datasample1.CDF&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">tic</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Run this new file using the <code class="docutils literal notranslate"><span class="pre">python</span></code> command from the terminal. The plot
+window will appear, and you can interact with the data. However, you will not
+be able to work in the terminal again until you close this window.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>gcms&gt;$ python tic_plot.py
+</pre></div>
+</div>
+<p>Alternatively, you can run this program directly from IPython.  This has the
+advantage that once the window is closed, you are dropped back into an IPython
+session that “remembers” all of the variables and imports from your program
+file. See <a class="reference internal" href="appendA.html"><span class="doc">Appendix A</span></a> for more information here.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="o">%</span><span class="n">run</span> <span class="n">tic_plot</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="working-with-multiple-data-sets">
+<h2>Working with multiple data sets<a class="headerlink" href="#working-with-multiple-data-sets" title="Permalink to this heading">¶</a></h2>
+<p>In the example above, we opened one dataset into a variable called <code class="docutils literal notranslate"><span class="pre">data</span></code>.
+If you want to manipulate more than one data set, the procedure is the same,
+except that you will need to use different variable names for your other data
+sets. (Again, using AiaFile importer as an example, but this is not required.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">data2</span> <span class="o">=</span> <span class="n">AiaFile</span><span class="p">(</span><span class="s1">&#39;datasample2.CDF&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These two data sets can be plot together on the same figure by doing the
+following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">tic</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x7f34</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data2</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">data2</span><span class="o">.</span><span class="n">tic</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">Line2D</span> <span class="n">at</span> <span class="mh">0x02e3</span><span class="o">&gt;</span><span class="p">]</span>
+
+<span class="n">In</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The window shown in <a href="#id3"><span class="problematic" id="id4">:num:`Figure #twotic`</span></a> should now appear. (There is a blue
+and green line here that are a little hard to see in this picture.  Zoom in on
+the plot to see the differences.)</p>
+<figure class="align-default" id="id6">
+<span id="twotic"></span><a class="reference internal image-reference" href="_images/tic2.png"><img alt="_images/tic2.png" src="_images/tic2.png" style="width: 3.5in;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Two TIC plotted together.</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="basics.html">Basic Setup</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="fitting.html">Referencing and Fitting</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Ryan Nelson.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+  Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59963257-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  </body>
+</html>

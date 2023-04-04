@@ -20,4 +20,4 @@ Currently, this package implements the following:
 * Analyze the distribution of isotopes (for isotopic labeling experiments)
 
 
-.. _online user guide: http://rnelsonchem.github.io/gcmstools/
+.. _online user guide: https://rnelsonchem.github.io/gcmstools/

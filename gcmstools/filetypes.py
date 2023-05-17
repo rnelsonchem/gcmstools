@@ -62,8 +62,8 @@ class AiaFile(GcmsFile):
         times = times_cdf[:]/60.
 
         mass_cdf = data.variables['mass_values'][:]
-        mass_min = np.int( np.round( mass_cdf.min() ) )
-        mass_max = np.int( np.round( mass_cdf.max() ) )
+        mass_min = int( np.round( mass_cdf.min() ) )
+        mass_max = int( np.round( mass_cdf.max() ) )
         masses = np.arange(mass_min, mass_max +1)
         
         inten_cdf = data.variables['intensity_values'][:]

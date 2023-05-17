@@ -136,7 +136,7 @@ class Isotope(object):
 
         # Perfom least squares fit
         # TODO: I should probably check some of the other vals besides coefs
-        self._allfit = np.linalg.lstsq(self.isomat.T, self.vals)
+        self._allfit = np.linalg.lstsq(self.isomat.T, self.vals, rcond=None)
 
         # Make a results DataFrame w/ same index as iso matrix, Coef column
         self.results = pd.DataFrame(self._allfit[0], index=self.isomat.index,
@@ -144,8 +144,9 @@ class Isotope(object):
         # As percents, needs to be done per compound (index level=0)
         self.results['Per'] = 0.0
         for cpd in self.results.index.levels[0]:
-            df = self.results.ix[cpd]
-            df['Per'] = df['Coef']*100./df['Coef'].sum()
+            coef = self.results.loc[cpd, 'Coef']
+            per = coef*100./coef.sum()
+            self.results.loc[cpd, 'Per'] = per
 
         # Create a DataFrame of simulated and real MS with residuals
         siminten = self.isomat.mul(self.results['Coef'], axis=0)
@@ -154,7 +155,7 @@ class Isotope(object):
         simdf['Resid'] = simdf['Real'] - simdf['Sim Total']
         # Add the simulation per compound as well
         for cpd in siminten.index.levels[0]:
-            df = siminten.ix[cpd]
+            df = siminten.loc[cpd]
             simdf[cpd + ' Sim'] = df.sum(axis=0)
         simdf.index.set_names('Mass', inplace=True)
         self.simdf = simdf

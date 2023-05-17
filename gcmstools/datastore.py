@@ -123,7 +123,7 @@ class GcmsStore(pd.HDFStore):
         self.close()
         # Make a copy of the file.
         # This compresses the file if a lot of changes have been made
-        tb.copyFile(self.filename, self.filename+'temp', overwrite=True)
+        tb.copy_file(self.filename, self.filename+'temp', overwrite=True)
         os.remove(self.filename)
         os.rename(self.filename+'temp', self.filename)
 

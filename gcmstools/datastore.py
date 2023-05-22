@@ -65,7 +65,7 @@ class GcmsStore(pd.HDFStore):
             name = self._gcms_name_fix(filename)
             names.append((name, filename))
             self._append_single_gcms(name, data)
-        temp_df = pd.DataFrame(names, columns=self._files_df_columns)\
+        temp_df = pd.DataFrame(names, columns=self._files_df_columns)
 
         if not hasattr(self, 'files'):
             self.put('files', temp_df)
